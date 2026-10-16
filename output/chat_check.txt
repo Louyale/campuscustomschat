@@ -1,0 +1,44 @@
+PASS ( 1.6s) How much is the Basic Hoodie Big Yale?
+     -> The Basic Hoodie Big Yale is $39.99.
+     cards: ['basic-hoodie-big-yale']
+PASS ( 0.8s) Is the Pierson College Crewneck in stock in size L?
+     -> The Pierson College Crewneck is sold out in size L. It is $39.99; I can check another size if you’d like.
+     cards: ['pierson-college-crewneck']
+PASS ( 1.0s) How many XL Basic Hoodie Big Yale are left?
+     -> There are 2 XL Basic Hoodie Big Yale left, at $39.99 each.
+     cards: ['basic-hoodie-big-yale']
+PASS ( 0.6s) Does the Basic Hoodie Big Yale come in pink?
+     -> No. The Basic Hoodie Big Yale is available in navy blue with white lettering, not pink.
+     cards: ['basic-hoodie-big-yale']
+PASS ( 0.7s) What hats do you have under $30?
+     -> Three hats are under $30: Y Pom Beanie ($24.99), in Navy/Heather Grey; Y Dad Hat ($29.99), in Navy, Stone or White; and Class of 2026 Big Y Hat ($29.99), in Navy. All are in stock.
+     cards: ['pom-beanie-3dy', 'lo-profile-cap-2-y', 'class-of-2026-big-y-hat']
+PASS ( 1.0s) Do you sell scarves?
+     -> Scarves aren’t listed in our current catalogue. We do carry hats and other Yale apparel; you can also call (475) 301-4205 to ask whether scarves are available in-store.
+     cards: []
+PASS ( 1.4s) Do you have any Ezra Stiles college gear?
+     -> I couldn’t find any Ezra Stiles College gear in the current catalogue. The Residential Colleges collection does include other college-specific pieces, such as the Pierson College Crewneck ($39.99) and Saybrook Logo T Shirt ($29.99).
+     cards: ['pierson-college-crewneck', 'saybrook-logo-t-shirt']
+PASS ( 0.9s) What is the most expensive item you sell?
+     -> The most expensive item in the catalogue is the Brooks Brothers Bomber Jacket Yale at $199.99.
+     cards: ['brooks-brothers-bomber-jacket-yale']
+PASS ( 0.7s) Show me Morse college gear.
+     -> Morse College gear currently includes a heather gray Morse Logo T Shirt ($29.99) and a heather gray Morse 1/4 Zip ($59.99).
+     cards: ['morse-logo-t-shirt', 'morse-1-4-zip']
+PASS ( 0.9s) Is the Lacrosse Left Chest Crewneck available in XS?
+     -> The Lacrosse Left Chest Crewneck is sold out in XS. It’s $34.99 and comes in navy blue.
+     cards: ['lacrosse-left-chest-crewneck']
+PASS ( 0.6s) What colors does the School of Management Crest T Shirt come in?
+     -> The shirt comes in navy, with white and light blue in the crest design.
+     cards: ['school-of-management-crest-t-shirt']
+PASS ( 0.7s) What are your store hours?
+     -> Store hours aren’t published. Please call (475) 301-4205 before visiting 57 Broadway, New Haven.
+     cards: []
+PASS ( 0.5s) What is your return policy?
+     -> Returns are accepted within 30 days of the ship date for unworn, unused items with original tags. Final-sale and custom items, including Custom Alumni pieces, are not returnable. If we made a mistake, we cover return shipping; otherwise, return shipping is the customer’s responsibility. Refunds take 2–10 business days and exclude original shipping.
+     cards: []
+PASS ( 0.6s) Do you have a pink hat?
+     -> Yes. The Legacy Varsity Y Hat comes in Dusty Rose, a muted pink, for $34.99.
+     cards: ['adjustable-y-w-vintage-foam']
+
+14/14 chat checks passed

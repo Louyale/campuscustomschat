@@ -147,10 +147,12 @@ def _chat_db() -> sqlite3.Connection:
     return con
 
 
-def _saved_turns(user_id: int, limit: int = 40) -> list[sqlite3.Row]:
+def _saved_turns(user_id: int, limit: int = 40, recent_hours: int | None = None) -> list[sqlite3.Row]:
+    """A shopper's saved turns, oldest first. recent_hours keeps only the latest conversation."""
+    since = f"AND created_at >= datetime('now', '-{int(recent_hours)} hours') " if recent_hours else ""
     with _chat_db() as con:
         rows = con.execute(
-            "SELECT role, content, products_json, created_at FROM chat_messages WHERE user_id = ? "
+            "SELECT role, content, products_json, created_at FROM chat_messages WHERE user_id = ? " + since +
             "ORDER BY id DESC LIMIT ?", (user_id, limit)).fetchall()
     return list(reversed(rows))
 
@@ -186,7 +188,8 @@ async def chat(body: ChatRequest, request: Request, cc_session: str | None = Coo
 
     user = current_user(cc_session)
     if user:  # logged in: use the saved conversation, not whatever the browser sent
-        history = [ChatTurn(role=r["role"], content=r["content"]) for r in _saved_turns(user.id, 24)]
+        # Only the last day goes to the model: older chats may quote prices or stock that have since changed.
+        history = [ChatTurn(role=r["role"], content=r["content"]) for r in _saved_turns(user.id, 24, recent_hours=24)]
     else:
         history = body.history
 

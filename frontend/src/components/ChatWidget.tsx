@@ -149,7 +149,7 @@ export default function ChatWidget() {
       >
         <span className="chat-launcher-icon" aria-hidden="true">
           {open ? '×' : (
-            <svg viewBox="0 0 24 24" width="22" height="22">
+            <svg viewBox="0 0 24 24" width="44" height="44">
               <path d="M4.5 5.5h15v10h-9l-4 3.5v-3.5h-2z" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" />
             </svg>
           )}

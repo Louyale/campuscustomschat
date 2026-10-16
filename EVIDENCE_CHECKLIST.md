@@ -48,7 +48,8 @@ The assignment says the evidence is **the running site, the database writes, and
 - [x] Agent uses the AI key from `.env` (`PORTKEY_API_KEY`, model from `OPENAI_MODEL`)
 - [x] `output/harness.md`: how the front end talks to FastAPI and how the agent is loaded
 - [x] Extras: Add to cart / Check options (size, color), cart with shipping + CT tax + total and a demo card form (no card data sent or stored), refined chat
-- [x] Screenshots `p5_01` to `p5_10` (guest chat, prompt-injection refusal, Lou's saved chat, cart buttons, options, hat colors, added-to-cart popup, checkout tally, card validation, refined chat)
+- [x] Chat accuracy: `tests/check_chat.py` 14/14 (`output/chat_check.txt`) after fixing the color and stale-history causes
+- [x] Screenshots `p5_01` to `p5_11` (guest chat, prompt-injection refusal, Lou's saved chat, cart buttons, options, hat colors, added-to-cart popup, checkout tally, card validation, refined chat, larger chat button)
 - [x] I've reviewed the harness Problem 5 section (my edits kept; the proof now matches a real Lou Donofrio test)
 
 ## Whole project (from the scenario)

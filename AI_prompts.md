@@ -226,6 +226,29 @@ This is the log of what I typed to my vibe coder (Claude Code) while building th
 
 **Result:** Approved the harness wording. Everything was saved in `HW4/`, the checklist was ticked, the build and auth checks were re-run, and Problem 5 was committed and pushed to `github.com/Louyale/campuscustomschat`. **Problem 5 complete.**
 
+> see you after dinner
+
+**Result:** Break before Problem 6.
+
+> make sure the chat is live on the webpage and make sure that everything is pushed to the repo campuscustomschat and loaded there so my professor and tas can see it
+
+> how do i see the chat on the website?
+
+> fix the reasons why the chat gives some incorrect responses
+
+> after you make these fixes, re push everything so far to the repo and i'll see you after din-nah
+
+> before you push to repo, make the chat blue circle double in size
+
+**Result:**
+- **Live chat:** checked it live through the website (`http://localhost:5180`). To see it, open the site and click the navy chat circle at the bottom right.
+- **Accuracy test:** added `tests/check_chat.py`, 14 questions with answers known from the database: prices, stock by size, sold-out sizes, colors, items we don't carry, store hours and returns. Results are in `output/chat_check.txt`.
+- **Cause 1, colors:** the tools passed the catalogue's design colors as if they were color choices, so the bot said the SOM tee came "in navy, white, and light blue". The tools now separate `garment_color` from `print_colors` (only hats list real choices), and the prompt explains the difference.
+- **Cause 2, stale history:** logged-in shoppers' old chats (including seed chats quoting the old $68 price) were fed back to the model, which then "corrected" itself. The model now sees only the last 24 hours of a shopper's chat; older history still shows on screen with current prices.
+- **After the fixes:** 14/14 chat checks pass and 16/16 auth checks pass.
+- **Chat button:** the circle is now twice the size (104 px; 72 px on phones). Screenshot `p5_11`.
+- **Pushed:** everything was committed and pushed to `github.com/Louyale/campuscustomschat`.
+
 ---
 
 ## Appendix: setup prompts (before Problem 1)

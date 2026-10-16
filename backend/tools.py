@@ -215,8 +215,14 @@ def category_counts() -> dict:
 # straight from the database on every call, never from memory.
 
 def _brief(p: dict) -> dict:
+    # The catalogue's colors describe the design: garment color first, then print colors.
+    # Only hats come in several colorways, so only their colors are real choices.
+    if p["category"] == "Hats":
+        colors = {"colors_available": p["colors"]}
+    else:
+        colors = {"garment_color": p["colors"][0] if p["colors"] else None, "print_colors": p["colors"][1:]}
     return {"product_id": p["product_id"], "name": p["name"], "price": p["price"], "category": p["category"],
-            "colors": p["colors"], "in_stock": p["in_stock"], "best_seller_rank": p["best_seller_rank"],
+            **colors, "in_stock": p["in_stock"], "best_seller_rank": p["best_seller_rank"],
             "summary": p["short_description"]}
 
 

@@ -53,3 +53,7 @@ Copy `.env.example` to `.env` and fill in `PORTKEY_API_KEY` (and a `SESSION_SECR
 | `GET /api/chat/history` | A logged-in shopper's saved chat |
 
 The agent lives in four files next to `main.py`: `prompts/prompt.md` (system prompt), `agent.py` (wiring), `tools.py` (catalogue tools) and `models.py` (types).
+
+## Checks
+
+With the backend running: `python tests/check_auth.py` (16 account and security checks) and `python tests/check_chat.py` (14 chat accuracy checks against the database).
