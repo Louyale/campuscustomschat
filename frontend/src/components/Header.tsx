@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from 'react'
 import { Link, NavLink, useNavigate } from 'react-router-dom'
 import { useAuth } from '../auth'
+import { useCart } from '../cart'
 
 type NavItem = { to: string; label: string; end?: boolean }
 
@@ -19,6 +20,7 @@ export default function Header() {
   const [query, setQuery] = useState('')
   const navigate = useNavigate()
   const { user, logout } = useAuth()
+  const { count } = useCart()
   const links: NavItem[] = user ? [...NAV, { to: '/account', label: `Hi, ${user.first_name}` }] : [...NAV, ...GUEST_NAV]
 
   function search(event: FormEvent) {
@@ -65,6 +67,13 @@ export default function Header() {
             </svg>
           </button>
         </form>
+        <Link to="/cart" className="cart-link" aria-label={`Cart, ${count} ${count === 1 ? 'item' : 'items'}`} onClick={() => setOpen(false)}>
+          <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true">
+            <path d="M6 7h12l-1 13H7L6 7Z" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" />
+            <path d="M9 7V5.5a3 3 0 0 1 6 0V7" fill="none" stroke="currentColor" strokeWidth="1.8" />
+          </svg>
+          {count > 0 && <span className="cart-count">{count}</span>}
+        </Link>
       </div>
       <nav className={`site-nav ${open ? 'open' : ''}`} aria-label="Main">
         <ul className="container">

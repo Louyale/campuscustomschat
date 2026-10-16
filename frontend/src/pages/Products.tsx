@@ -99,7 +99,7 @@ export default function Products() {
                 <p className="empty">Nothing matches that yet. Try a broader search, or ask the chat for a suggestion.</p>
               ) : (
                 <div className="product-grid">
-                  {products.data.map((p) => <ProductCard key={p.product_id} product={p} />)}
+                  {products.data.map((p) => <ProductCard key={p.product_id} product={p} showActions />)}
                 </div>
               )}
             </>

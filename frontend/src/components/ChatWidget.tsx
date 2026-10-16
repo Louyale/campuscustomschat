@@ -1,20 +1,15 @@
 import { useEffect, useRef, useState, type FormEvent } from 'react'
-import { sendChat, type ChatTurn, type ProductSummary } from '../api'
+import { getChatHistory, sendChat, type ChatTurn, type ProductSummary } from '../api'
 import { useAuth } from '../auth'
 import ProductCard from './ProductCard'
 
 interface Message extends ChatTurn {
   products?: ProductSummary[]
+  suggestions?: string[]
   error?: boolean
 }
 
-const WELCOME: Message = {
-  role: 'assistant',
-  content:
-    "Hey! I'm the Campus Customs assistant. Ask me about sizes, stock, prices, or what to wear to The Game.",
-}
-
-const QUICK_REPLIES = ['Best-selling hoodies', 'Residential college gear', 'Gifts for Yale parents', 'Shipping & returns']
+const QUICK_REPLIES = ['Best sellers', 'Residential colleges', 'Gifts for parents', 'Shipping & returns']
 
 /** Opens the chat from anywhere, optionally with a question already typed. */
 export function openChat(prefill = '') {
@@ -24,11 +19,26 @@ export function openChat(prefill = '') {
 export default function ChatWidget() {
   const { user } = useAuth()
   const [open, setOpen] = useState(false)
-  const [messages, setMessages] = useState<Message[]>([WELCOME])
+  const [messages, setMessages] = useState<Message[]>([])
   const [draft, setDraft] = useState('')
   const [busy, setBusy] = useState(false)
   const listRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
+
+  // Logged-in shoppers get their saved chat back; logging out starts a fresh guest chat.
+  useEffect(() => {
+    let active = true
+    if (!user) {
+      setMessages([])
+      return
+    }
+    getChatHistory()
+      .then((saved) => active && setMessages(saved.map(({ role, content, products }) => ({ role, content, products }))))
+      .catch(() => active && setMessages([]))
+    return () => {
+      active = false
+    }
+  }, [user])
 
   useEffect(() => {
     const handler = (event: Event) => {
@@ -42,23 +52,24 @@ export default function ChatWidget() {
 
   useEffect(() => {
     listRef.current?.scrollTo({ top: listRef.current.scrollHeight, behavior: 'smooth' })
-  }, [messages, busy])
+  }, [messages, busy, open])
 
   async function send(text: string) {
     const message = text.trim()
     if (!message || busy) return
-    const history = messages.filter((m) => !m.error && m !== WELCOME).map(({ role, content }) => ({ role, content }))
+    // Guests send recent turns with each message; the server keeps logged-in shoppers' history itself.
+    const history = user ? [] : messages.filter((m) => !m.error).map(({ role, content }) => ({ role, content }))
     setMessages((prev) => [...prev, { role: 'user', content: message }])
     setDraft('')
     setBusy(true)
     try {
       const response = await sendChat(message, history)
-      setMessages((prev) => [...prev, { role: 'assistant', content: response.reply, products: response.products }])
-    } catch (err) {
       setMessages((prev) => [
         ...prev,
-        { role: 'assistant', content: `Sorry, I couldn't reach the shop just now (${(err as Error).message}). Please try again.`, error: true },
+        { role: 'assistant', content: response.reply, products: response.products, suggestions: response.suggestions },
       ])
+    } catch (err) {
+      setMessages((prev) => [...prev, { role: 'assistant', content: (err as Error).message, error: true }])
     } finally {
       setBusy(false)
     }
@@ -69,22 +80,25 @@ export default function ChatWidget() {
     send(draft)
   }
 
+  const last = messages[messages.length - 1]
+  const chips = busy ? [] : !last ? QUICK_REPLIES : last.role === 'assistant' ? last.suggestions ?? [] : []
+
   return (
     <div className="chat">
       {open && (
         <section className="chat-panel" role="dialog" aria-label="Campus Customs chat">
           <header className="chat-header">
             <div>
-              <strong>Campus Customs Help</strong>
-              <small>Real prices and stock, straight from the shop</small>
+              <strong>Campus Customs</strong>
+              <small>{user ? 'Saved to your account' : 'Live prices and stock'}</small>
             </div>
             <button className="chat-close" aria-label="Close chat" onClick={() => setOpen(false)}>×</button>
           </header>
           <div className="chat-messages" ref={listRef} aria-live="polite">
+            {user && <p className="chat-note">Welcome back, {user.first_name}.</p>}
             {messages.map((m, i) => (
-
               <div key={i} className={`chat-msg chat-${m.role} ${m.error ? 'chat-error' : ''}`}>
-                <p>{m === WELCOME && user ? m.content.replace('Hey!', `Hey ${user.first_name}!`) : m.content}</p>
+                <p>{m.content}</p>
                 {m.products && m.products.length > 0 && (
                   <div className="chat-products">
                     {m.products.map((p) => (
@@ -100,9 +114,9 @@ export default function ChatWidget() {
               </div>
             )}
           </div>
-          {messages.length === 1 && (
+          {chips.length > 0 && (
             <div className="chat-chips">
-              {QUICK_REPLIES.map((q) => (
+              {chips.map((q) => (
                 <button key={q} type="button" onClick={() => send(q)}>{q}</button>
               ))}
             </div>
@@ -114,25 +128,29 @@ export default function ChatWidget() {
               ref={inputRef}
               value={draft}
               onChange={(e) => setDraft(e.target.value)}
-              placeholder="Ask about a size, price, or gift idea…"
+              placeholder="Message"
               maxLength={2000}
               autoComplete="off"
             />
-            <button type="submit" disabled={busy || !draft.trim()}>Send</button>
+            <button type="submit" aria-label="Send" disabled={busy || !draft.trim()}>
+              <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+                <path d="M5 12h13M13 6l6 6-6 6" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </button>
           </form>
         </section>
       )}
       <button
         className="chat-launcher"
         aria-label={open ? 'Close chat' : 'Open chat'}
+        title={open ? 'Close' : 'Chat with Campus Customs'}
         aria-expanded={open}
         onClick={() => setOpen(!open)}
       >
-        {!open && <span className="chat-launcher-label">Hey! Need help?</span>}
         <span className="chat-launcher-icon" aria-hidden="true">
           {open ? '×' : (
-            <svg viewBox="0 0 24 24" width="26" height="26">
-              <path fill="currentColor" d="M4 4h16a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H9l-5 4v-4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Z" />
+            <svg viewBox="0 0 24 24" width="22" height="22">
+              <path d="M4.5 5.5h15v10h-9l-4 3.5v-3.5h-2z" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" />
             </svg>
           )}
         </span>

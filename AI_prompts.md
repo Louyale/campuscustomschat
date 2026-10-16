@@ -12,6 +12,7 @@ This is the log of what I typed to my vibe coder (Claude Code) while building th
 | 2 | Analyze the database | Show each table and its fields, with space for my one-line reasons | Show the 4 tables with real rows so I can write the reasons | `output/harness.md` |
 | 3 | Build the Campus Customs website | Main pages in my voice, Products + single-item pages, bottom-right chat stub, FastAPI backend | Add knit Y pom beanies, Y caps and a Class of 2026 hat; new home-page line | `frontend/`, `backend/main.py`, `add_hats.py` |
 | 4 | Create account and login | Secure sign-up/login with hacker safety; test the seed user and a new account; harness overview | "Safely saves" wording; 20-minute lockout and passwords need a number | `backend/auth.py`, Log in / Create account pages, `tests/check_auth.py` |
+| 5 | PydanticAI agent backend | Build the chatbot as a PydanticAI agent behind FastAPI in four files; Campus Customs voice and safety; harness narrative | Add to cart / Check options, checkout tally and card form, refined chat; real Lou Donofrio test | `backend/main.py`, `backend/prompts/prompt.md`, `backend/agent.py`, `backend/tools.py`, `backend/models.py` |
 
 ---
 
@@ -164,6 +165,66 @@ This is the log of what I typed to my vibe coder (Claude Code) while building th
 
 **Result:** Committed the Problem 3 and 4 work (code, docs, harness, test evidence and screenshots) and pushed it to `github.com/Louyale/campuscustomschat`. Before committing, I checked that no `.env`, database or product images were included.
 - **Harness:** added a "Problem 4: Create account and login" section to `output/harness.md` explaining what we store and how passwords are protected.
+
+---
+
+## Problem 5: PydanticAI agent backend
+
+**Prompt (my own words):**
+
+> now follow these instructions to build the chatbot and the chat route.  keep the files saved as required.  keep these agent as these four files next to it as we did in HW3.  make sure the agent and website communicate for replies for products, inventory, price and the rest of the auth requirements.  put campus customs voice and safety basics into prompts.md.  perform updates as needed based on chat replies, in the models file.  make sure the backend runs in the uvicorn file as noted.  provide a narrative in harness as noted in draft and open it on the right so i can modify it as needed- for how the agent is loaded and how front end talks to fastapi.  can you doo all this now?!
+
+**Follow-up prompt:**
+
+> on the products pages, there should be two small boxes on each product that says add to cart or check options, and in the check options it should have changes in size and color as appropriate.  for the chat and pop ups you just made, i want you to make them more refined and less like a wholesaler like target.  include less language in the writeable portions like how can i help you.  it should cater to intelligent users.  make these changes now so i can see them on the webpage
+
+> if we don;t do the cart later, it should have a dollar tally that also adds tax and shipping and a place for a credit card
+
+> make my change to the harness proof it works as to my name, the ball cap and add the correct pricing
+
+**What was lacking after the first prompt:** products couldn't be added to a cart or configured by size and color, the chat read like a big-box retailer (chatty openers, uppercase chips, a "Hey! Need help?" label), and my harness proof named a test that hadn't been run and quoted the wrong price.
+
+**Outcome:** (screenshots in `screenshots/p5_*.jpg`)
+- **Four agent files next to `backend/main.py`:**
+  - `prompts/prompt.md`: Campus Customs voice, shop facts and safety basics.
+  - `agent.py`: loads the prompt and connects to `gpt-6-luna` through Portkey.
+  - `tools.py`: four read-only catalogue tools for search, details, stock by size and categories.
+  - `models.py`: product cards, chat request and response, and the structured `AgentReply`.
+- **`main.py`:**
+  - Routes only, and runs from `backend/` with `uvicorn main:app --reload --port 8000`.
+  - `POST /api/chat` returns the agent's reply, real product cards and follow-up suggestions.
+  - `GET /api/chat/history` returns a logged-in shopper's saved chat.
+- **Auth together with chat:**
+  - Logged-in shoppers are greeted by first name.
+  - Each turn is saved to `chat_messages` and comes back after a reload, so the "safely saved" wording from Problem 4 is now true.
+  - Guests chat without saving.
+- **Checks:**
+  - A guest asked about Pierson gear and got correct prices, colors and sold-out-in-L.
+  - A prompt-injection attempt was refused.
+  - Ezra's hat question got the right answer and was saved (rows 23–24) and restored after a reload.
+  - `check_auth.py` still passes 16/16.
+- **Harness:** added "Problem 5: PydanticAI agent backend" to `output/harness.md`, covering how the agent is loaded and how the front end talks to FastAPI.
+- **Model note:** `gpt-6-luna` only allows tools through OpenAI's Responses API on this Portkey route, so the agent uses `OpenAIResponsesModel`.
+- **Cart and options (follow-up):**
+  - Every product on the Products page has "Add to cart" and "Check options".
+  - Check options opens a popup with color (real choices for hats; other pieces show their single color), size with stock (sold out struck through), and quantity.
+  - An "Added to your cart" popup confirms, and the header shows a cart count.
+- **Checkout (follow-up):**
+  - The cart page tallies subtotal, estimated UPS shipping ($9.95), CT sales tax (6.35%) and total.
+  - It has a credit card form (name, number, expiry, security code, ZIP) that checks the format in the browser only. No card data is sent or stored, and the order is labeled as a demonstration with no charge.
+- **Refined chat (follow-up):**
+  - A quiet navy launcher with no label, and no canned "how can I help" opener.
+  - Signed-in shoppers see only "Welcome back, Lou."
+  - Sentence-case chips, a "Message" field with an arrow button, and the assistant's replies as clean text.
+  - The prompt now asks for a precise, understated voice for discerning shoppers: no filler, no exclamation marks.
+- **Harness proof (follow-up):**
+  - I ran the real test: a Lou Donofrio account asked for "a Yale ball cap under $30" and got the Y Dad Hat and the Class of 2026 Big Y Hat at $29.99 each.
+  - The turn was saved as rows 25–26 and restored after a reload.
+  - The harness now states that result with the correct prices.
+
+> yes, looks good.  save to hw4, update everything and push to the repo
+
+**Result:** Approved the harness wording. Everything was saved in `HW4/`, the checklist was ticked, the build and auth checks were re-run, and Problem 5 was committed and pushed to `github.com/Louyale/campuscustomschat`. **Problem 5 complete.**
 
 ---
 

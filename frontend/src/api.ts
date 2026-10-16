@@ -42,7 +42,13 @@ export interface ChatTurn {
 export interface ChatResponse {
   reply: string
   products: ProductSummary[]
-  stub: boolean
+  suggestions: string[]
+  saved: boolean
+}
+
+export interface SavedChatMessage extends ChatTurn {
+  products: ProductSummary[]
+  created_at: string | null
 }
 
 export type ProductQuery = Partial<{
@@ -79,6 +85,8 @@ export function getProduct(productId: string): Promise<Product> {
 export function getFacets(): Promise<{ categories: Facet[]; collections: Facet[] }> {
   return request('/api/categories')
 }
+
+export const getChatHistory = () => request<SavedChatMessage[]>('/api/chat/history')
 
 export function sendChat(message: string, history: ChatTurn[]): Promise<ChatResponse> {
   return request('/api/chat', {

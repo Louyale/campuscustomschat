@@ -39,13 +39,25 @@ The assignment says the evidence is **the running site, the database writes, and
 - [x] `output/harness.md` explains what we store and how passwords are protected
 - [x] I've reworded the harness auth section in my own words (code updated to match: 20-minute lockout, passwords need a number)
 
+## Problem 5: PydanticAI agent backend (12 points)
+- [x] API app in `backend/main.py`, runs from `backend/` with `uvicorn main:app --reload --port 8000`
+- [x] Agent as four files next to it: `prompts/prompt.md`, `agent.py`, `tools.py`, `models.py`
+- [x] Chat route: a website message returns the agent's reply (plus product cards and suggestions)
+- [x] Campus Customs voice and safety basics in `prompts/prompt.md`
+- [x] Types for chat replies and product cards in `models.py`
+- [x] Agent uses the AI key from `.env` (`PORTKEY_API_KEY`, model from `OPENAI_MODEL`)
+- [x] `output/harness.md`: how the front end talks to FastAPI and how the agent is loaded
+- [x] Extras: Add to cart / Check options (size, color), cart with shipping + CT tax + total and a demo card form (no card data sent or stored), refined chat
+- [x] Screenshots `p5_01` to `p5_10` (guest chat, prompt-injection refusal, Lou's saved chat, cart buttons, options, hat colors, added-to-cart popup, checkout tally, card validation, refined chat)
+- [x] I've reviewed the harness Problem 5 section (my edits kept; the proof now matches a real Lou Donofrio test)
+
 ## Whole project (from the scenario)
-- [ ] **Running site:** the React + Vite TypeScript front end and FastAPI backend start cleanly
-- [ ] **Database writes:** a new account in `users` (hashed password): done in Problem 4. Chats saved in `chat_messages`: still to do. **Reminder:** the account pages already say chats are "safely saved", so build this with the chatbot (or soften the wording)
-- [ ] **Screenshots** in `screenshots/`: browsing products, creating an account, a chat with matching items appearing on the page, honest price and stock answers
-- [ ] **Public GitHub repo** pushed; its URL is ready for Canvas
+- [x] **Running site:** the React + Vite TypeScript front end and FastAPI backend start cleanly (backend: `uvicorn main:app --reload --port 8000` from `backend/`)
+- [x] **Database writes:** a new account in `users` (hashed password, Problem 4) and chats saved in `chat_messages` for logged-in shoppers (Problem 5, rows 23–24 for Ezra Stiles)
+- [x] **Screenshots** in `screenshots/`: browsing products (`p3_*`), creating an account (`p4_*`), chats with matching product cards and honest price and stock answers (`p5_*`)
+- [x] **Public GitHub repo** pushed: https://github.com/Louyale/campuscustomschat (URL ready for Canvas)
 - [ ] **File tree** shown for the last problem
-- [ ] **Not committed:** `data/` (the database and product images) and `.env`
+- [x] **Not committed:** `data/` (the database and product images) and `.env` (checked before every push)
 
 ## Problems 5 onward
 _Added as each problem is given._

@@ -3,6 +3,7 @@ import { Link, useParams } from 'react-router-dom'
 import { getProduct, money, STOCK_LABEL } from '../api'
 import { useFetch } from '../useFetch'
 import { openChat } from '../components/ChatWidget'
+import { colorOptions, useCart } from '../cart'
 
 const sizeLabel = (size: string) => (size === 'OS' ? 'One size' : size)
 
@@ -10,6 +11,8 @@ export default function ProductPage() {
   const { productId = '' } = useParams()
   const { data: product, error, loading } = useFetch(() => getProduct(productId), [productId])
   const [selected, setSelected] = useState<string | null>(null)
+  const [color, setColor] = useState<string | null>(null)
+  const { add } = useCart()
 
   if (loading) return <div className="page container"><p className="muted">Loading product…</p></div>
   if (error || !product) {
@@ -80,7 +83,24 @@ export default function ProductPage() {
             </tbody>
           </table>
 
-          <button className="btn btn-primary btn-block" onClick={() => openChat(`Is the ${product.name} available in ${selected === 'OS' ? 'one size' : selected ?? 'my size'}?`)}>
+          {colorOptions(product).length > 1 && (
+            <fieldset className="sizes">
+              <legend>Color: {color ?? colorOptions(product)[0]}</legend>
+              <div className="size-pills">
+                {colorOptions(product).map((c) => (
+                  <button key={c} type="button" className={`size-pill ${(color ?? colorOptions(product)[0]) === c ? 'selected' : ''}`}
+                    aria-pressed={(color ?? colorOptions(product)[0]) === c} onClick={() => setColor(c)}>{c}</button>
+                ))}
+              </div>
+            </fieldset>
+          )}
+
+          <button className="btn btn-primary btn-block" disabled={!selected}
+            onClick={() => selected && add(product, selected, color ?? colorOptions(product)[0] ?? '')}>
+            {selected ? 'Add to cart' : 'Select a size'}
+          </button>
+
+          <button className="btn btn-outline btn-block" style={{ marginTop: 10 }} onClick={() => openChat(`Is the ${product.name} available in ${selected === 'OS' ? 'one size' : selected ?? 'my size'}?`)}>
             Ask about this item
           </button>
 

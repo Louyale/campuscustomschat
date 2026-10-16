@@ -1,6 +1,6 @@
 """End-to-end check of create account and login against the running API.
 
-Start the backend first (port 8004), then run:  python tests/check_auth.py
+Start the backend first (port 8000), then run:  python tests/check_auth.py
 
 It checks:
   1. the seeded test user logs in (test@campuscustoms.yale.edu / password)
@@ -22,7 +22,7 @@ import urllib.error
 import urllib.request
 from pathlib import Path
 
-BASE = "http://127.0.0.1:8004"
+BASE = "http://127.0.0.1:8000"
 DB_PATH = Path(__file__).resolve().parent.parent / "data" / "campus_customs.db"
 results: list[tuple[bool, str]] = []
 
