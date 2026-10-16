@@ -1,0 +1,99 @@
+// Typed calls to the FastAPI backend (backend/main.py). Vite proxies /api and /images.
+
+export type StockStatus = 'in_stock' | 'low_stock' | 'sold_out'
+
+export interface ProductSummary {
+  product_id: string
+  name: string
+  garment_type: string
+  category: string
+  collections: string[]
+  short_description: string
+  price: number
+  image_url: string
+  colors: string[]
+  best_seller_rank: number | null
+  total_stock: number
+  in_stock: boolean
+}
+
+export interface Size {
+  size: string
+  quantity: number
+  status: StockStatus
+}
+
+export interface Product extends ProductSummary {
+  description: string
+  search_tags: string[]
+  sizes: Size[]
+}
+
+export interface Facet {
+  name: string
+  count: number
+}
+
+export interface ChatTurn {
+  role: 'user' | 'assistant'
+  content: string
+}
+
+export interface ChatResponse {
+  reply: string
+  products: ProductSummary[]
+  stub: boolean
+}
+
+export type ProductQuery = Partial<{
+  q: string
+  category: string
+  collection: string
+  in_stock: string
+  min_price: string
+  max_price: string
+  sort: string
+  limit: string
+}>
+
+async function request<T>(path: string, init?: RequestInit): Promise<T> {
+  const response = await fetch(path, init)
+  if (!response.ok) {
+    const detail = await response.json().catch(() => null)
+    throw new Error(detail?.detail ?? `Request failed (${response.status})`)
+  }
+  return response.json() as Promise<T>
+}
+
+export function getProducts(query: ProductQuery = {}): Promise<ProductSummary[]> {
+  const params = new URLSearchParams(Object.entries(query).filter(([, v]) => v) as [string, string][])
+  return request(`/api/products?${params}`)
+}
+
+export function getProduct(productId: string): Promise<Product> {
+  return request(`/api/products/${encodeURIComponent(productId)}`)
+}
+
+export function getFacets(): Promise<{ categories: Facet[]; collections: Facet[] }> {
+  return request('/api/categories')
+}
+
+export function sendChat(message: string, history: ChatTurn[]): Promise<ChatResponse> {
+  return request('/api/chat', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ message, history }),
+  })
+}
+
+export const money = (value: number) =>
+  value.toLocaleString('en-US', { style: 'currency', currency: 'USD' })
+
+export const STOCK_LABEL: Record<StockStatus, string> = {
+  in_stock: 'In stock',
+  low_stock: 'Low stock',
+  sold_out: 'Sold out',
+}
+
+/** URL for a catalogue photo by product_id. Keep v= in step with IMAGE_VERSION in backend/main.py. */
+export const productImage = (productId: string) => `/images/${productId}.jpg?v=3`
