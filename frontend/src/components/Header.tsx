@@ -43,7 +43,7 @@ export default function Header() {
           <span />
         </button>
         <Link to="/" className="logo" onClick={() => setOpen(false)}>
-          <span className="logo-mark">Y</span>
+          <img className="logo-mark" src="/handsome-dan.jpg" alt="" width={56} height={56} title="Handsome Dan, Yale's bulldog" />
           <span className="logo-text">
             <strong>Campus Customs</strong>
             <small>Yale Bulldog Blue</small>

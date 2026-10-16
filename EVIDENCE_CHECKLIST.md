@@ -26,7 +26,8 @@ The assignment says the evidence is **the running site, the database writes, and
 - [x] Floating chat panel at the bottom right that calls the backend stub (`POST /api/chat`)
 - [x] FastAPI app in `backend/main.py` serving products and images
 - [x] Hats added to the catalogue (`add_hats.py`): Y pom beanies, Y caps, Class of 2026 hat
-- [x] Screenshots: `screenshots/p3_01` to `p3_13` (home, best sellers, The Game, Handsome Dan, products, single item, chat, About Us, create account, mobile, hats row, 2026 hat, hats category)
+- [x] Extras: Handsome Dan photo as the header logo (CC BY-SA 4.0, credited), "Boola Boola!" on About Us, Bulldog Athletics collection (38 items), School of Management spotlight in Grad & Professional Schools
+- [x] Screenshots: `screenshots/p3_01` to `p3_17` (home, best sellers, The Game, Handsome Dan, products, single item, chat, About Us, create account, mobile, hats row, 2026 hat, hats category, Handsome Dan photo, Boola Boola, Bulldog Athletics, SOM spotlight)
 - [x] I've reviewed the Home and About Us wording and made it my own (edited in `frontend/src/content.ts`)
 
 ## Problem 4: Create account and login (8 points)
@@ -46,5 +47,5 @@ The assignment says the evidence is **the running site, the database writes, and
 - [ ] **File tree** shown for the last problem
 - [ ] **Not committed:** `data/` (the database and product images) and `.env`
 
-## Problems 2 onward
+## Problems 5 onward
 _Added as each problem is given._

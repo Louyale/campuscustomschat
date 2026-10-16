@@ -1,8 +1,9 @@
 import { useState } from 'react'
 import { useSearchParams, Link } from 'react-router-dom'
-import { getFacets, getProducts } from '../api'
+import { getFacets, getProducts, productImage } from '../api'
 import { useFetch } from '../useFetch'
 import ProductCard from '../components/ProductCard'
+import { PRODUCTS } from '../content'
 
 const SORTS = [
   { value: 'featured', label: 'Featured' },
@@ -88,6 +89,7 @@ export default function Products() {
         </details>
 
         <section aria-live="polite">
+          {query.collection === 'Graduate & Professional Schools' && <SomSpotlight />}
           {products.loading && <p className="muted">Loading products…</p>}
           {products.error && <p className="alert alert-error">Couldn't load products: {products.error}</p>}
           {products.data && (
@@ -105,6 +107,22 @@ export default function Products() {
         </section>
       </div>
     </div>
+  )
+}
+
+function SomSpotlight() {
+  const som = PRODUCTS.somSpotlight
+  const productId = 'school-of-management-crest-t-shirt'
+  return (
+    <Link to={`/products/${productId}`} className="spotlight">
+      <img src={productImage(productId)} alt="Yale School of Management crest T-shirt" />
+      <div>
+        <p className="eyebrow">{som.eyebrow}</p>
+        <h2>{som.title}</h2>
+        <p>{som.body}</p>
+        <span className="btn btn-primary">{som.button}</span>
+      </div>
+    </Link>
   )
 }
 

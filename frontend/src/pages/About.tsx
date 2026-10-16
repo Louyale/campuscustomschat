@@ -24,6 +24,8 @@ export default function About() {
         </address>
         <Link to="/products" className="btn btn-primary">{ABOUT.contact.button}</Link>
       </section>
+
+      <p className="boola">{ABOUT.closing}</p>
     </div>
   )
 }

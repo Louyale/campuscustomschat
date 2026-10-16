@@ -6,9 +6,9 @@ import { HOME } from '../content'
 
 const COLLECTIONS = [
   { name: 'Residential Colleges', blurb: HOME.findYourCrew.residentialColleges, image: productImage('pierson-college-crewneck') },
-  { name: 'Sports', blurb: HOME.findYourCrew.sports, image: productImage('yale-sports-hoodie-hockey') },
+  { name: 'Bulldog Athletics', blurb: HOME.findYourCrew.sports, image: productImage('yale-sports-hoodie-hockey') },
   { name: 'Family', blurb: HOME.findYourCrew.family, image: productImage('yale-mom-crewneck') },
-  { name: 'Graduate & Professional Schools', blurb: HOME.findYourCrew.gradSchools, image: productImage('yale-law-school-1-4-zip') },
+  { name: 'Graduate & Professional Schools', blurb: HOME.findYourCrew.gradSchools, image: productImage('school-of-management-crest-t-shirt') },
 ]
 
 export default function Home() {

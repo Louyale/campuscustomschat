@@ -35,7 +35,14 @@ export default function Footer() {
           </ul>
         </div>
       </div>
-      <p className="copyright container">© {new Date().getFullYear()} Yale Bulldog Blue by Campus Customs. Boola Boola.</p>
+      <p className="copyright container">
+        © {new Date().getFullYear()} Yale Bulldog Blue by Campus Customs. Boola Boola.
+        <span className="photo-credit">
+          Handsome Dan photo:{' '}
+          <a href="https://commons.wikimedia.org/wiki/File:Handsome_Dan_Kingman.jpg" target="_blank" rel="noreferrer">Joeshmonobody</a>,{' '}
+          <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noreferrer">CC BY-SA 4.0</a>, via Wikimedia Commons (cropped).
+        </span>
+      </p>
     </footer>
   )
 }

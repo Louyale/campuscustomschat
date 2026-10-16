@@ -96,6 +96,33 @@ This is the log of what I typed to my vibe coder (Claude Code) while building th
 
 **Result:** My edits were saved in `frontend/src/content.ts`. Two typing slips (a missing closing backtick on the new About opening line, and a sentence typed after a closing backtick) stopped the site from building; they were fixed without changing my words. Both pages render, the About Us screenshot was refreshed, the side pane was closed, and the home page was opened. **Problem 3 complete.**
 
+> before we go to problem 5, i want you to go to the home page and add a photo of handsome dan's face.  it should be a real photo of him and aboyt one inch squared in the upper right corner.  go to the about us page and add "boola boola" to the lower area after the text.  then go to the ledger of the apparrel and add a category that says "Bulldog Athletics," and in there add in any gear that has a Yale sports team.  show me all these here.  finally, show me all the problem titles so far as they are saved in hw4.  let's do this now
+
+**Result (added after Problem 4):** (screenshots `p3_14` to `p3_16`)
+- **Handsome Dan:** a real photo of the current Handsome Dan (Kingman), cropped to his face. It was first a one-inch photo in the hero's upper-right corner, then moved to replace the Y logo in the header (see below). The photo is by Joeshmonobody on Wikimedia Commons under CC BY-SA 4.0, credited in the footer as the license requires.
+- **About Us:** "Boola Boola!" closes the page under the last section (kept in `content.ts` as `closing`).
+- **Bulldog Athletics:** a new collection on the Products page, replacing "Sports". It has 38 items: all 32 sport-specific pieces plus the Yale Crew hoodie, the 2025 The Game tee, the Yale Bowl tee, and three pieces with the BULLDOGS team wordmark.
+
+> place the photo of handsome dan in place of the Y next to campus customs  that looks better
+
+**Result:** Handsome Dan's photo replaced the "Y" logo next to "Campus Customs" in the header, so he shows on every page. I made it slightly bigger (56 px) so his face is easy to see, and removed the corner badge from the home page hero. The photo credit stays in the footer.
+
+> in the graduate and professional schools, school of management should have a prominent place
+
+**Result:** (screenshot `p3_17`) The Graduate & Professional Schools collection now opens with a "Spotlight · Yale School of Management" banner (wording in `content.ts`), and the SOM Crest T-Shirt always comes first in that collection. On the home page, the Grad Schools tile now shows the SOM tee and its blurb starts with "Management". The catalogue has one SOM product (the crest tee); the live store also sells SOM hats that could be added.
+
+> in athletics, place lacriosse and field hockey first
+
+**Result:** Bulldog Athletics now leads with lacrosse (Lacrosse Left Chest Crewneck), then field hockey (Field Hockey T-Shirt and Crewneck), then everything else in its usual order (screenshot `p3_16` refreshed). SOM still leads Grad & Professional Schools.
+
+> for som, just take out the built for the long haul language
+
+**Result:** Removed "Built for the long haul, just like an MBA." from the SOM spotlight. It now reads: "From Evans Hall to the case-study classroom, wear the crest of the Yale School of Management."
+
+> Yes, commit the Handsome Dan logo, Boola Boola, Bulldog Athletics, SOM spotlight and lacrosse/field hockey changes and push them to the campuscustomschat repo.
+
+**Result:** Committed these site updates (with screenshots and this log) and pushed them to `github.com/Louyale/campuscustomschat`, after checking that no `.env`, database or product images were included.
+
 > yo all that stuff in the HW4 folder, push to this repo
 
 **Result:** Turned `HW4/` into a git repo and pushed it to https://github.com/Louyale/campuscustomschat (branch `main`). The `.gitignore` kept out the database, product images, `.env`, `.venv`, `node_modules` and build output.

@@ -76,8 +76,7 @@ button, input, select { font: inherit; }
 .header-main { display: flex; align-items: center; gap: 24px; padding-top: 14px; padding-bottom: 14px; }
 .logo { display: flex; align-items: center; gap: 12px; text-decoration: none; color: var(--text); }
 .logo-mark {
-  display: grid; place-items: center; width: 46px; height: 46px; border-radius: 6px; background: var(--navy); color: #fff;
-  font: 700 30px/1 Georgia, 'Times New Roman', serif;
+  width: 56px; height: 56px; border-radius: 8px; object-fit: cover; border: 2px solid var(--navy);
 }
 .logo-text { display: flex; flex-direction: column; line-height: 1.15; }
 .logo-text strong { font-size: 1.25rem; letter-spacing: 0.02em; color: var(--navy); }
@@ -305,3 +304,16 @@ button, input, select { font: inherit; }
 .nav-button { display: block; padding: 13px 14px; background: none; border: 0; border-bottom: 3px solid transparent; cursor: pointer; font-weight: 600; text-transform: uppercase; font-size: 0.9375rem; color: var(--text-light); }
 .nav-button:hover { color: var(--text); }
 .btn:disabled { opacity: 0.7; cursor: wait; }
+
+.photo-credit { display: block; margin-top: 4px; font-size: 0.75rem; }
+.photo-credit a { color: var(--text-light); }
+.boola { margin: 40px 0 0; text-align: center; font-size: 2rem; font-weight: 700; color: var(--navy); letter-spacing: 0.04em; }
+
+/* Spotlight banner (School of Management in Graduate & Professional Schools) */
+.spotlight { display: grid; grid-template-columns: 180px 1fr; gap: 24px; align-items: center; padding: 18px 22px; margin-bottom: 22px;
+  border: 2px solid var(--navy); border-radius: 8px; background: linear-gradient(135deg, #eef3f9, #fff); color: var(--text); text-decoration: none; }
+.spotlight:hover { box-shadow: var(--shadow); color: var(--text); }
+.spotlight img { width: 180px; aspect-ratio: 1; object-fit: contain; background: #fff; border-radius: 6px; }
+.spotlight h2 { font-size: 1.5rem; font-weight: 700; color: var(--navy); margin-bottom: 6px; }
+.spotlight p { margin: 0 0 12px; }
+@media (max-width: 719px) { .spotlight { grid-template-columns: 1fr; } .spotlight img { width: 140px; } }

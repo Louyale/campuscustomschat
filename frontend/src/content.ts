@@ -53,7 +53,7 @@ export const HOME = {
     residentialColleges: `Rep your college, from Benjamin Franklin to Trumbull.`,
     sports: `Gear for the varsity athlete and the bleacher regular.`,
     family: `Mom, Dad, Grandpa, Aunt: everyone gets a jersey.`,
-    gradSchools: `Law, Medicine, Music, Forestry and more.`,
+    gradSchools: `Management, Law, Medicine, Music, Forestry and more.`,
   },
 
   hats: {
@@ -64,6 +64,16 @@ export const HOME = {
   visit: {
     title: `Come visit us`,
     body: `We're at 57 Broadway, New Haven, steps from Old Campus and a short jog from Payne Whitney. Families on move-in weekend, alumni back for reunions, students who just need a warmer layer: the door is open.`,
+  },
+}
+
+export const PRODUCTS = {
+  // Banner at the top of the Graduate & Professional Schools collection.
+  somSpotlight: {
+    eyebrow: `Spotlight · Yale School of Management`,
+    title: `Yale SOM: leaders for business and society`,
+    body: `From Evans Hall to the case-study classroom, wear the crest of the Yale School of Management.`,
+    button: `Shop the SOM crest tee`,
   },
 }
 
@@ -96,4 +106,7 @@ export const ABOUT = {
     body: `Our chat assistant gives straight answers on price, sizes and stock, pulled from our own inventory. For anything else, call, email, or just come by the shop:`,
     button: `Browse the shop`,
   },
+
+  // Closing line at the very bottom of the About Us page.
+  closing: `Boola Boola!`,
 }

@@ -103,9 +103,19 @@ COLLEGES = ["benjamin-franklin", "berkeley", "branford", "davenport", "ezra-stil
             "jonathan-edwards", "morse", "pauli-murray", "pierson", "saybrook", "silliman",
             "timothy-dwight", "trumbull"]
 RELATIVES = ["mom", "dad", "grandma", "grandpa", "aunt", "uncle", "brother", "sister", "cousin"]
+# Bulldog Athletics: gear that shows a Yale sports team. Sport names are matched in the
+# product_id; these extra items name a team in other ways (Yale Crew, The Game,
+# the Yale Bowl, or the BULLDOGS team wordmark).
+ATHLETICS_EXTRA = {"crew-left-chest-hoodie", "2025-yale-vs-harvard-t-shirt", "yale-bowl-t-shirt",
+                   "dry-zone-long-sleeve", "ua-mens-tech-l-s-2-0", "yale-maplehouse-diana-mockneck"}
 SPORTS = ["baseball", "basketball", "diving", "fencing", "field-hockey", "football", "golf", "hockey",
           "lacrosse", "sailing", "soccer", "squash", "swimming", "tennis", "track", "volleyball"]
-COLLECTIONS = ["Residential Colleges", "Sports", "Family", "Graduate & Professional Schools",
+# Products that lead their collection, whatever the sort order, in the order listed.
+SPOTLIGHT = {
+    "Graduate & Professional Schools": ["school-of-management"],
+    "Bulldog Athletics": ["lacrosse", "field-hockey"],
+}
+COLLECTIONS = ["Residential Colleges", "Bulldog Athletics", "Family", "Graduate & Professional Schools",
                "The Game", "Bulldogs"]
 
 
@@ -134,7 +144,9 @@ def collections_for(product_id: str) -> list[str]:
     if any(s in words or s in product_id.replace("creqneck", "crewneck") for s in SPORTS if "-" in s) or any(
         s in words for s in SPORTS
     ):
-        found.append("Sports")
+        found.append("Bulldog Athletics")
+    elif product_id in ATHLETICS_EXTRA:
+        found.append("Bulldog Athletics")
     if any(r in words for r in RELATIVES):
         found.append("Family")
     if "school" in words or "divinity" in words:
@@ -269,6 +281,10 @@ def list_products(
         "name-desc": lambda p: p["name"].lower(),
     }
     products.sort(key=sorters[sort], reverse=sort == "name-desc")
+    if collection in SPOTLIGHT:
+        terms = SPOTLIGHT[collection]
+        first = lambda p: next((i for i, t in enumerate(terms) if t in p["product_id"]), len(terms))  # noqa: E731
+        products.sort(key=first)  # stable sort: spotlight items first, everything else keeps its order
     return products[:limit]
 
 
