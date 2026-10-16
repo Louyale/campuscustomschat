@@ -27,21 +27,26 @@ from pydantic import BaseModel, Field
 
 ROOT = Path(__file__).resolve().parent.parent
 load_dotenv(ROOT / ".env")
+load_dotenv(ROOT.parent / ".env")  # workspace .env holds PORTKEY_API_KEY; HW4/.env wins on conflicts
+
+from backend.auth import router as auth_router  # noqa: E402  (reads .env settings at import)
 
 DB_PATH = ROOT / os.getenv("DATABASE_PATH", "data/campus_customs.db")
 IMAGES_DIR = ROOT / os.getenv("PRODUCT_IMAGES_DIR", "data/products")
 BESTSELLERS = json.loads((Path(__file__).parent / "bestsellers.json").read_text(encoding="utf-8"))
-SIZE_ORDER = ["XS", "S", "M", "L", "XL", "XXL"]
+SIZE_ORDER = ["XS", "S", "M", "L", "XL", "XXL", "OS"]  # OS = one size (hats)
 LOW_STOCK = 5
-IMAGE_VERSION = 3  # bump when clean_image() changes so browsers refetch
+IMAGE_VERSION = 4  # bump when clean_image() changes so browsers refetch
 
-app = FastAPI(title="Campus Customs API", version="0.3.0")
+app = FastAPI(title="Campus Customs API", version="0.4.0")
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:5180", "http://127.0.0.1:5180"],
     allow_methods=["*"],
     allow_headers=["*"],
+    allow_credentials=True,
 )
+app.include_router(auth_router)
 
 
 # ---------------------------------------------------------------- images
@@ -92,7 +97,7 @@ def product_image(name: str) -> Response:
 # ---------------------------------------------------------------- grouping
 
 # garment_type has 22 free-text spellings; fold them into shop categories.
-CATEGORIES = ["Hoodies", "Crewnecks", "T-Shirts", "Quarter-Zips", "Jackets & Fleece", "Long Sleeves"]
+CATEGORIES = ["Hoodies", "Crewnecks", "T-Shirts", "Quarter-Zips", "Jackets & Fleece", "Long Sleeves", "Hats"]
 
 COLLEGES = ["benjamin-franklin", "berkeley", "branford", "davenport", "ezra-stiles", "grace-hopper",
             "jonathan-edwards", "morse", "pauli-murray", "pierson", "saybrook", "silliman",
@@ -106,6 +111,8 @@ COLLECTIONS = ["Residential Colleges", "Sports", "Family", "Graduate & Professio
 
 def category_for(garment_type: str) -> str:
     g = garment_type.lower()
+    if any(word in g for word in ("beanie", "cap", "hat")):
+        return "Hats"
     if "quarter-zip" in g:
         return "Quarter-Zips"
     if "jacket" in g:

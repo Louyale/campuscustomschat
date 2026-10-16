@@ -15,9 +15,35 @@ A customer website for Campus Customs (Yale Bulldog Blue). It has a React + Vite
 
 | Table | Rows | Contents |
 |---|---|---|
-| `catalogue` | 102 | product_id, name, garment_type, description, colors (JSON), search_tags (JSON), image_file_path, price |
+| `catalogue` | 102 (+7 hats from `add_hats.py`) | product_id, name, garment_type, description, colors (JSON), search_tags (JSON), image_file_path, price |
 | `inventory` | 612 | product_id × size (XS–XXL) → quantity; 145 rows have 0 in stock |
 | `users` | 3 | name, email, password_hash (pbkdf2_sha256), created_at, first_name, last_name; includes a test user |
 | `chat_messages` | 22 | user_id, role, content, products_json, created_at |
 
 Prices were synced to the live store on 2026-10-16 with `update_prices.py` and now run from $24.99 to $199.99; the original course prices ($32–$98) are kept in `data/campus_customs.original.db`. The `garment_type` labels are inconsistent (22 variants) and should be grouped into categories for filtering.
+
+## Running the site
+
+You need Python 3.12+ and Node 20+. Unzip the course `data.zip` into `HW4/data/` first (it is not in the repo).
+
+```bash
+# Backend (FastAPI on http://localhost:8004)
+python -m venv .venv
+.venv/Scripts/python -m pip install -r backend/requirements.txt
+.venv/Scripts/python -m uvicorn backend.main:app --port 8004
+
+# Front end (React + Vite on http://localhost:5180), in a second terminal
+cd frontend
+npm install
+npm run dev
+```
+
+Vite forwards `/api` and `/images` to the backend. After unzipping the data, run `python add_hats.py` once: it adds 7 hats (Y pom beanies, Y caps, Class of 2026 hat) from the live store to the catalogue, since the course data has none. Optional: `python update_prices.py --apply` syncs prices with the live store, and `python backend/fetch_bestsellers.py` refreshes the best-seller ranking.
+
+| Endpoint | What it returns |
+|---|---|
+| `GET /api/products` | Product list; filters `q`, `category`, `collection`, `in_stock`, `min_price`, `max_price`, `sort` |
+| `GET /api/products/{product_id}` | One product with stock by size |
+| `GET /api/categories` | Category and collection counts |
+| `GET /images/{file}` | Product photo on a white background |
+| `POST /api/chat` | Chat stub (becomes the PydanticAI agent in Problem 5) |

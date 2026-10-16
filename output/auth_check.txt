@@ -1,0 +1,32 @@
+Problem 4: Create account and login (evidence, 2026-10-16)
+
+$ python tests/check_auth.py   (re-run after adding the 20-minute lockout and the number rule)
+PASS seeded test user logs in
+PASS session cookie is HttpOnly + SameSite
+PASS /me returns the logged-in test user
+PASS API never returns password_hash
+PASS logout ends the session
+PASS new account created (bulldog.64e67b36@yale.edu)
+PASS new account logs in (email is case-insensitive)
+PASS users row stores pbkdf2_sha256$salt$hash, never the password
+PASS wrong password refused
+PASS unknown email gets the same message
+PASS duplicate email refused
+PASS common password refused
+PASS short password refused
+PASS password without a number refused
+PASS SQL-injection style login refused
+PASS after 5 failures in 15 minutes, login is locked for 20 minutes (429)
+
+16/16 checks passed
+
+Browser test (screenshots/p4_*.jpg):
+- Created "Ezra Stiles" (ezra.stiles.demo@yale.edu) on the Create account page; confirm-password mismatch was caught first.
+- Logged out, entered a wrong password for the test user: "Invalid email or password."
+- Logged in as the seeded test user (test@campuscustoms.yale.edu / password): "Welcome back, Test!"
+
+Database writes (users table; hashes shortened):
+(1, 'Test User',    'test@campuscustoms.yale.edu', created 2026-09-19 11:34:09, pbkdf2_sha256$…)  seeded
+(4, 'Handsome Dan', 'bulldog.187e72a7@yale.edu',   created 2026-10-16 21:34:39, pbkdf2_sha256$…)  new (check script)
+(5, 'Ezra Stiles',  'ezra.stiles.demo@yale.edu',   created 2026-10-16 21:35:42, pbkdf2_sha256$…)  new (website)
+Each run of the check script adds one more bulldog.<random>@yale.edu test account.

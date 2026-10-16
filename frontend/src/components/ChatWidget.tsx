@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, type FormEvent } from 'react'
 import { sendChat, type ChatTurn, type ProductSummary } from '../api'
+import { useAuth } from '../auth'
 import ProductCard from './ProductCard'
 
 interface Message extends ChatTurn {
@@ -21,6 +22,7 @@ export function openChat(prefill = '') {
 }
 
 export default function ChatWidget() {
+  const { user } = useAuth()
   const [open, setOpen] = useState(false)
   const [messages, setMessages] = useState<Message[]>([WELCOME])
   const [draft, setDraft] = useState('')
@@ -80,8 +82,9 @@ export default function ChatWidget() {
           </header>
           <div className="chat-messages" ref={listRef} aria-live="polite">
             {messages.map((m, i) => (
+
               <div key={i} className={`chat-msg chat-${m.role} ${m.error ? 'chat-error' : ''}`}>
-                <p>{m.content}</p>
+                <p>{m === WELCOME && user ? m.content.replace('Hey!', `Hey ${user.first_name}!`) : m.content}</p>
                 {m.products && m.products.length > 0 && (
                   <div className="chat-products">
                     {m.products.map((p) => (

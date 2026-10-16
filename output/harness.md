@@ -67,3 +67,49 @@ Each (`product_id`, `size`) pair appears only once.
 | `content` | TEXT | Required; the message text | `We carry these hoodies…` | The actual words, which give the bot memory of the conversation and the shop a record of questions. |
 | `products_json` | TEXT | Optional; JSON list of the products the bot showed | `[{"product_id": "basic-hoodie-big-yale", …}]` | Lets the page show the same matching products again when the chat reloads for future sales. |
 | `created_at` | TEXT | Required; defaults to the time the row was added (UTC) | `2026-09-19 11:40:23` | Timestamps each message so chats can be sorted and reviewed later, which helps keep track of conversations. |
+
+---
+
+## Problem 4: Create account and login
+
+_How accounts work, in plain language. Edit any sentence to put it in your own words._
+
+### The flow
+
+- **Create account** asks for first name, last name, email, password, and the password again to confirm it. The site checks that the two passwords match before sending anything. The server then creates one new row in the `users` table and logs the shopper in.
+- **Log in** asks for email and password. If they match, the shopper is signed in and the header changes from "Log in / Create account" to "Hi, *first name* / Log out".
+- **Log out** ends the session on this browser.
+
+### What we store for each user (`users` table)
+
+| Field | What goes in it |
+|---|---|
+| `id` | A number the database assigns |
+| `name` | First and last name together, e.g. "Ezra Stiles" |
+| `first_name`, `last_name` | Stored separately so the chatbot can greet people by first name |
+| `email` | Lowercased and trimmed, so "Lou@Yale.edu" and "lou@yale.edu" are the same account. Each email can only be used once. |
+| `password_hash` | A scrambled fingerprint of the password, never the password itself |
+| `created_at` | When the account was made, filled in by the database |
+
+### How passwords are protected
+
+- **We never store the password.** We store `pbkdf2_sha256$salt$hash`: the name of the method, a random salt, and the result.
+- **The method is PBKDF2-HMAC-SHA256 with 120,000 rounds.** It is slow on purpose: one login barely notices, but someone who steals the database and tries billions of guesses is slowed to a crawl.
+- **Every account gets its own random salt.** Two people with the same password end up with completely different hashes, so a stolen database can't be cracked with one pre-built list.
+- **Logging in never "un-hashes" anything.** We read the salt out of the stored value (the middle piece), hash what the shopper just typed with that same salt and the same settings, and compare the two results. The compare is constant-time, so the response speed doesn't hint at how close a guess was.
+- **Sign-up and login use exactly the same settings,** so the seeded test user and brand-new accounts both work.
+
+### Safety features against hackers (human or AI)
+
+- **One vague error.** A wrong password and an unknown email both get "Invalid email or password," and both take the same time, so nobody can use the login form to find out who has an account.
+- **Rate limit.** After 5 failed logins in 15 minutes for the same email from the same place, further tries are blocked for 20 minutes.
+- **Better passwords.** New passwords must be 8–128 characters and can't be a common one like "password" or "boolaboola".  It must have a number.  
+- **Safe session cookie.** After login the browser gets a signed session cookie marked HttpOnly (page scripts, including anything malicious, can't read it) and SameSite (other websites can't use it). It expires after 7 days. The signing key lives only in `.env`.
+- **No SQL tricks.** Every database query uses placeholders, so typing code into a form is treated as plain text.
+- **Nothing leaks.** The website and API never send `password_hash` back, passwords are never logged, and `.env` and the database are never committed to GitHub.
+- **The chatbot can't see passwords.** The agent will get read-only product and stock tools, with no access to password hashes.
+
+### Proof it works
+
+- `tests/check_auth.py` runs 16 checks against the live API, and all 16 pass (`output/auth_check.txt`). They cover the seeded test user, a brand-new account, the stored hash format, refusals (including a password with no number), and the 20-minute lockout.
+- In the browser: created **Lou Stiles** (a new row in `users`), saw a wrong password refused, and logged in as the seeded **test@campuscustoms.yale.edu** (`screenshots/p4_*.jpg`).

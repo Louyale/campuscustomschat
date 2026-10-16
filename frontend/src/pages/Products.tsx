@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { useSearchParams, Link } from 'react-router-dom'
 import { getFacets, getProducts } from '../api'
 import { useFetch } from '../useFetch'
@@ -19,6 +20,8 @@ export default function Products() {
   const query = Object.fromEntries(FILTER_KEYS.map((k) => [k, params.get(k) ?? ''])) as Record<(typeof FILTER_KEYS)[number], string>
   const facets = useFetch(getFacets, [])
   const products = useFetch(() => getProducts(query), [params.toString()])
+  // Filters start open on desktop and collapsed on phones.
+  const [wide] = useState(() => window.matchMedia('(min-width: 720px)').matches)
 
   function update(key: string, value: string) {
     const next = new URLSearchParams(params)
@@ -44,8 +47,8 @@ export default function Products() {
       </div>
 
       <div className="products-layout">
-        <aside className="filters" aria-label="Filters">
-          <h2>Filters</h2>
+        <details className="filters" open={wide} aria-label="Filters">
+          <summary><h2>Filters{active.length > 0 ? ` (${active.length})` : ''}</h2></summary>
 
           <fieldset>
             <legend>Category</legend>
@@ -82,7 +85,7 @@ export default function Products() {
           {active.length > 0 && (
             <button className="btn btn-outline btn-small" onClick={() => setParams(query.sort ? { sort: query.sort } : {})}>Clear filters</button>
           )}
-        </aside>
+        </details>
 
         <section aria-live="polite">
           {products.loading && <p className="muted">Loading products…</p>}

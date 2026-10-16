@@ -4,6 +4,8 @@ import { getProduct, money, STOCK_LABEL } from '../api'
 import { useFetch } from '../useFetch'
 import { openChat } from '../components/ChatWidget'
 
+const sizeLabel = (size: string) => (size === 'OS' ? 'One size' : size)
+
 export default function ProductPage() {
   const { productId = '' } = useParams()
   const { data: product, error, loading } = useFetch(() => getProduct(productId), [productId])
@@ -46,7 +48,7 @@ export default function ProductPage() {
           </dl>
 
           <fieldset className="sizes">
-            <legend>Size{size ? `: ${size.size}` : ''}</legend>
+            <legend>Size{size ? `: ${sizeLabel(size.size)}` : ''}</legend>
             <div className="size-pills">
               {product.sizes.map((s) => (
                 <button
@@ -56,9 +58,9 @@ export default function ProductPage() {
                   aria-pressed={selected === s.size}
                   disabled={s.status === 'sold_out'}
                   onClick={() => setSelected(s.size)}
-                  title={`${s.size}: ${STOCK_LABEL[s.status]}`}
+                  title={`${sizeLabel(s.size)}: ${STOCK_LABEL[s.status]}`}
                 >
-                  {s.size}
+                  {sizeLabel(s.size)}
                 </button>
               ))}
             </div>
@@ -70,7 +72,7 @@ export default function ProductPage() {
             <tbody>
               {product.sizes.map((s) => (
                 <tr key={s.size} className={selected === s.size ? 'selected' : ''}>
-                  <td>{s.size}</td>
+                  <td>{sizeLabel(s.size)}</td>
                   <td>{s.quantity}</td>
                   <td><span className={`stock-dot ${s.status}`} />{STOCK_LABEL[s.status]}</td>
                 </tr>
@@ -78,7 +80,7 @@ export default function ProductPage() {
             </tbody>
           </table>
 
-          <button className="btn btn-primary btn-block" onClick={() => openChat(`Is the ${product.name} available in ${selected ?? 'my size'}?`)}>
+          <button className="btn btn-primary btn-block" onClick={() => openChat(`Is the ${product.name} available in ${selected === 'OS' ? 'one size' : selected ?? 'my size'}?`)}>
             Ask about this item
           </button>
 

@@ -1,10 +1,15 @@
 import { useState, type FormEvent } from 'react'
 import { Link, NavLink, useNavigate } from 'react-router-dom'
+import { useAuth } from '../auth'
 
-const NAV = [
+type NavItem = { to: string; label: string; end?: boolean }
+
+const NAV: NavItem[] = [
   { to: '/', label: 'Home', end: true },
   { to: '/products', label: 'Products' },
   { to: '/about', label: 'About Us' },
+]
+const GUEST_NAV: NavItem[] = [
   { to: '/login', label: 'Log in' },
   { to: '/register', label: 'Create account' },
 ]
@@ -13,6 +18,8 @@ export default function Header() {
   const [open, setOpen] = useState(false)
   const [query, setQuery] = useState('')
   const navigate = useNavigate()
+  const { user, logout } = useAuth()
+  const links: NavItem[] = user ? [...NAV, { to: '/account', label: `Hi, ${user.first_name}` }] : [...NAV, ...GUEST_NAV]
 
   function search(event: FormEvent) {
     event.preventDefault()
@@ -61,13 +68,27 @@ export default function Header() {
       </div>
       <nav className={`site-nav ${open ? 'open' : ''}`} aria-label="Main">
         <ul className="container">
-          {NAV.map((item) => (
+          {links.map((item) => (
             <li key={item.to}>
               <NavLink to={item.to} end={item.end} onClick={() => setOpen(false)}>
                 {item.label}
               </NavLink>
             </li>
           ))}
+          {user && (
+            <li>
+              <button
+                className="nav-button"
+                onClick={async () => {
+                  await logout()
+                  setOpen(false)
+                  navigate('/')
+                }}
+              >
+                Log out
+              </button>
+            </li>
+          )}
         </ul>
       </nav>
     </header>

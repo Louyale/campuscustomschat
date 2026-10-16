@@ -60,8 +60,10 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
   const response = await fetch(path, init)
   if (!response.ok) {
     const detail = await response.json().catch(() => null)
-    throw new Error(detail?.detail ?? `Request failed (${response.status})`)
+    const message = typeof detail?.detail === 'string' ? detail.detail : `Request failed (${response.status})`
+    throw new Error(message)
   }
+  if (response.status === 204) return undefined as T
   return response.json() as Promise<T>
 }
 
@@ -96,4 +98,25 @@ export const STOCK_LABEL: Record<StockStatus, string> = {
 }
 
 /** URL for a catalogue photo by product_id. Keep v= in step with IMAGE_VERSION in backend/main.py. */
-export const productImage = (productId: string) => `/images/${productId}.jpg?v=3`
+export const productImage = (productId: string) => `/images/${productId}.jpg?v=4`
+
+// ---------------------------------------------------------------- accounts
+
+export interface User {
+  id: number
+  first_name: string
+  last_name: string
+  email: string
+}
+
+const jsonPost = (body: unknown): RequestInit => ({
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify(body),
+})
+
+export const getMe = () => request<User | null>('/api/auth/me')
+export const login = (email: string, password: string) => request<User>('/api/auth/login', jsonPost({ email, password }))
+export const register = (data: { first_name: string; last_name: string; email: string; password: string }) =>
+  request<User>('/api/auth/register', jsonPost(data))
+export const logout = () => fetch('/api/auth/logout', { method: 'POST' })

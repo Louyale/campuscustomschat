@@ -12,6 +12,7 @@ export default function Footer() {
           <h2>Shop</h2>
           <ul>
             <li><Link to="/products?category=Hoodies">Hoodies</Link></li>
+            <li><Link to="/products?category=Hats">Hats</Link></li>
             <li><Link to="/products?collection=Residential%20Colleges">Residential Colleges</Link></li>
             <li><Link to="/products?collection=Family">Family</Link></li>
             <li><Link to="/products?sort=best-selling">Best sellers</Link></li>
