@@ -658,6 +658,7 @@ hw4/
 ├── .env.example
 ├── .gitignore
 ├── README.md
+├── TREE.md                 # the complete file tree
 ├── frontend/               # Vite React TypeScript app
 ├── backend/
 │   ├── main.py             # FastAPI app — run with: uvicorn main:app --reload
@@ -711,6 +712,16 @@ data/
 > make the agent.py change you note above and push to the repo and update the hw4 folder
 
 **Result:** Moved the audit-trail code from `backend/audit.py` into the end of `backend/agent.py` (same behavior; functions `append_audit`, `audit_entry`, `mask`) and deleted `audit.py`. The agent is now exactly four files: `prompts/prompt.md`, `agent.py`, `tools.py`, `models.py`. Updated the audit test, harness, README tree and checklist; the audit test passed again; pushed, and the HW4 package was rebuilt.
+
+> be sure to update the tree if needed and push that as well and save to HW$
+
+> HW4
+
+**Result:** Regenerated the tree from git (no `audit.py`), pushed, and rebuilt the HW4 package.
+
+> i want to see the tree separately in HW4 and the repo should also clearly show it
+
+**Result:** Added **`hw4/TREE.md`**, the complete file tree generated from git, with notes on each key file, the local-only data pack and a "required layout check" table. The repo's front page (`README.md` at the root) now shows the file tree first, with a link to `hw4/TREE.md`; `hw4/README.md` links to it too.
 
 ---
 

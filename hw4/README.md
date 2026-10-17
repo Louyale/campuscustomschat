@@ -113,6 +113,8 @@ Live tests call the AI, so they pace themselves under the 20-messages-a-minute l
 
 ## File tree
 
+The complete tree of every file is in **[TREE.md](TREE.md)**. The required layout:
+
 ```
 hw4/
 ├── AI_prompts.md
@@ -120,6 +122,7 @@ hw4/
 ├── .env.example
 ├── .gitignore
 ├── README.md
+├── TREE.md                   # the complete file tree
 ├── frontend/                 # Vite React TypeScript app
 ├── backend/
 │   ├── main.py               # FastAPI app — run with: uvicorn main:app --reload
