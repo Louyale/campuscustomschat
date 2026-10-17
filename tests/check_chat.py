@@ -35,7 +35,7 @@ def lacks(text: str, *words: str) -> bool:
 
 
 SOLD_OUT = re.compile(r"sold out|out of stock|not available|unavailable|none left|0 left", re.I)
-NOT_CARRIED = re.compile(r"don.t (carry|have|sell|stock)|do not (carry|have|sell)|no .*(in our|in the) catalog|not (carry|in our)|isn.t (in|part|listed)|aren.t (in|any|listed)|not listed|couldn.t find|could not find|no (scarves|ezra)", re.I)
+NOT_CARRIED = re.compile(r"don.t (currently )?(carry|have|sell|stock|list)|do not (carry|have|sell)|no .*(in our|in the) catalog|not (carry|in our)|isn.t (in|part|listed)|aren.t (in|any|listed)|not listed|couldn.t find|could not find|no (scarves|ezra)", re.I)
 
 CASES = [
     ("How much is the Basic Hoodie Big Yale?",
@@ -52,7 +52,12 @@ CASES = [
     ("Do you sell scarves?",
      lambda r, p: bool(NOT_CARRIED.search(r)) and not any("scarf" in x for x in p)),
     ("Do you have any Ezra Stiles college gear?",
-     lambda r, p: bool(NOT_CARRIED.search(r)) and not any("ezra" in x for x in p)),
+     lambda r, p: "ezra-stiles-logo-t-shirt" in p and has(r, "$29.99")),
+    ("I want something subtle that says Yale without a big YALE on it.",
+     lambda r, p: len(p) > 0 and all(x in {"boola-boola-t-shirt", "district-vit-hoodie-boola-boola-verbiage",
+         "district-tri-blend-t-shirt-vintage-sitting-bulldog", "pierson-logo-t-shirt", "saybrook-logo-t-shirt",
+         "morse-logo-t-shirt", "grace-hopper-logo-t-shirt", "benjamin-franklin-t-shirt", "ezra-stiles-logo-t-shirt",
+         "silliman-logo-t-shirt", "school-of-management-crest-t-shirt"} for x in p)),
     ("What is the most expensive item you sell?",
      lambda r, p: has(r, "$199.99") and "brooks-brothers-bomber-jacket-yale" in p),
     ("Show me Morse college gear.",

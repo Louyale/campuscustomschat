@@ -257,6 +257,26 @@ This is the log of what I typed to my vibe coder (Claude Code) while building th
 
 **Result:** Committed and pushed the white ring change to `github.com/Louyale/campuscustomschat`.
 
+> before problem 6, be sure to add the tee shirt of dan wiping his nose with the harvard towel is in the front line of tee shirts under athletic apparel.  also, add a category of apparel that is "Low key Yale gear - so you can rep. as a Yallie on the down low," and add some products to it that would indicate to a observer that you are repping yale without seeing Yale or a Y prominently displayed, such as images of Dan, or Boola, or similar things such as the crest.  then push it to the repo and the website so i can see these changes.  good work.
+
+> does this exist on the website  _(with a photo of a black tee: Dan blowing his nose on a Harvard pennant)_
+
+> to the top banner, after the down low add ",iyky" and then keep the rest with the colon, and add to site and push to repo
+
+> and you can note that we won't add the shirt of dan wiping his nose because it isn't on the real CC website.  we need to keep it real.  but harvard stinks, anyway.
+
+> use iykyk as you corrected the typo
+
+**Result:**
+- **Dan / Harvard pennant tee: not added.** It isn't on the real Campus Customs site; I checked all 144 live-store T-shirts and its Harvard items. It looks like a third-party design, so to keep it real (and officially licensed) it stays out. Harvard stinks anyway.
+- **Low-Key Yale Gear:** a new collection of 11 pieces where Handsome Dan, Boola Boola or a crest does the talking instead of a big YALE or Y.
+  - From our catalogue: the Boola Boola tee; the Pierson, Saybrook, Morse, Grace Hopper and Benjamin Franklin crest tees; and the School of Management crest tee.
+  - New from the live store, via `add_products.py` (which replaces `add_hats.py`): the Vintage Sitting Bulldog tee, the Boola Boola lyrics hoodie, and the Ezra Stiles and Silliman crest tees.
+- **Collection banner:** "So you can rep as a Yalie on the down low, iykyk: Handsome Dan, Boola Boola and the crests, no big YALE required."
+- **Where it shows:** the Products page Collection filter and the footer. The chatbot knows about it too.
+- **Checks:** the chat test now has 15 checks (Ezra Stiles gear now exists, plus a subtle-gear question), and all 15 pass. Auth passes 16/16. Screenshot `p5_12`.
+- **Pushed** to `github.com/Louyale/campuscustomschat`.
+
 ---
 
 ## Appendix: setup prompts (before Problem 1)

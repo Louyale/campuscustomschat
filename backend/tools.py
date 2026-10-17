@@ -35,6 +35,12 @@ RELATIVES = ["mom", "dad", "grandma", "grandpa", "aunt", "uncle", "brother", "si
 # the Yale Bowl, or the BULLDOGS team wordmark).
 ATHLETICS_EXTRA = {"crew-left-chest-hoodie", "2025-yale-vs-harvard-t-shirt", "yale-bowl-t-shirt",
                    "dry-zone-long-sleeve", "ua-mens-tech-l-s-2-0", "yale-maplehouse-diana-mockneck"}
+# Low-Key Yale Gear: pieces a fellow Yalie recognizes (Handsome Dan, Boola Boola, crests)
+# without a big YALE wordmark or block Y.
+LOW_KEY = {"boola-boola-t-shirt", "district-vit-hoodie-boola-boola-verbiage",
+           "district-tri-blend-t-shirt-vintage-sitting-bulldog", "pierson-logo-t-shirt", "saybrook-logo-t-shirt",
+           "morse-logo-t-shirt", "grace-hopper-logo-t-shirt", "benjamin-franklin-t-shirt", "ezra-stiles-logo-t-shirt",
+           "silliman-logo-t-shirt", "school-of-management-crest-t-shirt"}
 SPORTS = ["baseball", "basketball", "diving", "fencing", "field-hockey", "football", "golf", "hockey",
           "lacrosse", "sailing", "soccer", "squash", "swimming", "tennis", "track", "volleyball"]
 # Products that lead their collection, whatever the sort order, in the order listed.
@@ -42,8 +48,8 @@ SPOTLIGHT = {
     "Graduate & Professional Schools": ["school-of-management"],
     "Bulldog Athletics": ["lacrosse", "field-hockey"],
 }
-COLLECTIONS = ["Residential Colleges", "Bulldog Athletics", "Family", "Graduate & Professional Schools",
-               "The Game", "Bulldogs"]
+COLLECTIONS = ["Residential Colleges", "Bulldog Athletics", "Low-Key Yale Gear", "Family",
+               "Graduate & Professional Schools", "The Game", "Bulldogs"]
 
 SortKey = Literal["featured", "best-selling", "price-asc", "price-desc", "name-asc", "name-desc"]
 
@@ -86,6 +92,8 @@ def collections_for(product_id: str) -> list[str]:
         found.append("The Game")
     if "bulldog" in words:
         found.append("Bulldogs")
+    if product_id in LOW_KEY:
+        found.append("Low-Key Yale Gear")
     return found
 
 
@@ -235,7 +243,8 @@ def search_products(query: str | None = None, category: str | None = None, colle
         query: Words to match in names, descriptions, colors and tags, e.g. "navy hoodie" or "pierson".
             Every word must match, so use one or two key words. Leave empty to browse.
         category: One of Hoodies, Crewnecks, T-Shirts, Quarter-Zips, Jackets & Fleece, Long Sleeves, Hats.
-        collection: One of Residential Colleges, Bulldog Athletics, Family, Graduate & Professional Schools,
+        collection: One of Residential Colleges, Bulldog Athletics, Low-Key Yale Gear (subtle pieces with
+            Handsome Dan, Boola Boola or a crest instead of a big YALE), Family, Graduate & Professional Schools,
             The Game, Bulldogs.
         max_price: Highest price in US dollars.
         in_stock_only: True to skip products that are sold out in every size.

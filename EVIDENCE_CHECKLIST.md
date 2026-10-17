@@ -25,7 +25,7 @@ The assignment says the evidence is **the running site, the database writes, and
 - [x] Clicking a card opens a single-item page: large image on one side; description, price and sizes/stock on the other
 - [x] Floating chat panel at the bottom right that calls the backend stub (`POST /api/chat`)
 - [x] FastAPI app in `backend/main.py` serving products and images
-- [x] Hats added to the catalogue (`add_hats.py`): Y pom beanies, Y caps, Class of 2026 hat
+- [x] Hats added to the catalogue (`add_products.py`, formerly `add_hats.py`): Y pom beanies, Y caps, Class of 2026 hat
 - [x] Extras: Handsome Dan photo as the header logo (CC BY-SA 4.0, credited), "Boola Boola!" on About Us, Bulldog Athletics collection (38 items), School of Management spotlight in Grad & Professional Schools
 - [x] Screenshots: `screenshots/p3_01` to `p3_17` (home, best sellers, The Game, Handsome Dan, products, single item, chat, About Us, create account, mobile, hats row, 2026 hat, hats category, Handsome Dan photo, Boola Boola, Bulldog Athletics, SOM spotlight)
 - [x] I've reviewed the Home and About Us wording and made it my own (edited in `frontend/src/content.ts`)
@@ -48,8 +48,9 @@ The assignment says the evidence is **the running site, the database writes, and
 - [x] Agent uses the AI key from `.env` (`PORTKEY_API_KEY`, model from `OPENAI_MODEL`)
 - [x] `output/harness.md`: how the front end talks to FastAPI and how the agent is loaded
 - [x] Extras: Add to cart / Check options (size, color), cart with shipping + CT tax + total and a demo card form (no card data sent or stored), refined chat
-- [x] Chat accuracy: `tests/check_chat.py` 14/14 (`output/chat_check.txt`) after fixing the color and stale-history causes
-- [x] Screenshots `p5_01` to `p5_11` (guest chat, prompt-injection refusal, Lou's saved chat, cart buttons, options, hat colors, added-to-cart popup, checkout tally, card validation, refined chat, larger chat button)
+- [x] Low-Key Yale Gear collection (11 pieces: Handsome Dan, Boola Boola, crests; 4 added from the live store)
+- [x] Chat accuracy: `tests/check_chat.py` 15/15 (`output/chat_check.txt`) after fixing the color and stale-history causes
+- [x] Screenshots `p5_01` to `p5_12` (guest chat, prompt-injection refusal, Lou's saved chat, cart buttons, options, hat colors, added-to-cart popup, checkout tally, card validation, refined chat, larger chat button, Low-Key Yale Gear)
 - [x] I've reviewed the harness Problem 5 section (my edits kept; the proof now matches a real Lou Donofrio test)
 
 ## Whole project (from the scenario)

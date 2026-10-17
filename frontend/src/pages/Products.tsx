@@ -90,6 +90,7 @@ export default function Products() {
 
         <section aria-live="polite">
           {query.collection === 'Graduate & Professional Schools' && <SomSpotlight />}
+          {query.collection === 'Low-Key Yale Gear' && <p className="collection-lede">{PRODUCTS.lowKey}</p>}
           {products.loading && <p className="muted">Loading products…</p>}
           {products.error && <p className="alert alert-error">Couldn't load products: {products.error}</p>}
           {products.data && (

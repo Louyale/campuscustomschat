@@ -68,6 +68,9 @@ export const HOME = {
 }
 
 export const PRODUCTS = {
+  // Line under the heading of the Low-Key Yale Gear collection.
+  lowKey: `So you can rep as a Yalie on the down low, iykyk: Handsome Dan, Boola Boola and the crests, no big YALE required.`,
+
   // Banner at the top of the Graduate & Professional Schools collection.
   somSpotlight: {
     eyebrow: `Spotlight · Yale School of Management`,

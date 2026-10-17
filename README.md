@@ -15,7 +15,7 @@ A customer website for Campus Customs (Yale Bulldog Blue). It has a React + Vite
 
 | Table | Rows | Contents |
 |---|---|---|
-| `catalogue` | 102 (+7 hats from `add_hats.py`) | product_id, name, garment_type, description, colors (JSON), search_tags (JSON), image_file_path, price |
+| `catalogue` | 102 (+11 from `add_products.py`: 7 hats, 4 low-key pieces) | product_id, name, garment_type, description, colors (JSON), search_tags (JSON), image_file_path, price |
 | `inventory` | 612 | product_id × size (XS–XXL) → quantity; 145 rows have 0 in stock |
 | `users` | 3 | name, email, password_hash (pbkdf2_sha256), created_at, first_name, last_name; includes a test user |
 | `chat_messages` | 22 | user_id, role, content, products_json, created_at |
@@ -40,7 +40,7 @@ npm install
 npm run dev
 ```
 
-Copy `.env.example` to `.env` and fill in `PORTKEY_API_KEY` (and a `SESSION_SECRET`). Vite forwards `/api` and `/images` to the backend. After unzipping the data, run `python add_hats.py` once: it adds 7 hats (Y pom beanies, Y caps, Class of 2026 hat) from the live store to the catalogue, since the course data has none. Optional: `python update_prices.py --apply` syncs prices with the live store, and `python backend/fetch_bestsellers.py` refreshes the best-seller ranking.
+Copy `.env.example` to `.env` and fill in `PORTKEY_API_KEY` (and a `SESSION_SECRET`). Vite forwards `/api` and `/images` to the backend. After unzipping the data, run `python add_products.py` once: it adds 11 real products from the live store, 7 hats (the course data has none) and 4 pieces for the Low-Key Yale Gear collection. Optional: `python update_prices.py --apply` syncs prices with the live store, and `python backend/fetch_bestsellers.py` refreshes the best-seller ranking.
 
 | Endpoint | What it returns |
 |---|---|
