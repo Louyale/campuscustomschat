@@ -351,6 +351,14 @@ This is the log of what I typed to my vibe coder (Claude Code) while building th
   - Fixed "don;t" and "doesn;t", removed double spaces, and removed leftover "edit this" notes from the Problem 4–6 sections.
   - Committed and pushed to `github.com/Louyale/campuscustomschat`. **Problem 6 complete.**
 
+> for the product description, add shoppers get a concise, accurate description of the product to enhance shopping experience and add to efficiency in the search and pleasure in the purchase.  keep search products as you have it.
+
+**Result:** The `get_product_description` row's "Why it matters to the shopper" now reads: "Shoppers get a concise, accurate description of the product, which enhances the shopping experience, adds efficiency to the search and adds pleasure to the purchase." The `search_products` row was kept as is.
+
+> Yes, commit the harness wording change and push it to the campuscustomschat repo.
+
+**Result:** Committed and pushed to `github.com/Louyale/campuscustomschat`.
+
 ---
 
 ## Appendix: setup prompts (before Problem 1)
