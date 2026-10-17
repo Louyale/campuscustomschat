@@ -215,6 +215,9 @@ async def chat(body: ChatRequest, request: Request, cc_session: str | None = Coo
                                  "(475) 301-4205.") from None
 
     products = tools.summaries_for(answer.product_ids)  # only real products become cards
+    notes = {n.product_id: n.note.strip() for n in answer.product_notes}
+    for card in products:  # attach each card's "why it fits" note (ignored for unknown ids)
+        card["note"] = notes.get(card["product_id"]) or None
     # A search for a type of item (e.g. 'what hoodies do you have?') also fills the page with its matches.
     page = page_results(answer.search, len(products)) if products and answer.search else None
     saved = False

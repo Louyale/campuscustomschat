@@ -28,12 +28,16 @@ export default function ProductCard({ product, showDescription = true, showActio
       <Link to={`/products/${product.product_id}`} className="product-card-link">
         <div className="product-card-image">
           <img src={product.image_url} alt={product.name} loading="lazy" />
-          {top && <span className="badge badge-best">{featured && product.best_seller_rank === 1 ? '#1 Best seller' : 'Best seller'}</span>}
-          {!product.in_stock && <span className="badge badge-sold">Sold out</span>}
         </div>
         <div className="product-card-body">
+          {/* Labels sit in their own row, never over the photo; the row keeps its height so names line up. */}
+          <div className="card-labels">
+            {top && <span className="badge badge-best">{featured && product.best_seller_rank === 1 ? '#1 Best seller' : 'Best seller'}</span>}
+            {!product.in_stock && <span className="badge badge-sold">Sold out</span>}
+          </div>
           <h3>{product.name}</h3>
           <p className="price">{money(product.price)}</p>
+          {product.note && <p className="card-note">✓ {product.note}</p>}
           {showDescription && <p className="product-card-desc">{product.short_description}</p>}
         </div>
       </Link>

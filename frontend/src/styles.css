@@ -408,3 +408,57 @@ button, input, select { font: inherit; }
 .chat-results-grid { margin-top: 14px; }
 .chat-on-page { margin: 6px 0 0 !important; font-size: 0.8rem; color: var(--link); font-weight: 600; }
 @keyframes rise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+.card-note { margin: 6px 0 0; padding: 4px 8px; border-radius: 4px; background: #eef6ef; color: #24572a; font-size: 0.8rem; font-weight: 600; line-height: 1.35; }
+
+/* ---------- Problem 9: bold quick-shop bar and clearer buttons */
+.quick-shop { background: var(--navy); }
+.quick-shop ul { list-style: none; display: flex; gap: 8px; margin: 0 auto; padding-top: 8px; padding-bottom: 8px; overflow-x: auto; scrollbar-width: none; }
+.quick-shop ul::-webkit-scrollbar { display: none; }
+.quick-shop a { display: block; white-space: nowrap; padding: 7px 14px; border-radius: 999px; border: 1.5px solid rgba(255, 255, 255, 0.55);
+  color: #fff; font-weight: 800; font-size: 0.82rem; letter-spacing: 0.04em; text-transform: uppercase; text-decoration: none; transition: background 0.2s, color 0.2s; }
+.quick-shop a:hover, .quick-shop a.active { background: #fff; color: var(--navy); border-color: #fff; }
+.product-card h3 { font-weight: 700; }
+.product-card .price { font-size: 1.08rem; font-weight: 800; color: var(--navy); }
+.card-btn { font-size: 0.86rem; font-weight: 800; padding: 10px 8px; letter-spacing: 0.02em; }
+.btn { font-weight: 800; letter-spacing: 0.02em; }
+.btn-big { padding: 15px 22px; font-size: 1.05rem; }
+.item-price { display: flex; align-items: center; flex-wrap: wrap; gap: 12px; font-weight: 800; color: var(--navy); }
+
+/* ---------- Problem 9: bold stock badge and sticky Add to cart bar */
+.stock-badge { font-size: 0.85rem; font-weight: 800; padding: 4px 10px; border-radius: 999px; }
+.stock-badge.in_stock { background: #e3f1e4; color: #23692a; }
+.stock-badge.low_stock { background: #fdf0dc; color: #8a5300; }
+.stock-badge.sold_out { background: #f9e0e1; color: #9b1f26; }
+.buy-bar { display: flex; align-items: center; gap: 14px; max-width: var(--max); margin: 0 auto; padding: 10px var(--gutter);
+  background: #fff; border-top: 3px solid var(--navy); animation: rise 0.25s ease-out; }
+.buy-bar img { width: 52px; height: 52px; object-fit: contain; }
+.buy-bar-info { display: flex; flex-direction: column; flex: 1; min-width: 0; }
+.buy-bar-info strong { font-size: 0.95rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.buy-bar-price { font-weight: 800; color: var(--navy); }
+.buy-bar-stock { font-size: 0.78rem; font-weight: 800; }
+.buy-bar-stock.low_stock { color: #8a5300; }
+.buy-bar-stock.in_stock { color: #23692a; }
+.buy-bar-size select { padding: 10px; border: 1px solid var(--border); border-radius: var(--radius); font-weight: 700; }
+.buy-bar-add { padding: 12px 22px; white-space: nowrap; }
+@media (max-width: 719px) {
+  .buy-bar { flex-wrap: wrap; }
+  .buy-bar-add { flex: 1; }
+}
+
+/* ---------- Problem 9 spacing: labels and floating buttons never sit on an item or banner */
+.card-labels { display: flex; flex-wrap: wrap; gap: 6px; min-height: 26px; margin-bottom: 6px; }
+.card-labels .badge { position: static; display: inline-block; }
+.chat-products .card-labels { min-height: 20px; margin-bottom: 4px; }
+/* The chat button gets its own lane on the right: page content (not the full-width banners) stays out of it. */
+:root { --chat-lane: 140px; }
+#main .container, .site-footer .container {
+  padding-right: max(var(--gutter), calc(var(--chat-lane) - max(0px, (100vw - var(--max)) / 2))); }
+@media (max-width: 719px) {
+  /* Phones: the chat button gets a lane along the bottom instead, so items scroll clear of it. */
+  :root { --chat-lane: 0px; }
+  .chat { right: 0; left: 0; bottom: 0; padding: 8px 12px; background: #fff; border-top: 1px solid #e3e6eb;
+    box-shadow: 0 -4px 14px rgba(0, 0, 0, 0.06); }
+  body { padding-bottom: 92px; }
+}
+/* With the buy bar docked under the header, the item photo and panels stick below it, not under it. */
+.has-buy-bar .item-image, .has-buy-bar .order-panel { top: var(--sticky-top, 240px); }

@@ -16,6 +16,7 @@ This is the log of what I typed to my vibe coder (Claude Code) while building th
 | 6 | Tools: product info and stock | Description, price and stock-by-size tools; never invent; say sold out; a fast price-and-stock check | My own "why it matters" reasons in the harness; typo cleanup; push | `backend/tools.py`, `backend/models.py`, `backend/prompts/prompt.md`, `tests/check_tools.py` |
 | 7 | Chat search that updates the page | Chat searches show matching product cards on the page; cards open the item page; prompt and harness | "We have Hoodies!" headline; Problem 3 card checks; session-saved results, phone view | `backend/models.py`, `backend/main.py`, `frontend/src/chatResults.tsx`, `ChatResultsSection.tsx` |
 | 8 | Customer memory | Save and reload logged-in chat history; agent knows who (name, email) and what page; personalize by name; harness | Keep guests chatting, with history only for logged-in users | `backend/agent.py`, `backend/models.py`, `backend/main.py`, `frontend/src/pageContext.ts`, `tests/check_memory.py` |
+| 9 | Usability improvements | Recommend and build 2 front-end and 2 agent usability improvements; bold lettering, easier buttons, a more accurate agent; write `usability.md` with a why-grid | Agreed to the four; labels and floating bars moved so nothing covers an item | `output/usability.md`, `QuickShopBar.tsx`, `StickyBuyBar.tsx`, `backend/tools.py` search, `tests/check_search.py` |
 
 ---
 
@@ -456,6 +457,40 @@ This is the log of what I typed to my vibe coder (Claude Code) while building th
 > is problem 8 pushed to the repo and saved to git and hw4?
 
 **Result:** Yes. Verified that Problem 8 (commit f1123df) is in HW4, in git, and on GitHub; the prompt-log lines since then were committed and pushed too.
+
+---
+
+## Problem 9: Usability improvements
+
+**Prompt (my own words):**
+
+> yo, here's 9. now recommend 2 front end usability improvements and 2 back end/agent usability improvements. i want the site to look even better and even easier to use although we worked on this already. you can think of some bold lkettering and easier to find buttons. make the agent more accurate by looking at product description and categories, and mke the output response even better. then write the usability.md file and list all 4 items that we added. add a grid next to the item that lists why we added it, and the overall reasons that improve ease of site use, which increases sales and customer experience leading to return shopping. make sure all enhancements show up n the running app because graders will read both the write up and look for the features.
+
+**Follow-up prompt:**
+
+> i agree with the recs above
+
+**What was lacking after the first prompt:** Nothing was built yet; I wanted to see the four recommendations first and then approve them before building.
+
+**Outcome:** (write-up in `output/usability.md`, screenshots `screenshots/p9_*.jpg`)
+- **Front end 1, bold quick-shop bar and easier-to-find buttons:** a navy bar of bold pill links (Best Sellers, Hoodies, Crewnecks, Tees, Hats, Accessories, Bulldog Athletics, Low-Key Yale) on every page, with the current one highlighted; bolder product names, prices and buttons.
+- **Front end 2, sticky Add to cart bar and stock badge:** on item pages, a bar with photo, price, in-stock sizes and Add to cart appears whenever the main button is off screen; a bold badge by the price ("In stock in L", "Only 5 left in M", "Sold out in L"); one-size items are pre-selected.
+- **Agent 1, more accurate search:** relevance ranking over names, categories, styles, tags, colors and descriptions; shopper words ("cup", "tee", "dorm", "cap", "sticker"); the agent searches with the shopper's own words and checks `matched_on`. Everyday queries that found nothing before (coffee cup, tee for my dad, sticker, gift for grandma) now find the right items.
+- **Agent 2, better replies:** a short "why it fits" note on every recommended product card, built from tool facts only (e.g. "✓ Navy · $14.99"); replies give the answer first, then one or two picks, and no filler.
+- **Checks:** `tests/check_search.py` 12/12 (before: 5/12 found anything), saved in `output/search_check.txt`; regression re-run: `check_tools.py` 15/15, `check_auth.py` 16/16, `check_memory.py` 11/11 (chat check re-run in progress at push time).
+- **Seen in the running app:** Hats pill highlighted; the sticky bar added a crewneck to the cart (count 1 → 2); chat "I need a coffee cup for my dad" found the Yale Relative Mug – Dad.
+
+> the best seller labels should never be over an item and the chat boxes or bars should never be over another item or banner  this must be fixed with spacing but do not reduce the size, just move the bars and labels
+
+**Result:** Moved, not shrunk:
+- "Best seller" and "Sold out" labels now sit in their own row under the photo.
+- The chat button has its own lane on the right that page content stays out of; on phones it has its own band at the bottom.
+- The Add to cart bar docks under the menu, and the item photo sticks below it.
+- Checked at 1280 px: no label on any photo, and no text, card or button under the chat button while scrolling the products, item and home pages. Also checked on a phone. Added a "Spacing rule" section to `usability.md`.
+
+> show me the usability.md here
+
+**Result:** Opened `output/usability.md` in the side pane.
 
 ---
 

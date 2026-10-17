@@ -18,6 +18,7 @@ export interface ProductSummary {
   best_seller_rank: number | null
   total_stock: number
   in_stock: boolean
+  note?: string | null // chat only: why this item fits the shopper's request
 }
 
 export interface Size {

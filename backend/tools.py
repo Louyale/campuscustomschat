@@ -72,7 +72,83 @@ SPOTLIGHT = {
 COLLECTIONS = ["Residential Colleges", "Bulldog Athletics", "Low-Key Yale Gear", "Family",
                "Graduate & Professional Schools", "The Game", "Bulldogs"]
 
-SortKey = Literal["featured", "best-selling", "price-asc", "price-desc", "name-asc", "name-desc"]
+SortKey = Literal["relevance", "featured", "best-selling", "price-asc", "price-desc", "name-asc", "name-desc"]
+
+# ---------------------------------------------------------------- smarter search (Problem 9)
+# Shoppers don't type product names. These maps turn everyday words into catalogue words,
+# and a weighted score ranks matches by where the words appear (name > category > tags >
+# description), so "coffee cup", "tee for my dad" or "something for my dorm wall" find real items.
+
+QUERY_STOP = {"a", "an", "the", "for", "my", "me", "some", "something", "any", "anything", "with", "in", "of", "to",
+              "i", "want", "need", "looking", "show", "do", "you", "have", "yale", "please", "gift", "gifts", "present",
+              "item", "items", "stuff", "gear", "thing", "things", "on", "and", "or", "that", "is", "are"}
+SHOPPER_WORDS: dict[str, list[str]] = {
+    "cup": ["mug", "tumbler", "glass"], "coffee": ["mug", "tumbler"], "mugs": ["mug"],
+    "tee": ["t-shirt", "tee"], "tees": ["t-shirt", "tee"], "tshirt": ["t-shirt"], "shirt": ["t-shirt", "shirt"],
+    "sweatshirt": ["sweatshirt", "crewneck", "hoodie"], "sweater": ["crewneck", "sweater", "fleece"],
+    "hoody": ["hoodie"], "hood": ["hoodie", "hood"], "cap": ["cap", "hat"], "caps": ["cap", "hat"],
+    "hat": ["hat", "cap", "beanie"], "toque": ["beanie"], "sticker": ["decal", "sticker"], "stickers": ["decal"],
+    "dorm": ["pennant", "banner", "blanket", "frame", "decal"], "wall": ["pennant", "banner", "frame"],
+    "winter": ["beanie", "fleece", "scarf", "blanket", "jacket", "earmuffs"], "warm": ["fleece", "hoodie", "beanie", "blanket"],
+    "bottle": ["bottle", "tumbler"], "bag": ["bag", "backpack", "tote", "duffle"], "jewelry": ["earrings", "pin"],
+    "kid": ["youth", "toddler", "infant"], "kids": ["youth", "toddler", "infant"], "baby": ["infant", "toddler"],
+    "dog": ["dog", "bulldog", "pet"], "grandmother": ["grandma"], "grandfather": ["grandpa"], "mother": ["mom"],
+    "father": ["dad"], "mum": ["mom"], "athletic": ["sports", "athletic", "performance"], "workout": ["performance", "athletic"],
+}
+CATEGORY_WORDS: dict[str, str] = {
+    "hoodie": "Hoodies", "hoodies": "Hoodies", "hoody": "Hoodies", "crewneck": "Crewnecks", "crewnecks": "Crewnecks",
+    "sweatshirt": "Crewnecks", "tee": "T-Shirts", "tees": "T-Shirts", "tshirt": "T-Shirts", "t-shirt": "T-Shirts",
+    "hat": "Hats", "hats": "Hats", "cap": "Hats", "caps": "Hats", "beanie": "Hats", "beanies": "Hats",
+    "mug": "Drinkware", "mugs": "Drinkware", "cup": "Drinkware", "glass": "Drinkware", "tumbler": "Drinkware",
+    "bag": "Bags", "backpack": "Bags", "tote": "Bags", "pennant": "Home & Decor", "blanket": "Home & Decor",
+    "tie": "Ties & Scarves", "ties": "Ties & Scarves", "scarf": "Ties & Scarves", "decal": "Decals & Magnets",
+    "sticker": "Decals & Magnets", "magnet": "Decals & Magnets", "quarter-zip": "Quarter-Zips", "jacket": "Jackets & Fleece",
+}
+FIELD_WEIGHTS = {"name": 3, "category": 3, "product_id": 2, "style": 2, "tags": 2, "colors": 1, "description": 1}
+
+
+def _singular(word: str) -> str:
+    if len(word) > 3 and word.endswith("ies"):
+        return word[:-3] + "y"
+    if len(word) > 3 and word.endswith("s") and not word.endswith(("ss", "us")):
+        return word[:-1]
+    return word
+
+
+def query_terms(q: str) -> list[tuple[str, list[str]]]:
+    """Each meaningful word with the catalogue words it may match ("cup" -> mug, tumbler, glass)."""
+    words = [w for w in re.findall(r"[a-z0-9-]+", q.lower()) if w not in QUERY_STOP]
+    return [(w, list(dict.fromkeys(SHOPPER_WORDS.get(w, []) + [w, _singular(w)]))) for w in words]
+
+
+def score_products(products: list[dict], q: str) -> dict[str, tuple[float, list[str], int]]:
+    """product_id -> (score, fields that matched, how many query words matched)."""
+    terms = query_terms(q)
+    if not terms:
+        return {p["product_id"]: (0.0, [], 0) for p in products}
+    wanted_categories = {CATEGORY_WORDS[w] for w, _ in terms if w in CATEGORY_WORDS}
+    with db() as con:
+        rows = {r["product_id"]: r for r in con.execute("SELECT * FROM catalogue")}
+    scores: dict[str, tuple[float, list[str], int]] = {}
+    for p in products:
+        row = rows[p["product_id"]]
+        fields = {"name": row["name"].lower(), "category": p["category"].lower(), "product_id": row["product_id"],
+                  "style": row["garment_type"].lower(), "tags": row["search_tags"].lower(),
+                  "colors": row["colors"].lower(), "description": row["description"].lower()}
+        score, matched, hits = 0.0, set(), 0
+        for _, options in terms:
+            found = [field for field, text in fields.items()
+                     if any(re.search(rf"\b{re.escape(o)}", text) for o in options)]
+            if found:
+                hits += 1
+                # The strongest place it matched, plus a little for each other place
+                # (a word in the name AND the category beats the category alone).
+                score += max(FIELD_WEIGHTS[f] for f in found) + 0.5 * (len(found) - 1)
+                matched.update(found)
+        if p["category"] in wanted_categories:
+            score += 4  # the shopper named this kind of item
+        scores[p["product_id"]] = (score, sorted(matched, key=list(FIELD_WEIGHTS).index), hits)
+    return scores
 
 
 # ---------------------------------------------------------------- grouping
@@ -197,13 +273,20 @@ def find_products(q: str | None = None, category: str | None = None, collection:
     products = load_products()
     if group:
         products = [p for p in products if p["group"].lower() == group.lower()]
+    relevance: dict[str, tuple[float, list[str], int]] = {}
     if q:
-        terms = q.lower().split()
-        with db() as con:
-            text = {r["product_id"]: " ".join([r["product_id"], r["name"], r["garment_type"], r["description"],
-                                                r["colors"], r["search_tags"]]).lower()
-                    for r in con.execute("SELECT * FROM catalogue")}
-        products = [p for p in products if all(t in text[p["product_id"]] for t in terms)]
+        relevance = score_products(products, q)
+        needed = len(query_terms(q))
+        every_word = [p for p in products if relevance[p["product_id"]][2] == needed]
+        if every_word or needed == 0:
+            products = every_word if needed else products
+        else:  # nothing matches every word: keep the items that match most of them
+            top = max((v[2] for v in relevance.values()), default=0)
+            products = [p for p in products if top and relevance[p["product_id"]][2] == top]
+        for p in products:
+            p["matched_on"] = relevance[p["product_id"]][1]
+        if sort == "featured":
+            sort = "relevance"
     if category:
         products = [p for p in products if p["category"].lower() == category.lower()]
     if collection:
@@ -217,6 +300,7 @@ def find_products(q: str | None = None, category: str | None = None, collection:
 
     rank = lambda p: p["best_seller_rank"] or 10_000  # noqa: E731
     sorters = {
+        "relevance": lambda p: (-relevance.get(p["product_id"], (0,))[0], rank(p)),
         "featured": lambda p: (_category_rank(p["category"]), rank(p)),
         "best-selling": rank,
         "price-asc": lambda p: (p["price"], p["name"]),
@@ -330,12 +414,17 @@ def _not_found(product_id: str) -> str:
 
 def search_products(query: str | None = None, category: str | None = None, collection: str | None = None,
                     max_price: float | None = None, in_stock_only: bool = False,
-                    sort: SortKey = "best-selling", limit: int = 8, group: str | None = None) -> SearchResults:
+                    sort: SortKey | None = None, limit: int = 8, group: str | None = None) -> SearchResults:
     """Find products to recommend. Use this to browse or compare; use quick_check for one item's price and stock.
 
+    Matches are ranked by relevance: words in the name or category count most, then tags, then the
+    description. Everyday words work ("coffee cup", "tee for my dad", "dorm wall", "winter hat").
+    Each result's `matched_on` says where the words were found; check the summary and category
+    before recommending, so the item really fits what the shopper asked for.
+
     Args:
-        query: Words to match in names, descriptions, colors and tags, e.g. "navy hoodie" or "pierson".
-            Every word must match, so use one or two key words. Leave empty to browse.
+        query: The shopper's own words, including who it's for, e.g. "coffee cup dad", "navy hoodie",
+            "pierson crewneck", "dorm wall". Everyday words are understood. Leave empty to browse.
         category: Apparel: Hoodies, Crewnecks, T-Shirts, Quarter-Zips, Jackets & Fleece, Long Sleeves, Hats.
             Accessories: Drinkware (mugs, glasses, tumblers), Bags, Home & Decor (pennants, blankets, ornaments,
             towels), Books & Stationery, Ties & Scarves, "Jewelry, Pins & Keychains", Decals & Magnets, Pets & Plush.
@@ -344,16 +433,19 @@ def search_products(query: str | None = None, category: str | None = None, colle
             The Game, Bulldogs.
         max_price: Highest price in US dollars.
         in_stock_only: True to skip products that are sold out in every size.
-        sort: best-selling (default), featured, price-asc, price-desc, name-asc or name-desc.
+        sort: relevance (default when there is a query), best-selling (default otherwise), featured,
+            price-asc, price-desc, name-asc or name-desc.
         limit: How many results to return (1-12).
         group: "Apparel" (clothing and hats) or "Accessories" (everything else).
     """
     limit = max(1, min(int(limit), 12))
+    sort = sort or ("relevance" if query else "best-selling")
     results = find_products(q=query or None, category=category, collection=collection,
                             in_stock=True if in_stock_only else None, max_price=max_price, sort=sort, group=group)
     return SearchResults(total_matches=len(results), products=[
         ProductMatch(product_id=p["product_id"], name=p["name"], category=p["category"], price=p["price"],
                      in_stock=p["in_stock"], best_seller_rank=p["best_seller_rank"], summary=p["short_description"],
+                     matched_on=p.get("matched_on", []),
                      **_colors(p["category"], p["colors"]).model_dump())
         for p in results[:limit]])
 

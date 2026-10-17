@@ -40,6 +40,7 @@ class ProductSummary(BaseModel):
     best_seller_rank: int | None
     total_stock: int
     in_stock: bool
+    note: str | None = None  # chat only: the agent's short "why it fits" for this shopper
 
 
 class Product(ProductSummary):
@@ -118,6 +119,12 @@ class ChatResponse(BaseModel):
     saved: bool = False  # True when the turn was stored in chat_messages for a logged-in shopper
 
 
+class ProductNote(BaseModel):
+    product_id: str
+    note: str = Field(max_length=90, description="Why this item fits the request, from tool facts only, e.g. "
+                                                 "'Navy fleece · 2 left in XL' or 'Under $15 · best seller'.")
+
+
 class AgentReply(BaseModel):
     """The structured output the agent returns on every turn (the API contract with the website)."""
 
@@ -128,6 +135,12 @@ class AgentReply(BaseModel):
         description="product_id values (from tool results only) to show as product cards on the page, best "
                     "match first. Up to 12 for a search like 'what hoodies do you have'; empty when no product "
                     "should be shown.",
+    )
+    product_notes: list[ProductNote] = Field(
+        default_factory=list,
+        max_length=12,
+        description="One short 'why it fits' note per recommended product (same ids as product_ids), "
+                    "built only from tool facts: price, stock, color, category, best-seller rank.",
     )
     search: SearchFilters | None = Field(
         None,
@@ -164,6 +177,8 @@ class ProductMatch(ColorInfo):
     in_stock: bool = Field(description="True if at least one size is in stock.")
     best_seller_rank: int | None = Field(description="1 is the best seller on the live store.")
     summary: str
+    matched_on: list[str] = Field(default_factory=list,
+                                  description="Where the search words were found: name, category, tags, description...")
 
 
 class SearchResults(BaseModel):

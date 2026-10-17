@@ -1,0 +1,27 @@
+Query                         Before  After     ms  Top 3 after  ->  expected
+PASS 'coffee cup'                  0     40   30.9  Yale University Mug | Graduate & Professional Schools Mug - Law School | Graduate & Professional Schools Mug - School of Medicine  ->  mugs / drinkware
+                                             matched on: name, product_id, style, tags, description
+PASS 'coffee cup dad'              0      1   35.1  Yale Relative Mug - Dad  ->  the Dad mug
+                                             matched on: name, product_id, style, tags, description
+PASS 'tee for my dad'              0      1   16.1  Yale Dad T Shirt  ->  Dad T-shirts
+                                             matched on: name, category, product_id, style, tags, description
+PASS 'something for my dorm wall'       0      8   38.4  Yale Crest Pennant | For God, For Country, and For Yale Banner | Studio Diploma Frame - Thin Frame  ->  pennants / decor
+                                             matched on: name, product_id, style, tags, description
+PASS 'navy hoodies'                0     26   17.5  Basic Hoodie Big Yale | Yale Sports Hoodie Baseball | Brooks Brothers Double Knit Full Zip Hoodie Yale  ->  hoodies
+                                             matched on: category, tags, colors, description
+PASS 'gift for grandma'            0      2   10.7  Yale Grandma Hoodie | Yale Relative Mug - Grandma  ->  Grandma / Grandparent items
+                                             matched on: name, product_id, tags, description
+PASS 'sticker'                     0     60   13.2  Graduate & Professional Schools Decal - Law School | Y Decal | Graduate & Professional Schools Decal - School of Medicine  ->  decals
+                                             matched on: name, category, product_id, style, tags, description
+PASS 'hockey hoodie'               2      2   14.1  Yale Sports Hoodie Hockey | Ice Hockey Left Chest Hoodie  ->  the hockey hoodie
+                                             matched on: name, category, product_id, style, tags, description
+PASS 'pierson crewneck'            1      1   16.0  Pierson College Crewneck  ->  Pierson crewneck
+                                             matched on: name, category, product_id, style, tags, description
+PASS 'winter hat'                  3      4   39.8  New Era Y Beanie | Y Pom Beanie | Legacy Y Beanie  ->  hats / beanies
+                                             matched on: name, category, product_id, style, tags, description
+PASS 'tie'                        31     37   11.8  Graduate & Professional Schools Tie - School of Medicine | Residential College Tie - Branford | Residential College Tie - Trumbull  ->  ties
+                                             matched on: name, category, product_id, style, tags, description
+PASS 'baseball cap'                4      4   17.2  Y Dad Hat | Class of 2026 Big Y Hat | Legacy Y Hat  ->  caps
+                                             matched on: name, category, product_id, style, tags, description
+
+Before: 5/12 queries found anything.  After: 12/12 return the right kind of item in the top 3.

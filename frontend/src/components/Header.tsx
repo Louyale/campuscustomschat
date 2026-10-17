@@ -2,6 +2,7 @@ import { useState, type FormEvent } from 'react'
 import { Link, NavLink, useNavigate } from 'react-router-dom'
 import { useAuth } from '../auth'
 import { useCart } from '../cart'
+import QuickShopBar from './QuickShopBar'
 
 type NavItem = { to: string; label: string; end?: boolean }
 
@@ -100,6 +101,7 @@ export default function Header() {
           )}
         </ul>
       </nav>
+      <QuickShopBar />
     </header>
   )
 }

@@ -78,6 +78,16 @@ The assignment says the evidence is **the running site, the database writes, and
 - [x] `output/harness.md`: how history is stored, which customer fields the agent sees, how page context is passed
 - [x] Proof: `tests/check_memory.py` 11/11, `screenshots/p8_01` to `p8_03`
 
+## Problem 9: Usability improvements (12 points)
+- [x] `output/usability.md` lists all 4 improvements in a grid: what we added, why, how it helps the shopper and business, where to see it in the app
+- [x] Front end 1: bold quick-shop bar on every page; bolder names, prices and buttons (`QuickShopBar.tsx`, `styles.css`)
+- [x] Front end 2: sticky Add to cart bar and bold stock badge on item pages (`StickyBuyBar.tsx`, `ProductPage.tsx`)
+- [x] Agent 1: relevance search over names, categories and descriptions with shopper words (`backend/tools.py`); `tests/check_search.py` 12/12 vs 5/12 before
+- [x] Agent 2: "why it fits" notes on recommended cards and a tighter reply shape (`models.py`, `main.py`, `prompt.md`, `ProductCard.tsx`)
+- [x] Overall reasons: ease of use leads to more sales, a better experience and return shopping (section in `usability.md`)
+- [x] Spacing: labels, the chat button and the Add to cart bar never cover an item or banner (moved, same size)
+- [x] All four seen in the running app; proof in `screenshots/p9_01` to `p9_05`
+
 ## Whole project (from the scenario)
 - [x] **Running site:** the React + Vite TypeScript front end and FastAPI backend start cleanly (backend: `uvicorn main:app --reload --port 8000` from `backend/`)
 - [x] **Database writes:** a new account in `users` (hashed password, Problem 4) and chats saved in `chat_messages` for logged-in shoppers (Problem 5, rows 23–24 for Ezra Stiles)

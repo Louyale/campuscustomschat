@@ -1,10 +1,11 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { getProduct, money, STOCK_LABEL } from '../api'
 import { useFetch } from '../useFetch'
 import { openChat } from '../components/ChatWidget'
 import { colorOptions, useCart } from '../cart'
 import { itemSelection } from '../pageContext'
+import StickyBuyBar from '../components/StickyBuyBar'
 
 const sizeLabel = (size: string) => (size === 'OS' ? 'One size' : size)
 
@@ -13,6 +14,12 @@ export default function ProductPage() {
   const { data: product, error, loading } = useFetch(() => getProduct(productId), [productId])
   const [selected, setSelected] = useState<string | null>(null)
   const [color, setColor] = useState<string | null>(null)
+  const addButton = useRef<HTMLButtonElement>(null)
+
+  // One-size items (hats, mugs, pennants) are ready to add without picking a size.
+  useEffect(() => {
+    if (product && product.sizes.length === 1 && product.sizes[0].status !== 'sold_out') setSelected(product.sizes[0].size)
+  }, [product])
   const { add } = useCart()
 
   // Share the shopper's picks with the chat, so "is this in stock in my size?" means this item and size.
@@ -52,7 +59,10 @@ export default function ProductPage() {
         <div className="item-info">
           {product.best_seller_rank !== null && product.best_seller_rank <= 12 && <span className="badge badge-best static">Best seller</span>}
           <h1>{product.name}</h1>
-          <p className="item-price">{money(product.price)}</p>
+          <p className="item-price">
+            {money(product.price)}
+            <StockBadge product={product} selected={selected} />
+          </p>
           <p className="item-desc">{product.description}</p>
 
           <dl className="item-facts">
@@ -105,7 +115,7 @@ export default function ProductPage() {
             </fieldset>
           )}
 
-          <button className="btn btn-primary btn-block" disabled={!selected}
+          <button ref={addButton} className="btn btn-primary btn-block btn-big" disabled={!selected}
             onClick={() => selected && add(product, selected, color ?? colorOptions(product)[0] ?? '')}>
             {selected ? 'Add to cart' : 'Select a size'}
           </button>
@@ -124,6 +134,20 @@ export default function ProductPage() {
           </details>
         </div>
       </div>
+      <StickyBuyBar product={product} selected={selected} onSelect={setSelected} watch={addButton}
+        onAdd={() => selected && add(product, selected, color ?? colorOptions(product)[0] ?? '')} />
     </div>
   )
+}
+
+/** Bold stock status right next to the price: for the chosen size, or overall. */
+function StockBadge({ product, selected }: { product: { sizes: { size: string; quantity: number; status: string }[] }; selected: string | null }) {
+  const size = product.sizes.find((s) => s.size === selected)
+  const total = product.sizes.reduce((n, s) => n + s.quantity, 0)
+  const [label, status] = size
+    ? size.status === 'sold_out' ? [`Sold out in ${sizeLabel(size.size)}`, 'sold_out']
+      : size.status === 'low_stock' ? [`Only ${size.quantity} left in ${sizeLabel(size.size)}`, 'low_stock']
+        : [`In stock in ${sizeLabel(size.size)}`, 'in_stock']
+    : total === 0 ? ['Sold out', 'sold_out'] : ['In stock', 'in_stock']
+  return <span className={`stock-badge ${status}`}>{label}</span>
 }
