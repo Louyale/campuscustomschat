@@ -13,6 +13,7 @@ This is the log of what I typed to my vibe coder (Claude Code) while building th
 | 3 | Build the Campus Customs website | Main pages in my voice, Products + single-item pages, bottom-right chat stub, FastAPI backend | Add knit Y pom beanies, Y caps and a Class of 2026 hat; new home-page line | `frontend/`, `backend/main.py`, `add_hats.py` |
 | 4 | Create account and login | Secure sign-up/login with hacker safety; test the seed user and a new account; harness overview | "Safely saves" wording; 20-minute lockout and passwords need a number | `backend/auth.py`, Log in / Create account pages, `tests/check_auth.py` |
 | 5 | PydanticAI agent backend | Build the chatbot as a PydanticAI agent behind FastAPI in four files; Campus Customs voice and safety; harness narrative | Add to cart / Check options, checkout tally and card form, refined chat; real Lou Donofrio test | `backend/main.py`, `backend/prompts/prompt.md`, `backend/agent.py`, `backend/tools.py`, `backend/models.py` |
+| 6 | Tools: product info and stock | Description, price and stock-by-size tools; never invent; say sold out; a fast price-and-stock check | My own "why it matters" reasons in the harness; typo cleanup; push | `backend/tools.py`, `backend/models.py`, `backend/prompts/prompt.md`, `tests/check_tools.py` |
 
 ---
 
@@ -307,6 +308,48 @@ This is the log of what I typed to my vibe coder (Claude Code) while building th
 > Yes, commit the larger best-seller hoodie and push it to the campuscustomschat repo.
 
 **Result:** Committed and pushed to `github.com/Louyale/campuscustomschat`.
+
+---
+
+## Problem 6: Tools: product info and stock
+
+**Prompt (my own words):**
+
+> let's gooooo problem 6.  i think we did some of this already but let's refine for the problem.  give the agent the tools specified.  note thta the agent must not invest prices or quantities and say if a size is out of stock.  expand the prompts and show me the harness with the added tesxt as required and so i can add some of my own language to your suggestions.  note that we are adding a tool to check for price and whether items are in stock that gets back to the customer quickly so that the custmer is not mislead and we don;t waste their time.  add this to your suggestion to the appropriate agent tool for item look up speed and accuracy
+
+> how much time until you are done with the above?
+
+**Follow-up prompt:**
+
+> all edits are in.  clean up any typos, save to HW4 in git and then push to the repo.
+
+**What was lacking after the first prompt:** the harness held only suggested text; it needed my own reasons for why each tool matters to the shopper, cleaned up and saved.
+
+**Outcome:** (results in `output/tools_check.txt` and `output/chat_check.txt`)
+- **Tools (`backend/tools.py`), each reading `campus_customs.db` read-only on every call:**
+  - `get_product_description` (description)
+  - `get_price` (price)
+  - `get_stock` (stock in every size, or one size)
+  - `quick_check` (new: one fast call from a product name and size to price and stock)
+  - `search_products` and `list_categories`
+- **Typed return models (`backend/models.py`):**
+  - `QuickCheck`, `ProductDescription`, `PriceInfo`, `StockInfo`/`SizeStock` and `SearchResults`/`ProductMatch`.
+  - Colors are split into garment color vs print colors (clothing) and real choices (hats and accessories).
+- **Prompt (`backend/prompts/prompt.md`):**
+  - a "Which tool to call" table, with `quick_check` first for price and stock questions
+  - rules: never invent prices or quantities, quote `price_text` exactly, give each price when listing, and say "sold out" clearly and first, then the sizes in stock
+- **Speed and accuracy:**
+  - Each lookup takes about 1 ms.
+  - The live agent answers a price or stock question with a single `quick_check` call.
+  - Name matching understands how shoppers talk (tee, cap, SOM, plurals).
+  - Reply time is mostly the AI model itself and varies.
+- **Checks:** `tests/check_tools.py` 15/15, `tests/check_chat.py` 18/18 (I also added a rule to give prices whenever products are listed), and `tests/check_auth.py` 16/16.
+- **Harness:** a "Problem 6: Tools: product info and stock" section listing each tool, its return model, the fields chosen and why, plus the fast-check explanation, opened for my edits.
+- **My edits (follow-up):**
+  - I added my own reasons for each tool and explained how efficiency improves the customer's experience.
+  - Cleanup: my reasons sat in an unlabeled fifth table cell, so they got their own "Why it matters to the shopper" column, and a reason was added for `search_products`.
+  - Fixed "don;t" and "doesn;t", removed double spaces, and removed leftover "edit this" notes from the Problem 4–6 sections.
+  - Committed and pushed to `github.com/Louyale/campuscustomschat`. **Problem 6 complete.**
 
 ---
 

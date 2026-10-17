@@ -94,6 +94,91 @@ class AgentReply(BaseModel):
     )
 
 
+# ---------------------------------------------------------------- tool results (what the agent reads)
+# Each agent tool returns one of these. They carry only facts read from campus_customs.db,
+# in the exact shape the agent needs, so it can answer without guessing.
+
+class ColorInfo(BaseModel):
+    """Colors split so the agent never offers a print color as a choice."""
+
+    garment_color: str | None = Field(None, description="Clothing: the one color the item comes in.")
+    print_colors: list[str] = Field(default_factory=list, description="Clothing: colors in the printed design.")
+    colors_available: list[str] = Field(default_factory=list, description="Hats and accessories: real color choices.")
+
+
+class ProductMatch(ColorInfo):
+    """One search result: enough to recommend an item and pick its product_id."""
+
+    product_id: str
+    name: str
+    category: str
+    price: float
+    in_stock: bool = Field(description="True if at least one size is in stock.")
+    best_seller_rank: int | None = Field(description="1 is the best seller on the live store.")
+    summary: str
+
+
+class SearchResults(BaseModel):
+    total_matches: int
+    products: list[ProductMatch]
+
+
+class ProductDescription(ColorInfo):
+    """get_product_description: the full text a shopper would read on the item page."""
+
+    product_id: str
+    name: str
+    category: str
+    style: str = Field(description="The garment or item type, e.g. 'pullover hoodie' or 'mug'.")
+    description: str
+
+
+class PriceInfo(BaseModel):
+    """get_price: one price, in US dollars, exactly as stored."""
+
+    product_id: str
+    name: str
+    price: float
+    currency: Literal["USD"] = "USD"
+    price_text: str = Field(description="The price formatted for the reply, e.g. '$39.99'.")
+
+
+class SizeStock(BaseModel):
+    size: str = Field(description="XS, S, M, L, XL, XXL, or OS for one-size items.")
+    quantity: int = Field(description="Units in stock right now (0 means sold out).")
+    status: StockStatus
+
+
+class StockInfo(BaseModel):
+    """get_stock: stock for every size, or for the one size the shopper asked about."""
+
+    product_id: str
+    name: str
+    size_requested: str | None
+    sizes: list[SizeStock]
+    in_stock_sizes: list[str]
+    sold_out_sizes: list[str]
+    total_in_stock: int
+    answer: str = Field(description="A plain statement of the facts to relay, e.g. 'XL: sold out.'")
+
+
+class QuickCheck(BaseModel):
+    """quick_check: name or id in, price and stock out, in one fast lookup."""
+
+    found: bool
+    product_id: str | None = None
+    name: str | None = None
+    price: float | None = None
+    price_text: str | None = None
+    size_requested: str | None = None
+    quantity: int | None = Field(None, description="Units in the requested size (None if no size was asked).")
+    status: StockStatus | None = None
+    in_stock_sizes: list[str] = Field(default_factory=list)
+    sold_out_sizes: list[str] = Field(default_factory=list)
+    other_matches: list[str] = Field(default_factory=list, description="Other names that also matched, to ask which one.")
+    answer: str = Field(description="A plain statement of the facts to relay.")
+
+
 @dataclass
 class ShopDeps:
     """Per-request facts the agent may use. Never includes passwords or other customers' data."""

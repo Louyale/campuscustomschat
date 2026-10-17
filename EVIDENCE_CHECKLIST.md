@@ -54,6 +54,14 @@ The assignment says the evidence is **the running site, the database writes, and
 - [x] Screenshots `p5_01` to `p5_15` (guest chat, prompt-injection refusal, Lou's saved chat, cart buttons, options, hat colors, added-to-cart popup, checkout tally, card validation, refined chat, larger chat button, Low-Key Yale Gear, Accessories page, home Accessories row, mug color options)
 - [x] I've reviewed the harness Problem 5 section (my edits kept; the proof now matches a real Lou Donofrio test)
 
+## Problem 6: Tools: product info and stock (8 points)
+- [x] Tools that read `campus_customs.db`: description (`get_product_description`), price (`get_price`), stock by size (`get_stock`), plus the fast `quick_check`
+- [x] The agent doesn't invent prices or quantities; it says clearly when a size is sold out (`tests/check_tools.py` 15/15)
+- [x] `prompts/prompt.md` expanded so the agent calls these tools for price and stock questions
+- [x] Return types in `models.py`: `QuickCheck`, `ProductDescription`, `PriceInfo`, `StockInfo`, `SizeStock`, `SearchResults`
+- [x] `output/harness.md`: each tool, its model fields and why
+- [x] I've added my own language to the harness Problem 6 section (a "Why it matters to the shopper" column)
+
 ## Whole project (from the scenario)
 - [x] **Running site:** the React + Vite TypeScript front end and FastAPI backend start cleanly (backend: `uvicorn main:app --reload --port 8000` from `backend/`)
 - [x] **Database writes:** a new account in `users` (hashed password, Problem 4) and chats saved in `chat_messages` for logged-in shoppers (Problem 5, rows 23–24 for Ezra Stiles)

@@ -5,7 +5,8 @@ How it is loaded
 - The model comes from OPENAI_MODEL (default gpt-6-luna), reached through Portkey with
   PORTKEY_API_KEY from .env. It uses OpenAI's Responses API, because this model only
   allows function tools there.
-- The tools are the four read-only catalogue functions in tools.py.
+- The tools are the read-only catalogue functions in tools.py: quick_check, get_product_description,
+  get_price, get_stock, search_products and list_categories.
 - Every reply is validated as models.AgentReply (text + product_ids + suggestions).
 """
 
@@ -50,7 +51,8 @@ def get_agent() -> Agent[ShopDeps, AgentReply]:
         deps_type=ShopDeps,
         output_type=AgentReply,
         instructions=PROMPT_PATH.read_text(encoding="utf-8"),
-        tools=[tools.search_products, tools.get_product_details, tools.check_size_stock, tools.list_categories],
+        tools=[tools.quick_check, tools.get_product_description, tools.get_price, tools.get_stock,
+               tools.search_products, tools.list_categories],
         retries=2,
     )
 

@@ -72,7 +72,7 @@ Each (`product_id`, `size`) pair appears only once.
 
 ## Problem 4: Create account and login
 
-_How accounts work, in plain language. Edit any sentence to put it in your own words._
+_How accounts work, in plain language._
 
 ### The flow
 
@@ -103,7 +103,7 @@ _How accounts work, in plain language. Edit any sentence to put it in your own w
 
 - **One vague error.** A wrong password and an unknown email both get "Invalid email or password," and both take the same time, so nobody can use the login form to find out who has an account.
 - **Rate limit.** After 5 failed logins in 15 minutes for the same email from the same place, further tries are blocked for 20 minutes.
-- **Better passwords.** New passwords must be 8–128 characters and can't be a common one like "password" or "boolaboola".  It must have a number.  
+- **Better passwords.** New passwords must be 8–128 characters and can't be a common one like "password" or "boolaboola". It must have a number.
 - **Safe session cookie.** After login the browser gets a signed session cookie marked HttpOnly (page scripts, including anything malicious, can't read it) and SameSite (other websites can't use it). It expires after 7 days. The signing key lives only in `.env`.
 - **No SQL tricks.** Every database query uses placeholders, so typing code into a form is treated as plain text.
 - **Nothing leaks.** The website and API never send `password_hash` back, passwords are never logged, and `.env` and the database are never committed to GitHub.
@@ -118,7 +118,7 @@ _How accounts work, in plain language. Edit any sentence to put it in your own w
 
 ## Problem 5: PydanticAI agent backend
 
-_How the agent is loaded and how the website talks to FastAPI, in plain language. Edit any sentence to put it in your own words._
+_How the agent is loaded and how the website talks to FastAPI, in plain language._
 
 ### Where everything lives
 
@@ -165,3 +165,50 @@ The API app is `backend/main.py`, which you run from the `backend/` folder with 
 - **Logged in as Lou Donofrio:** the agent greeted him by name ("Good to see you, Lou.") and found the Yale ball caps under $30: the Y Dad Hat and the Class of 2026 Big Y Hat, $29.99 each. The turn was saved to `chat_messages` (rows 25–26), and it came back after a page reload (`screenshots/p5_03`).
 - `tests/check_auth.py` still passes 16/16 on port 8000.
 - **Accuracy:** `tests/check_chat.py` asks 18 questions whose answers are known from the database (prices, stock by size, sold-out sizes, colors, accessories like mugs and scarves, items we don't carry such as umbrellas, subtle gear, hours, returns). All 18 pass (`output/chat_check.txt`). Two causes of wrong answers were fixed: the tools now separate a garment's color from its print colors, and the model only sees the last 24 hours of a shopper's saved chat, so old prices can't creep back in.
+
+---
+
+## Problem 6: Tools: product info and stock
+
+### The rule
+
+The agent never invents a price, a quantity, a size or a product. Every answer about a description, a price or stock comes from a tool that reads `campus_customs.db` at the moment the shopper asks. If a size is out of stock, the agent says so clearly and first ("The Pierson College Crewneck is sold out in L"), then offers the sizes that are in stock. This adds to the customer experience by making the site efficient so that the customer's time is not wasted.
+
+### The tools (`backend/tools.py`) and what each returns (`backend/models.py`)
+
+| Tool | Answers | Returns | Fields we chose, and why | Why it matters to the shopper |
+|---|---|---|---|---|
+| `quick_check(product, size)` | "How much is…?", "Is … in stock (in M)?" | `QuickCheck` | `found` so a missing item is never guessed; `name` and `price_text` ("$39.99") to quote exactly; `quantity` and `status` for the size asked; `in_stock_sizes` and `sold_out_sizes` so a sold-out answer can offer alternatives; `other_matches` when a name is ambiguous; `answer`, a one-line statement of the facts | Accuracy is key. |
+| `get_product_description(product)` | "Tell me about…", materials, look, colors | `ProductDescription` | `description` and `style` straight from the catalogue; colors split into `garment_color` and `print_colors` (clothing) or `colors_available` (hats and accessories), so a print color is never offered as an option | This increases sales by recommending related products. |
+| `get_price(product_id)` | A price for an item already identified | `PriceInfo` | `price` as stored, `currency` = USD, and `price_text` already formatted, so there's no rounding or "about" | We don't want the customer to feel taken advantage of. |
+| `get_stock(product_id, size)` | How many are left, in every size or one size | `StockInfo` | every size's `quantity` and `status` (in stock, low stock at 5 or fewer, sold out); `in_stock_sizes`, `sold_out_sizes` and `total_in_stock`; `answer` such as "L: sold out." so the reply can't soften it | Again, so time is not wasted and the customer doesn't have a negative experience by advancing in the shopping experience and then hitting a roadblock, which may lead to purchasing elsewhere now and in the future. |
+| `search_products(…)` | Browsing, gifts, comparisons | `SearchResults` | `total_matches` plus a short `ProductMatch` per item (price, in-stock flag, best-seller rank, colors), enough to recommend without a second call | Shoppers see real options with prices right away, which helps them find what they want and buy. |
+| `list_categories()` | "What do you sell?" | groups, categories and collections with counts | so the agent describes the real shop, not a guess | Again, a feature to increase sales by expanding the product universe to the customer. |
+
+Every tool opens the database read-only and never touches the `users` table, so the agent can't change data or see passwords. Unknown items come back as "not found", never as a made-up answer.
+
+### Fast, accurate price and stock checks
+
+We added `quick_check` so a shopper asking about price or stock gets a quick, accurate answer and isn't misled or kept waiting:
+- **One call.** It takes the product's name the way the shopper says it ("pierson crewneck", "som tee", "y dad cap") plus an optional size ("2XL", "large"). It finds the item and returns the price and stock together. Before, the agent had to search first, then look up details, then check the size.
+- **Fast.** The lookup itself takes about 1 millisecond. The rest of the reply time is the AI model writing its answer.
+- **Accurate.** It quotes the stored price exactly, reports the real count for the size asked, says "sold out" plainly, and lists the sizes that are in stock. If a size isn't offered, it says which sizes are.
+- **Understands shoppers.** Common words are matched to product names (tee → shirt, cap → hat, SOM → School of Management, plurals). If more than one product matches, it answers for the best match and names the others.
+
+### How the prompt uses them (`backend/prompts/prompt.md`)
+
+The prompt now has a "Which tool to call" table: `quick_check` first for any price or stock question, `get_product_description` for "tell me about", `get_stock` for counts by size, and `search_products` for browsing. It also has "Saying it right" rules:
+- Quote `price_text` exactly.
+- Give each price whenever listing products.
+- Say "sold out" clearly and first, then the sizes in stock.
+- Say "only a few left" at 5 or fewer.
+- Never offer a print color as a choice.
+
+### Proof it works
+
+- `tests/check_tools.py` (results in `output/tools_check.txt`): **15/15 pass**.
+  - Each tool's answer matches a direct SQL query, in under 2 ms.
+  - Unknown items return "not found", never a made-up price.
+  - The live agent made exactly one tool call per question: `quick_check` for "How much is the Basic Hoodie Big Yale?" ($39.99) and for "Is the Pierson College Crewneck in stock in a large?" ("sold out in L… in stock in XS, S, M, and XXL"), and `get_product_description` for the SOM tee.
+- `tests/check_chat.py`: **18/18 pass** through the website's chat route.
+- `tests/check_auth.py`: still **16/16**.
