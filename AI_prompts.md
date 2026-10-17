@@ -553,6 +553,14 @@ This is the log of what I typed to my vibe coder (Claude Code) while building th
   - the banner pause had no visible cue, so it now has a label in its own slot, plus tap-to-pause for phones
 - **Easy to grade:** a scoreboard at the top links to each check; each check has a PASS badge, a "What this proves" box and clickable full-size screenshots.
 
+> open the html so i can see it here
+
+**Result:** Opened `output/app_check.html` in the side panel (also at http://127.0.0.1:5190/app_check.html, or double-click the file).
+
+> push problem 11 to the repo and save to hw4 and git
+
+**Result:** Checked that no `.env`, database or product images were staged, then pushed Problem 11 to `github.com/Louyale/campuscustomschat`. **Problem 11 complete.**
+
 ---
 
 ## Appendix: setup prompts (before Problem 1)
