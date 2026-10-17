@@ -118,8 +118,11 @@ button, input, select { font: inherit; }
 .section-head { display: flex; justify-content: space-between; align-items: end; gap: 16px; margin-bottom: 18px; }
 .section-title { font-size: 1.825rem; margin-bottom: 4px; }
 .section-intro { margin: 0; color: var(--text-light); max-width: 46em; }
-.product-row { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(200px, 1fr); gap: 20px; overflow-x: auto; padding: 4px 4px 14px; scroll-snap-type: x mandatory; }
-.product-row > * { scroll-snap-align: start; }
+.product-row { display: flex; align-items: flex-end; gap: 20px; overflow-x: auto; padding: 4px 4px 14px; scroll-snap-type: x mandatory; }
+.product-row > * { flex: 0 0 210px; scroll-snap-align: start; height: auto; }
+/* The #1 best-selling hoodie stands a little larger than the rest of its row */
+.product-row > .product-card-featured { flex-basis: 270px; box-shadow: 0 0 0 2px var(--navy) inset; }
+.product-card-featured h3 { font-size: 1.05rem; font-weight: 600; }
 .row-skeleton { height: 300px; background: linear-gradient(90deg, #f4f4f4, #ececec, #f4f4f4); background-size: 200% 100%; animation: shimmer 1.2s infinite; border-radius: 6px; }
 @keyframes shimmer { to { background-position: -200% 0; } }
 

@@ -300,6 +300,14 @@ This is the log of what I typed to my vibe coder (Claude Code) while building th
   - Screenshots `p5_13` to `p5_15`.
 - **Pushed** to `github.com/Louyale/campuscustomschat`.
 
+> make the best seller hoodie a little larger than the rest
+
+**Result:** In the home page's Best sellers row (and the hoodie row), the #1 best seller, the Basic Hoodie Big Yale, is now about 30% wider than the other cards (270 px vs 210 px), with a thin navy frame and a "#1 Best seller" badge. Screenshot `p3_02` refreshed.
+
+> Yes, commit the larger best-seller hoodie and push it to the campuscustomschat repo.
+
+**Result:** Committed and pushed to `github.com/Louyale/campuscustomschat`.
+
 ---
 
 ## Appendix: setup prompts (before Problem 1)

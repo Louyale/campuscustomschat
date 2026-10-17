@@ -29,7 +29,8 @@ export default function ProductRow({ title, intro, query, shopLink, shopLabel = 
       {data && (
         <div className="product-row">
           {data.map((p) => (
-            <ProductCard key={p.product_id} product={p} showDescription={false} />
+            <ProductCard key={p.product_id} product={p} showDescription={false}
+              featured={p.best_seller_rank === 1 && p.category === 'Hoodies'} />
           ))}
         </div>
       )}

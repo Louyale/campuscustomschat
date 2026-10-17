@@ -8,9 +8,10 @@ interface Props {
   product: ProductSummary
   showDescription?: boolean
   showActions?: boolean
+  featured?: boolean  // shown a little larger, e.g. the #1 best seller
 }
 
-export default function ProductCard({ product, showDescription = true, showActions = false }: Props) {
+export default function ProductCard({ product, showDescription = true, showActions = false, featured = false }: Props) {
   const top = product.best_seller_rank !== null && product.best_seller_rank <= 12
   const { add } = useCart()
   const [choosing, setChoosing] = useState(false)
@@ -23,11 +24,11 @@ export default function ProductCard({ product, showDescription = true, showActio
   }
 
   return (
-    <div className="product-card">
+    <div className={`product-card${featured ? ' product-card-featured' : ''}`}>
       <Link to={`/products/${product.product_id}`} className="product-card-link">
         <div className="product-card-image">
           <img src={product.image_url} alt={product.name} loading="lazy" />
-          {top && <span className="badge badge-best">Best seller</span>}
+          {top && <span className="badge badge-best">{featured && product.best_seller_rank === 1 ? '#1 Best seller' : 'Best seller'}</span>}
           {!product.in_stock && <span className="badge badge-sold">Sold out</span>}
         </div>
         <div className="product-card-body">
