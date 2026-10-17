@@ -18,6 +18,7 @@ This is the log of what I typed to my vibe coder (Claude Code) while building th
 | 8 | Customer memory | Save and reload logged-in chat history; agent knows who (name, email) and what page; personalize by name; harness | Keep guests chatting, with history only for logged-in users | `backend/agent.py`, `backend/models.py`, `backend/main.py`, `frontend/src/pageContext.ts`, `tests/check_memory.py` |
 | 9 | Usability improvements | Recommend and build 2 front-end and 2 agent usability improvements; bold lettering, easier buttons, a more accurate agent; write `usability.md` with a why-grid | Agreed to the four; labels and floating bars moved so nothing covers an item | `output/usability.md`, `QuickShopBar.tsx`, `StickyBuyBar.tsx`, `backend/tools.py` search, `tests/check_search.py` |
 | 10 | Style the website | Re-look at the design and enhance it; write how it keeps customers engaged and buying; add licensed Yale campus photos and a slideshow of people in Yale gear | (none yet) | `output/design.md`, `Slideshow.tsx`, `CampusGallery.tsx`, `SpiritTicker.tsx`, `photoCredits.ts`, `frontend/public/photos/` |
+| 11 | Site testing (app check) | Test the live site; note the banner stops on hover; show other features work; make the HTML very easy to grade with screenshots | (none yet) | `output/app_check.html`, `output/app_check_images/` |
 
 ---
 
@@ -532,6 +533,25 @@ This is the log of what I typed to my vibe coder (Claude Code) while building th
 > yes, ready to save everywhere and push to the repo
 
 **Result:** Checked that no `.env`, database or product images were staged, then pushed Problem 10 to `github.com/Louyale/campuscustomschat`. **Problem 10 complete.**
+
+---
+
+## Problem 11: Site testing (app check)
+
+**Prompt (my own words):**
+
+> now test the live site and document it in the html.  one usability feature to soecifically note is the banner stops when you toggle over it with your cursor, which added authenticity to the usability.  note that the other features and enhancements work.  make the html very easy to grade.  i want it as user friendly as possible so that the busy grader can see all our great work clearly and efficiently  add the screen shot files and links as specified.  when you're done, show me the html
+
+**Outcome:** (`output/app_check.html`, screenshots in `output/app_check_images/`, linked with relative paths)
+- **Check 1, inventory:** the chat answered "How many Pierson College Crewnecks do you have in each size, and what is the price?" with $39.99 and XS 12, S 2, M 8, XXL 2, L and XL sold out, which matches the database and the item page's stock table exactly.
+- **Check 2, dynamic search cards:** "Show me your hoodies" on the About page added "We have Hoodies!" with 12 of 28 hoodie cards to the page.
+- **Check 3, Problem 9 usability:** the sticky Add to cart bar offered only in-stock sizes; adding M raised the cart from 3 to 4.
+- **Banner pause on hover:** the browser's animation state reads running before the hover, paused during it and running after; the label switches "Hover to pause" → "❚❚ Paused".
+- **Everything else:** quick-shop bar, smarter search with notes, hero, slideshow, campus postcards, large photo view, chat look and phone view, plus the automated test results.
+- **Found and fixed while testing:**
+  - the "Added to your cart" message covered the menu, so it now docks under the header
+  - the banner pause had no visible cue, so it now has a label in its own slot, plus tap-to-pause for phones
+- **Easy to grade:** a scoreboard at the top links to each check; each check has a PASS badge, a "What this proves" box and clickable full-size screenshots.
 
 ---
 

@@ -95,6 +95,14 @@ The assignment says the evidence is **the running site, the database writes, and
 - [x] `output/design.md`: what changed and why it helps customers stick around and buy (concrete and short)
 - [x] Seen in the running app; proof in `screenshots/p10_01` to `p10_07`
 
+## Problem 11: Site testing (app check) (8 points)
+- [x] Asked in my own words what to do (prompt logged in `AI_prompts.md`)
+- [x] `output/app_check.html` opens by double-click; heading, screenshot and "what this proves" for each check
+- [x] Check 1: chat inventory level, matching the database (Pierson College Crewneck)
+- [x] Check 2: dynamic search-result cards after "Show me your hoodies"
+- [x] Check 3: Problem 9 usability feature (sticky Add to cart bar), plus the banner pausing on hover
+- [x] Screenshots in `output/app_check_images/`, linked with relative paths
+
 ## Whole project (from the scenario)
 - [x] **Running site:** the React + Vite TypeScript front end and FastAPI backend start cleanly (backend: `uvicorn main:app --reload --port 8000` from `backend/`)
 - [x] **Database writes:** a new account in `users` (hashed password, Problem 4) and chats saved in `chat_messages` for logged-in shoppers (Problem 5, rows 23–24 for Ezra Stiles)

@@ -1,0 +1,216 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Campus Customs: App check (Problem 11)</title>
+<style>
+  :root { --navy: #00366b; --deep: #0b233f; --sky: #9fd3de; --ink: #1f2933; --muted: #5b6673; --line: #dfe4ea;
+    --pass: #23692a; --pass-bg: #e3f1e4; --cream: #f5f3ed; }
+  * { box-sizing: border-box; }
+  body { margin: 0; font: 16px/1.55 "Segoe UI", system-ui, -apple-system, Arial, sans-serif; color: var(--ink); background: var(--cream); }
+  a { color: var(--navy); }
+  header { background: linear-gradient(120deg, var(--navy), var(--deep)); color: #fff; padding: 34px 24px 28px; }
+  .wrap { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+  header .wrap { padding: 0; }
+  .eyebrow { margin: 0 0 6px; color: var(--sky); font-size: 0.8rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; }
+  h1 { margin: 0 0 8px; font: 700 2.3rem/1.15 Georgia, "Times New Roman", serif; }
+  header p { margin: 0; color: #dbe6f1; max-width: 46em; }
+  .meta { margin-top: 14px; font-size: 0.88rem; color: #c9d6e3; }
+
+  /* Scoreboard */
+  .score { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin: -18px auto 28px; }
+  .score a { display: block; background: #fff; border-radius: 12px; padding: 16px 18px; text-decoration: none; color: var(--ink);
+    box-shadow: 0 8px 22px rgba(0, 38, 77, 0.12); border-top: 4px solid var(--navy); transition: transform .2s; }
+  .score a:hover { transform: translateY(-3px); }
+  .score small { color: var(--muted); font-weight: 700; font-size: 0.75rem; letter-spacing: 0.08em; text-transform: uppercase; }
+  .score strong { display: block; margin: 4px 0 8px; font-size: 1.02rem; line-height: 1.3; }
+  .pass { display: inline-block; padding: 2px 10px; border-radius: 999px; background: var(--pass-bg); color: var(--pass); font-weight: 800; font-size: 0.8rem; }
+  .bonus { border-top-color: var(--sky) !important; }
+
+  /* Check sections */
+  section.check { background: #fff; border-radius: 14px; padding: 26px 28px; margin: 0 0 26px; box-shadow: 0 4px 14px rgba(0, 38, 77, 0.08); }
+  .check-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; flex-wrap: wrap;
+    border-bottom: 1px solid var(--line); padding-bottom: 12px; margin-bottom: 16px; }
+  h2 { margin: 0; font: 700 1.55rem/1.2 Georgia, "Times New Roman", serif; color: var(--navy); }
+  h2 span { color: var(--muted); font: 700 0.9rem "Segoe UI", system-ui, sans-serif; letter-spacing: 0.06em; text-transform: uppercase; display: block; margin-bottom: 4px; }
+  .proves { background: #eef6ff; border-left: 4px solid var(--navy); border-radius: 0 8px 8px 0; padding: 12px 16px; margin: 0 0 16px; }
+  .proves b { color: var(--navy); }
+  .how { color: var(--muted); font-size: 0.92rem; margin: 0 0 14px; }
+  .shots { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .shots.one { grid-template-columns: 1fr; }
+  figure { margin: 0; }
+  figure a { display: block; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
+  figure img { display: block; width: 100%; height: auto; }
+  figcaption { font-size: 0.88rem; color: var(--muted); margin-top: 6px; }
+  figcaption b { color: var(--ink); }
+  table { border-collapse: collapse; width: 100%; margin: 4px 0 16px; font-size: 0.92rem; }
+  th, td { border: 1px solid var(--line); padding: 7px 10px; text-align: left; }
+  th { background: #f3f6f9; color: var(--navy); }
+  td.ok { color: var(--pass); font-weight: 800; }
+  code { background: #f3f6f9; padding: 1px 5px; border-radius: 4px; font-size: 0.86em; }
+  header code { background: rgba(255, 255, 255, 0.16); color: #fff; }
+  .zoom { display: grid; gap: 10px; margin: 0 0 16px; }
+
+  /* Also working grid */
+  .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .grid figure { background: #fafbfc; border-radius: 10px; padding: 10px; border: 1px solid var(--line); }
+  .grid figcaption { font-size: 0.85rem; }
+  ul.fixed li { margin-bottom: 6px; }
+  footer { text-align: center; color: var(--muted); font-size: 0.85rem; padding: 10px 0 40px; }
+  @media (max-width: 860px) { .score, .shots, .grid { grid-template-columns: 1fr; } h1 { font-size: 1.8rem; } }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <p class="eyebrow">HW4 · Problem 11 · Site testing (app check)</p>
+    <h1>Campus Customs app check: all checks pass ✅</h1>
+    <p>We tested the live site (React + Vite front end on port 5180, FastAPI and PydanticAI agent on port 8000, data from
+      <code>campus_customs.db</code>). Each check below has a heading, the screenshot, and one or two sentences on what it proves.
+      Click any screenshot to open it full size.</p>
+    <p class="meta">Tested October 17, 2026 · Desktop 1280×800 and phone 375×812 · Chat as a guest shopper · Tester: Lou Donofrio</p>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <nav class="score" aria-label="Results at a glance">
+    <a href="#inventory"><small>Check 1</small><strong>Chat checks an item's inventory (honest stock and price)</strong><span class="pass">PASS</span></a>
+    <a href="#search-cards"><small>Check 2</small><strong>Dynamic search cards after "Show me your hoodies"</strong><span class="pass">PASS</span></a>
+    <a href="#usability"><small>Check 3</small><strong>Problem 9 usability: sticky Add to cart bar</strong><span class="pass">PASS</span></a>
+    <a href="#banner" class="bonus"><small>Also noted</small><strong>Cheer banner stops when you hover over it</strong><span class="pass">PASS</span></a>
+  </nav>
+
+  <!-- ===================================================== CHECK 1 -->
+  <section class="check" id="inventory">
+    <div class="check-head">
+      <h2><span>Check 1</span>Chat checks the inventory level of an item</h2>
+      <span class="pass">PASS</span>
+    </div>
+    <p class="proves"><b>What this proves:</b> asked "How many Pierson College Crewnecks do you have in each size, and what is the price?",
+      the chat gave the <b>exact price and stock for every size from the database</b>, including the two sold-out sizes. The item page's own
+      stock table shows the same numbers, so the answer is honest, not invented.</p>
+    <table>
+      <tr><th>Pierson College Crewneck</th><th>Price</th><th>XS</th><th>S</th><th>M</th><th>L</th><th>XL</th><th>XXL</th><th>Match</th></tr>
+      <tr><td>Database (<code>catalogue</code>, <code>inventory</code>)</td><td>$39.99</td><td>12</td><td>2</td><td>8</td><td>0</td><td>0</td><td>2</td><td class="ok">—</td></tr>
+      <tr><td>Chat answer</td><td>$39.99</td><td>12</td><td>2</td><td>8</td><td>sold out</td><td>sold out</td><td>2</td><td class="ok">✓ same</td></tr>
+      <tr><td>Item page stock table</td><td>$39.99</td><td>12</td><td>2 (low)</td><td>8</td><td>0 (sold out)</td><td>0 (sold out)</td><td>2 (low)</td><td class="ok">✓ same</td></tr>
+    </table>
+    <div class="shots">
+      <figure><a href="app_check_images/inventory.png" target="_blank"><img src="app_check_images/inventory.png" alt="Chat answering with the Pierson College Crewneck price and stock by size"></a>
+        <figcaption><b>Chat answer:</b> "$39.99. Current stock: XS 12, S 2, M 8, XXL 2; L and XL are sold out", with the product card.</figcaption></figure>
+      <figure><a href="app_check_images/inventory_item_page.png" target="_blank"><img src="app_check_images/inventory_item_page.png" alt="Item page stock-by-size table for the Pierson College Crewneck"></a>
+        <figcaption><b>Cross-check:</b> the item page's stock table (read from the same database) shows the same numbers.</figcaption></figure>
+    </div>
+  </section>
+
+  <!-- ===================================================== CHECK 2 -->
+  <section class="check" id="search-cards">
+    <div class="check-head">
+      <h2><span>Check 2</span>Dynamic search-result cards after a category question</h2>
+      <span class="pass">PASS</span>
+    </div>
+    <p class="proves"><b>What this proves:</b> typing "Show me your hoodies" in the chat while on the <b>About Us</b> page made a
+      <b>"We have Hoodies!"</b> section appear on the page with <b>12 of 28 hoodie cards</b> (each with price, a "why it fits" note and Add to cart).
+      The chat also shows a preview. The cards are built live from the agent's search, not a fixed page.</p>
+    <div class="shots">
+      <figure><a href="app_check_images/search_cards_with_chat.png" target="_blank"><img src="app_check_images/search_cards_with_chat.png" alt="Chat reply about hoodies with cards on the page and in the chat"></a>
+        <figcaption><b>During the chat:</b> the reply describes two hoodies and says "12 matches are on the page ↖".</figcaption></figure>
+      <figure><a href="app_check_images/search_cards.png" target="_blank"><img src="app_check_images/search_cards.png" alt="We have Hoodies section with hoodie product cards on the About page"></a>
+        <figcaption><b>On the page:</b> "From the chat · Show me your hoodies · We have Hoodies! · Showing 12 of 28 matches · See all 28".</figcaption></figure>
+    </div>
+  </section>
+
+  <!-- ===================================================== CHECK 3 -->
+  <section class="check" id="usability">
+    <div class="check-head">
+      <h2><span>Check 3</span>Problem 9 usability feature: sticky "Add to cart" bar</h2>
+      <span class="pass">PASS</span>
+    </div>
+    <p class="proves"><b>What this proves:</b> on an item page, a bar with the photo, price, stock, a size menu and <b>Add to cart</b> stays docked
+      under the menu, so buying is always one click away. It offers <b>only in-stock sizes</b> (XS, S, M, XXL; L and XL are sold out).
+      Choosing M and pressing Add to cart raised the cart from <b>3 to 4</b> and showed an "Added to your cart" strip. Nothing covers the product.</p>
+    <div class="shots">
+      <figure><a href="app_check_images/sticky_bar.png" target="_blank"><img src="app_check_images/sticky_bar.png" alt="Sticky Add to cart bar under the menu on the Pierson College Crewneck page"></a>
+        <figcaption><b>The bar</b> docked under the menu, size M chosen, with the bold "In stock in M" badge by the price (also Problem 9).</figcaption></figure>
+      <figure><a href="app_check_images/sticky_bar_added.png" target="_blank"><img src="app_check_images/sticky_bar_added.png" alt="Item added from the sticky bar; cart count shows 4"></a>
+        <figcaption><b>After Add to cart:</b> the cart shows 4 and the green "Added to your cart · Navy · M · $39.99" strip appears below the bar.</figcaption></figure>
+    </div>
+  </section>
+
+  <!-- ===================================================== BANNER -->
+  <section class="check" id="banner">
+    <div class="check-head">
+      <h2><span>Also noted</span>The cheer banner stops when you hover over it</h2>
+      <span class="pass">PASS</span>
+    </div>
+    <p class="proves"><b>What this proves:</b> the navy banner of Yale cheers ("Boola Boola", "Bulldogs, Bulldogs, Bow Wow Wow"…) scrolls on its own,
+      and <b>stops the moment the mouse is over it</b> so a shopper can read it. The label switches from "Hover to pause" to <b>"❚❚ Paused"</b>.
+      It starts again when the mouse moves away (on phones, a tap pauses it). Small touches like this make the shop feel authentic and easy to use.</p>
+    <div class="zoom">
+      <figure><a href="app_check_images/banner_running.png" target="_blank"><img src="app_check_images/banner_running_zoom.png" alt="Cheer banner scrolling, label Hover to pause"></a>
+        <figcaption><b>1. Scrolling:</b> label "Hover to pause", the cheers start at "Boola Boola".</figcaption></figure>
+      <figure><a href="app_check_images/banner_paused.png" target="_blank"><img src="app_check_images/banner_paused_zoom.png" alt="Cheer banner stopped under the mouse, label Paused"></a>
+        <figcaption><b>2. Mouse over it:</b> the cheers have moved on (now mid "Bow Wow Wow") and stopped; label "❚❚ Paused".</figcaption></figure>
+    </div>
+    <table>
+      <tr><th>Browser's animation state</th><th>Before hover</th><th>Mouse over the banner</th><th>Mouse leaves</th></tr>
+      <tr><td>Banner animation</td><td>running</td><td class="ok">paused</td><td>running</td></tr>
+      <tr><td>Label</td><td>Hover to pause</td><td class="ok">❚❚ Paused</td><td>Hover to pause</td></tr>
+    </table>
+    <p class="how">How we tested: read the banner's play state from the browser (<code>getAnimations()</code>) before, during and after a mouse-over.
+      A still screenshot can't show motion, so this table records it. Click a strip to see the full page.</p>
+  </section>
+
+  <!-- ===================================================== EVERYTHING ELSE -->
+  <section class="check" id="also">
+    <div class="check-head">
+      <h2><span>Everything else</span>Other features and enhancements also work</h2>
+      <span class="pass">ALL PASS</span>
+    </div>
+    <div class="grid">
+      <figure><a href="app_check_images/quick_shop_bar.png" target="_blank"><img src="app_check_images/quick_shop_bar.png" alt="Bold quick-shop bar with Hats active"></a>
+        <figcaption><b>Quick-shop bar</b> (P9): bold category links on every page; Hats is highlighted; labels sit under photos.</figcaption></figure>
+      <figure><a href="app_check_images/smart_search_dad_mug.png" target="_blank"><img src="app_check_images/smart_search_dad_mug.png" alt="Chat finds the Dad mug with a why-it-fits note"></a>
+        <figcaption><b>Smarter search + "why it fits"</b> (P9): "a coffee cup for my dad" finds the Yale Relative Mug – Dad, with the note "✓ Navy · $14.99".</figcaption></figure>
+      <figure><a href="app_check_images/hero.png" target="_blank"><img src="app_check_images/hero.png" alt="Home hero with Harkness Tower and serif headline"></a>
+        <figcaption><b>Hero</b> (P10): Harkness Tower behind the navy, collegiate serif headline.</figcaption></figure>
+      <figure><a href="app_check_images/gear_slideshow.png" target="_blank"><img src="app_check_images/gear_slideshow.png" alt="Bulldogs in the wild slideshow"></a>
+        <figcaption><b>"Bulldogs in the wild" slideshow</b> (P10): people and Handsome Dan in Yale gear, with Shop the look buttons.</figcaption></figure>
+      <figure><a href="app_check_images/campus_postcards.png" target="_blank"><img src="app_check_images/campus_postcards.png" alt="Postcards from campus gallery"></a>
+        <figcaption><b>"Postcards from campus"</b> (P10): 8 openly licensed Yale campus photos.</figcaption></figure>
+      <figure><a href="app_check_images/postcard_large.png" target="_blank"><img src="app_check_images/postcard_large.png" alt="Large photo view with photographer credit"></a>
+        <figcaption><b>Large photo view</b> (P10): click a postcard; credit and license shown.</figcaption></figure>
+      <figure><a href="app_check_images/chat_look.png" target="_blank"><img src="app_check_images/chat_look.png" alt="Chat with Handsome Dan avatar"></a>
+        <figcaption><b>Chat look</b> (P10): Handsome Dan avatar, online dot; "Is this in stock in M?" answered correctly.</figcaption></figure>
+      <figure><a href="app_check_images/phone_view.png" target="_blank"><img src="app_check_images/phone_view.png" alt="Phone view of the slideshow"></a>
+        <figcaption><b>Phone view:</b> the layout fits a phone; the slideshow plays on its own; the chat button has its own band.</figcaption></figure>
+    </div>
+    <h3>Automated checks (same day)</h3>
+    <table>
+      <tr><th>Test file</th><th>What it checks</th><th>Result</th></tr>
+      <tr><td><code>tests/check_chat.py</code></td><td>Live agent answers on price, stock, search and safety</td><td class="ok">21 / 21</td></tr>
+      <tr><td><code>tests/check_tools.py</code></td><td>Each product tool matches a direct SQL query</td><td class="ok">15 / 15</td></tr>
+      <tr><td><code>tests/check_search.py</code></td><td>12 everyday searches find the right kind of item (was 5 / 12)</td><td class="ok">12 / 12</td></tr>
+      <tr><td><code>tests/check_memory.py</code></td><td>Saved history, customer name, page context ("this")</td><td class="ok">11 / 11</td></tr>
+      <tr><td><code>tests/check_auth.py</code></td><td>Sign-up, login, hashed passwords, lockout</td><td class="ok">16 / 16</td></tr>
+    </table>
+  </section>
+
+  <section class="check" id="fixed">
+    <div class="check-head">
+      <h2><span>Found while testing</span>Fixed on the spot</h2>
+    </div>
+    <ul class="fixed">
+      <li><b>"Added to your cart" message covered the menu.</b> It floated over the top of the page, so it now docks as a strip under the header and never covers a product or banner (see Check 3).</li>
+      <li><b>Banner pause was invisible.</b> Added a "Hover to pause" / "❚❚ Paused" label in its own slot, so it never sits on a cheer, plus tap-to-pause for phones, which can't hover.</li>
+      <li><b>Slow AI replies:</b> some answers took 18–59 seconds from the AI service during testing. The typing dots show the chat is working, and every answer was correct.</li>
+    </ul>
+  </section>
+
+</main>
+<footer>Campus Customs · Yale Bulldog Blue · 57 Broadway, New Haven · HW4 Problem 11 · Boola Boola!</footer>
+</body>
+</html>

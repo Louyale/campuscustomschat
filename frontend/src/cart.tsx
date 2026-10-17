@@ -1,4 +1,5 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react'
+import { createPortal } from 'react-dom'
 import { Link } from 'react-router-dom'
 import { money, type ProductSummary } from './api'
 
@@ -74,7 +75,8 @@ export function CartProvider({ children }: { children: ReactNode }) {
   return (
     <CartContext.Provider value={value}>
       {children}
-      {toast && (
+      {/* Docked under the sticky header (like the buy bar), so it never covers a product or banner. */}
+      {toast && document.querySelector('.site-header') && createPortal(
         <div className="cart-toast" role="status">
           <img src={toast.image_url} alt="" />
           <div>
@@ -83,7 +85,8 @@ export function CartProvider({ children }: { children: ReactNode }) {
             <span>{[toast.color, toast.size === 'OS' ? 'One size' : toast.size].filter(Boolean).join(' · ')} · {money(toast.price)}</span>
           </div>
           <Link to="/cart" onClick={() => setToast(null)}>View cart</Link>
-        </div>
+        </div>,
+        document.querySelector('.site-header')!,
       )}
     </CartContext.Provider>
   )

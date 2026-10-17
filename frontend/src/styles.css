@@ -589,3 +589,14 @@ button, input, select { font: inherit; }
   .hero::before, .ticker-track, .chat-launcher-icon::after { animation: none; }
   .slide, .slide img, [data-reveal], .product-card, .postcard img { transition: none; }
 }
+
+/* The cart confirmation docks as a strip under the header instead of floating over the page. */
+.cart-toast { position: static; width: auto; max-width: var(--max); margin: 0 auto; border-radius: 0; box-shadow: none;
+  border: 0; border-top: 3px solid #23692a; background: #eef7ef; padding: 8px var(--gutter); animation: rise 0.25s ease-out; }
+/* The cheer banner stops under the mouse (or a tap) and says so, in its own slot at the left. */
+.ticker { display: flex; align-items: center; }
+.ticker-window { flex: 1; min-width: 0; overflow: hidden; }
+.ticker.is-paused .ticker-track { animation-play-state: paused; }
+.ticker-state { flex: none; margin: 0 6px 0 var(--gutter); padding: 4px 11px; border-radius: 999px; border: 1.5px solid rgba(255, 255, 255, 0.5);
+  color: #fff; font-size: 0.72rem; font-weight: 800; letter-spacing: 0.05em; text-transform: uppercase; white-space: nowrap; }
+.ticker.is-paused .ticker-state { background: #fff; color: var(--navy); border-color: #fff; }
