@@ -103,6 +103,12 @@ The assignment says the evidence is **the running site, the database writes, and
 - [x] Check 3: Problem 9 usability feature (sticky Add to cart bar), plus the banner pausing on hover
 - [x] Screenshots in `output/app_check_images/`, linked with relative paths
 
+## Problem 12: Audit trail, safety, finish harness (4 points)
+- [x] Asked in my own words what to do (prompts logged in `AI_prompts.md`)
+- [x] `output/audit_trail.json`: append-only, never wiped between runs; time, tool name, short args/result, stop reason (`backend/audit.py`, `tests/check_audit.py`)
+- [x] Safety rules in `backend/prompts/prompt.md`, including no invented products, exact prices, no interfering with other stores, all proven live (`tests/check_safety.py`)
+- [x] `output/harness.md` finished: model fields and why, tools and abilities, safety rules, specs (loop limits, result caps, models, how to run front and back)
+
 ## Whole project (from the scenario)
 - [x] **Running site:** the React + Vite TypeScript front end and FastAPI backend start cleanly (backend: `uvicorn main:app --reload --port 8000` from `backend/`)
 - [x] **Database writes:** a new account in `users` (hashed password, Problem 4) and chats saved in `chat_messages` for logged-in shoppers (Problem 5, rows 23–24 for Ezra Stiles)

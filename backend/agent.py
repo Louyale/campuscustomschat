@@ -8,6 +8,8 @@ How it is loaded
 - The tools are the read-only catalogue functions in tools.py: quick_check, get_product_description,
   get_price, get_stock, search_products and list_categories.
 - Every reply is validated as models.AgentReply (text + product_ids + suggestions).
+- Each run is capped by LOOP_LIMITS (8 model requests, 12 tool calls) and recorded in the
+  append-only output/audit_trail.json by audit.py (Problem 12).
 
 Customer memory and page context (Problem 8)
 - Each run gets ShopDeps: the logged-in customer (name, email, member since) and the page
@@ -20,23 +22,30 @@ Customer memory and page context (Problem 8)
 
 from __future__ import annotations
 
+import logging
 import os
+import time
 from functools import lru_cache
 from pathlib import Path
 
 from openai import AsyncOpenAI
-from pydantic_ai import Agent, RunContext
+from pydantic_ai import Agent, RunContext, UsageLimitExceeded, UsageLimits, capture_run_messages
 from pydantic_ai.messages import ModelMessage, ModelRequest, ModelResponse, TextPart, UserPromptPart
 from pydantic_ai.models.openai import OpenAIResponsesModel
 from pydantic_ai.providers.openai import OpenAIProvider
 
+import audit
 import tools
 from models import AgentReply, ChatTurn, CustomerInfo, PageContext, ShopDeps
 
 os.environ.setdefault("PYDANTIC_AI_NO_BANNER", "1")
+log = logging.getLogger("campus_customs.agent")
 
 PROMPT_PATH = Path(__file__).parent / "prompts" / "prompt.md"
 MAX_HISTORY_TURNS = 12  # recent turns sent to the model; older ones are dropped to keep replies fast
+# Loop limits for one chat message: a normal answer needs 2–4 model requests and 0–4 tool calls.
+# PydanticAI's default is 50 requests, far too many for a shop chat, so a runaway loop stops early.
+LOOP_LIMITS = UsageLimits(request_limit=8, tool_calls_limit=12)
 
 
 def build_model() -> OpenAIResponsesModel:
@@ -161,6 +170,31 @@ def to_model_history(turns: list[ChatTurn]) -> list[ModelMessage]:
 
 
 async def ask(message: str, history: list[ChatTurn], deps: ShopDeps) -> AgentReply:
-    """Run one chat turn with this shopper's deps and return the agent's structured reply."""
-    result = await get_agent().run(message, message_history=to_model_history(history), deps=deps)
+    """Run one chat turn with this shopper's deps and return the agent's structured reply.
+
+    The loop is capped by LOOP_LIMITS, and every run (answer, limit or error) is appended to
+    output/audit_trail.json with its tool calls and stop reason.
+    """
+    started = time.perf_counter()
+
+    def record(messages: list[ModelMessage], stop_reason: str, reply: AgentReply | None = None, usage=None) -> None:
+        try:  # the audit trail must never break a shopper's chat
+            audit.append(audit.build_entry(message=message, deps=deps, messages=messages, started=started,
+                                           reply=reply, usage=usage, stop_reason=stop_reason))
+        except Exception:
+            log.exception("Could not record the audit entry")
+
+    with capture_run_messages() as messages:
+        try:
+            result = await get_agent().run(message, message_history=to_model_history(history), deps=deps,
+                                           usage_limits=LOOP_LIMITS)
+        except UsageLimitExceeded as exc:
+            record(messages, f"usage_limit: {exc}")
+            raise
+        except Exception as exc:
+            record(messages, f"model_error: {type(exc).__name__}")
+            raise
+    new = result.new_messages()
+    usage = result.usage() if callable(result.usage) else result.usage  # a property in PydanticAI 2.x
+    record(new, f"final_answer (model: {audit.model_finish_reason(new) or 'stop'})", result.output, usage)
     return result.output

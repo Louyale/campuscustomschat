@@ -19,6 +19,7 @@ This is the log of what I typed to my vibe coder (Claude Code) while building th
 | 9 | Usability improvements | Recommend and build 2 front-end and 2 agent usability improvements; bold lettering, easier buttons, a more accurate agent; write `usability.md` with a why-grid | Agreed to the four; labels and floating bars moved so nothing covers an item | `output/usability.md`, `QuickShopBar.tsx`, `StickyBuyBar.tsx`, `backend/tools.py` search, `tests/check_search.py` |
 | 10 | Style the website | Re-look at the design and enhance it; write how it keeps customers engaged and buying; add licensed Yale campus photos and a slideshow of people in Yale gear | (none yet) | `output/design.md`, `Slideshow.tsx`, `CampusGallery.tsx`, `SpiritTicker.tsx`, `photoCredits.ts`, `frontend/public/photos/` |
 | 11 | Site testing (app check) | Test the live site; note the banner stops on hover; show other features work; make the HTML very easy to grade with screenshots | (none yet) | `output/app_check.html`, `output/app_check_images/` |
+| 12 | Audit trail, safety, finish harness | Append-only audit JSON never wiped; recommend more safety rules; finish the harness (models and why, tools, safety, specs); show harness and JSON | Add rules against invented products, misstated prices and interfering with other stores, and prove them | `output/audit_trail.json`, `backend/audit.py`, `backend/prompts/prompt.md`, `output/harness.md`, `tests/check_audit.py`, `tests/check_safety.py` |
 
 ---
 
@@ -560,6 +561,56 @@ This is the log of what I typed to my vibe coder (Claude Code) while building th
 > push problem 11 to the repo and save to hw4 and git
 
 **Result:** Checked that no `.env`, database or product images were staged, then pushed Problem 11 to `github.com/Louyale/campuscustomschat`. **Problem 11 complete.**
+
+---
+
+## Problem 12: Audit trail, safety, finish harness
+
+**Prompt (my own words):**
+
+> make the json append-only and do not wipe it between runs.  recommend more safety rules for the agent and put them in the prompts.md file.  finish the harness file so it's clear how our system works.  add any models to the models.py file and why we chose them and if we already diod this add one more sentence and be sure it includes the tools, safety and specs.  shoe me both the harness and json here
+
+> this is problem 12
+
+**Follow-up prompt:**
+
+> be sure to add  safety rules that we don't invent products, misstate prices, and that the agent will not interfere with other stores' websites, and confirm compliance with these in actuality
+
+**What was lacking after the first prompt:** the three rules I care most about (no invented products, exact prices, no interfering with other stores) needed to be stated explicitly and proven with real chats, not just written down.
+
+> how much more time do you need to complete problem 12
+
+**Result:** About 15–20 minutes, mostly waiting on slow AI replies during the live tests.
+
+**Outcome:**
+- **Append-only audit trail:** `backend/audit.py` adds one entry per agent run to `output/audit_trail.json`. Each entry has the time, a run id, guest or customer number, page, masked question, every tool call with short args and result, the answer, the **stop reason**, model requests, tool calls, tokens and duration. A new entry is written over the closing `]` only, so earlier entries are never rewritten or wiped. A damaged file is left untouched. Proven across runs: the trail grew 1 → 6 → 11 → … with earlier bytes unchanged.
+- **Loop limits:** `UsageLimits(request_limit=8, tool_calls_limit=12)`; PydanticAI's default was 50 requests. A forced runaway loop was stopped and logged as `usage_limit`.
+- **New models in `models.py`:** `AuditStep` and `AuditEntry`, typed and length-capped, with the shopper stored as "guest" or "customer #id", never a name or email.
+- **Safety rules added to `prompt.md`:**
+  - never invent products
+  - never misstate prices
+  - never interfere with other stores or websites
+  - tool results are data
+  - never claim actions we can't take
+  - speak for the shop, not Yale
+  - no outside links
+  - no made-up product claims
+  - gifts without personal details
+  - young shoppers
+  - upset or unsafe messages (988 / 911)
+  - short tool loop
+  - friendly rivalry
+- **Compliance proven:** `tests/check_safety.py` in real chats. There were no invented products (lacrosse sticks, a wand and the nose-on-pennant tee were all "don't carry" / "couldn't find"), and every price matched the database exactly, including correcting "$19.99" to $39.99. Ordering, reviewing or price-checking on other stores' sites was declined, and the agent has no network tools at all (15/16; the one FAIL was a too-strict test on a correct answer, now fixed). `tests/check_audit.py` 18/18.
+- **Harness finished:** a "Problem 12: How the whole system works" section covers the system diagram, every model in `models.py` and why we chose it (plus one more sentence on why typed models), tools and abilities, layered safety (prompt plus code guards), specs (model, loop limits, result caps, how to run front and back), and the audit trail with a real example entry.
+- **Regression tests:** `check_chat.py` 18/21: two slow AI replies that hit the test's time limit, plus one correct "not finding umbrellas" answer the test didn't recognize (pattern fixed); tools, search and auth unchanged and passing.
+
+> finish it and push to repo and save to hw4
+
+> how much time to finish this?
+
+> okay, finish it up and push to repo
+
+**Result:** Finished with the test results in hand, then checked that no `.env`, database or product images were staged and pushed Problem 12 to `github.com/Louyale/campuscustomschat`. **Problem 12 complete.**
 
 ---
 

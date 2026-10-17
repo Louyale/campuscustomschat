@@ -267,3 +267,33 @@ class ShopDeps:
     @property
     def first_name(self) -> str | None:
         return self.customer.first_name if self.customer else None
+
+
+# ---------------------------------------------------------------- audit trail (Problem 12)
+# One AuditEntry is appended to output/audit_trail.json for every agent run (one chat message).
+# Short, typed fields so a grader or the shop owner can see what the agent did and why it stopped,
+# without storing passwords, emails or full conversations.
+
+class AuditStep(BaseModel):
+    """One tool call inside the agent loop: which tool, with what, and what came back (all shortened)."""
+
+    tool: str
+    args: str = Field(max_length=160, description='The tool arguments as short JSON, e.g. {"query": "hoodies"}.')
+    result: str = Field(max_length=200, description="A short summary of what the tool returned.")
+
+
+class AuditEntry(BaseModel):
+    """One agent run: when it happened, who (guest or customer number only), the steps, and the stop reason."""
+
+    time: str = Field(description="UTC time the run finished, ISO 8601.")
+    run_id: str
+    shopper: str = Field(description="'guest' or 'customer #<id>': never a name or email.")
+    page: str = Field(max_length=120, description="The page the shopper was on.")
+    question: str = Field(max_length=100, description="The first words of the question, with emails and long numbers masked.")
+    steps: list[AuditStep] = Field(default_factory=list, description="Tool calls in the order the agent made them.")
+    answer: str = Field(max_length=160, description="The first words of the reply, plus how many product cards it showed.")
+    stop_reason: str = Field(description="Why the loop ended: final_answer, usage_limit, model_error, ...")
+    model_requests: int = 0
+    tool_calls: int = 0
+    tokens: int = 0
+    duration_ms: int = 0

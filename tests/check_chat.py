@@ -48,7 +48,7 @@ def lacks(text: str, *words: str) -> bool:
 
 
 SOLD_OUT = re.compile(r"sold out|out of stock|not available|unavailable|none left|0 left", re.I)
-NOT_CARRIED = re.compile(r"don.t (currently )?(carry|have|sell|stock|list)|do not (carry|have|sell)|no .*(in our|in the) catalog|not (carry|in our)|isn.t (in|part|listed)|aren.t (in|any|listed)|not listed|couldn.t find|could not find|no (scarves|ezra)", re.I)
+NOT_CARRIED = re.compile(r"don.t (currently )?(carry|have|sell|stock|list)|do not (carry|have|sell)|no .*(in our|in the) catalog|not (carry|in our)|isn.t (in|part|listed)|aren.t (in|any|listed)|not listed|couldn.t find|could not find|not finding|no (scarves|ezra)", re.I)
 
 CASES = [
     ("How much is the Basic Hoodie Big Yale?",
