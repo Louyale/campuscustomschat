@@ -70,6 +70,14 @@ The assignment says the evidence is **the running site, the database writes, and
 - [x] `prompts/prompt.md` and `output/harness.md` explain how search results reach the page
 - [x] Confirmed in the browser (`screenshots/p7_01` to `p7_03`) and by `tests/check_chat.py` 21/21
 
+## Problem 8: Customer memory (8 points)
+- [x] Logged-in chat history saved in `chat_messages` and reloaded on return (`GET /api/chat/history`; agent gets recent turns)
+- [x] The agent knows who is chatting (name, email) through PydanticAI deps (`ShopDeps.customer`) and a `get_customer` tool; it calls shoppers by name
+- [x] Page context (product on screen, selected size/color, filters, cart) passed with every message; code in `@agent.instructions` turns it into facts, so "do you have this in pink?" works
+- [x] Guests can still chat; history persists only for logged-in users
+- [x] `output/harness.md`: how history is stored, which customer fields the agent sees, how page context is passed
+- [x] Proof: `tests/check_memory.py` 11/11, `screenshots/p8_01` to `p8_03`
+
 ## Whole project (from the scenario)
 - [x] **Running site:** the React + Vite TypeScript front end and FastAPI backend start cleanly (backend: `uvicorn main:app --reload --port 8000` from `backend/`)
 - [x] **Database writes:** a new account in `users` (hashed password, Problem 4) and chats saved in `chat_messages` for logged-in shoppers (Problem 5, rows 23–24 for Ezra Stiles)

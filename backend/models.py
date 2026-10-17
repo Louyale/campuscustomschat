@@ -57,10 +57,31 @@ class ChatTurn(BaseModel):
     content: str = Field(max_length=4000)
 
 
+class CartLine(BaseModel):
+    product_id: str = Field(max_length=120)
+    name: str = Field(max_length=200)
+    size: str = Field(default="", max_length=10)
+    color: str = Field(default="", max_length=60)
+    quantity: int = Field(default=1, ge=1, le=25)
+
+
+class PageContext(BaseModel):
+    """Where the shopper is on the website when they send a message (sent by the browser)."""
+
+    path: str = Field(default="/", max_length=300, description="The page address, e.g. /products/basic-hoodie-big-yale.")
+    page_type: Literal["home", "products", "product", "cart", "account", "about", "other"] = "other"
+    product_id: str | None = Field(None, max_length=120, description="The item on screen, on a single-item page.")
+    selected_size: str | None = Field(None, max_length=10, description="The size pill the shopper picked, if any.")
+    selected_color: str | None = Field(None, max_length=60)
+    filters: dict[str, str] = Field(default_factory=dict, description="Products-page filters, e.g. {'category': 'Hats'}.")
+    cart: list[CartLine] = Field(default_factory=list, max_length=20)
+
+
 class ChatRequest(BaseModel):
     message: str = Field(min_length=1, max_length=2000)
     # Guests send their recent turns; logged-in shoppers' history is loaded from chat_messages.
     history: list[ChatTurn] = Field(default_factory=list, max_length=40)
+    page: PageContext | None = None  # what the shopper is looking at right now
 
 
 class ChatMessage(ChatTurn):
@@ -206,8 +227,28 @@ class QuickCheck(BaseModel):
     answer: str = Field(description="A plain statement of the facts to relay.")
 
 
+class CustomerInfo(BaseModel):
+    """Who is chatting: the logged-in shopper's own account (never anyone else's, never a password)."""
+
+    customer_id: int
+    first_name: str
+    last_name: str
+    email: str
+    member_since: str = Field(description="Date the account was created, YYYY-MM-DD.")
+    saved_messages: int = Field(description="How many chat messages are saved for this shopper.")
+
+
 @dataclass
 class ShopDeps:
-    """Per-request facts the agent may use. Never includes passwords or other customers' data."""
+    """Per-request facts the agent may use (PydanticAI deps).
 
-    first_name: str | None = None
+    customer: the logged-in shopper (None for guests). page: where they are on the site right now.
+    Never includes passwords or other customers' data.
+    """
+
+    customer: CustomerInfo | None = None
+    page: PageContext | None = None
+
+    @property
+    def first_name(self) -> str | None:
+        return self.customer.first_name if self.customer else None

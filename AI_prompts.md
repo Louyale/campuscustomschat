@@ -15,6 +15,7 @@ This is the log of what I typed to my vibe coder (Claude Code) while building th
 | 5 | PydanticAI agent backend | Build the chatbot as a PydanticAI agent behind FastAPI in four files; Campus Customs voice and safety; harness narrative | Add to cart / Check options, checkout tally and card form, refined chat; real Lou Donofrio test | `backend/main.py`, `backend/prompts/prompt.md`, `backend/agent.py`, `backend/tools.py`, `backend/models.py` |
 | 6 | Tools: product info and stock | Description, price and stock-by-size tools; never invent; say sold out; a fast price-and-stock check | My own "why it matters" reasons in the harness; typo cleanup; push | `backend/tools.py`, `backend/models.py`, `backend/prompts/prompt.md`, `tests/check_tools.py` |
 | 7 | Chat search that updates the page | Chat searches show matching product cards on the page; cards open the item page; prompt and harness | "We have Hoodies!" headline; Problem 3 card checks; session-saved results, phone view | `backend/models.py`, `backend/main.py`, `frontend/src/chatResults.tsx`, `ChatResultsSection.tsx` |
+| 8 | Customer memory | Save and reload logged-in chat history; agent knows who (name, email) and what page; personalize by name; harness | Keep guests chatting, with history only for logged-in users | `backend/agent.py`, `backend/models.py`, `backend/main.py`, `frontend/src/pageContext.ts`, `tests/check_memory.py` |
 
 ---
 
@@ -406,6 +407,47 @@ This is the log of what I typed to my vibe coder (Claude Code) while building th
 > ready to push and move to problem 8
 
 **Result:** Committed and pushed to `github.com/Louyale/campuscustomschat`; ready for Problem 8.
+
+---
+
+## Problem 8: Customer memory
+
+**Prompt (my own words):**
+
+> here is problem 8, label it as usual.  be sure to personalize the customer and call him/her by name if you see their name.  be extra sure to follow the hint to put code into the agent context.  follow the history instructions.  update the harness to describe how the chat history is stored in a clear way for the grader, as well as the other categories.
+
+**Follow-up prompt:**
+
+> be sure that guests can still chat but the history only persists for logged in users
+
+**What was lacking after the first prompt:** I wanted it confirmed and tested that guests keep full chat while only logged-in shoppers' history is saved.
+
+**Outcome:** (results in `output/memory_check.txt`, screenshots `screenshots/p8_*.jpg`)
+- **Chat history:**
+  - Logged-in turns are saved to `chat_messages` (question and reply, with the products shown).
+  - They are reloaded when the shopper returns, on screen via `GET /api/chat/history`, and for the agent as the last 24 hours of the conversation.
+  - Guests can still chat, but nothing of theirs is saved.
+- **Who is chatting:** `ShopDeps.customer` (`CustomerInfo`: first and last name, email, member since, saved message count) is passed as PydanticAI deps on every message; a `get_customer` tool returns the same facts.
+- **Personalized:** the agent calls the shopper by name ("Good to see you, Lou."), including guests who say their name ("Hi Sarah").
+- **Page context:**
+  - The browser sends the page, the product on screen, the selected size and color, filters and cart with every message (`frontend/src/pageContext.ts`).
+  - **Code in the agent context:** `@agent.instructions` functions in `backend/agent.py` look up the product on screen in the database (price, colors, stock, selected size) and add it to the agent's instructions, so "do you have this in pink?" knows what "this" is. A `get_current_page` tool does the same on demand.
+- **Hardening found by testing:**
+  - The current page now beats earlier talk about another item.
+  - Cart lines are rebuilt from the database, so text planted in the page can't reach the agent.
+  - The chat opens at the newest saved message.
+- **Checks:** `tests/check_memory.py` 11/11; chat, tools and auth checks re-run.
+- **Harness:** a "Problem 8: Customer memory" section with clear parts for how chat history is stored, what customer fields the agent sees, how page context is passed, and proof.
+
+> be sure to note in the harness that ambiguous phrases such as "this" are coded to be accounted for, and that a logged in user's chat history is saved so we can recommend products and they can remember what they looked for.  tell me where you note this in the harness
+
+**Result:** Added to the Problem 8 harness section:
+- "Why we save it" in part 1 (how chat history is stored): history is saved so we can recommend products and shoppers can remember what they looked for.
+- "Ambiguous phrases are coded for" in part 3 (how page context is passed): "this", "it", "this one" and "my size" are resolved by code before the agent answers.
+
+> then give me the repo key
+
+**Result:** Committed and pushed Problem 8 to the public repo and gave the repo URL for Canvas: https://github.com/Louyale/campuscustomschat. **Problem 8 complete.**
 
 ---
 

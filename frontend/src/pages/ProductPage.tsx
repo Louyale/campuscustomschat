@@ -1,9 +1,10 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { getProduct, money, STOCK_LABEL } from '../api'
 import { useFetch } from '../useFetch'
 import { openChat } from '../components/ChatWidget'
 import { colorOptions, useCart } from '../cart'
+import { itemSelection } from '../pageContext'
 
 const sizeLabel = (size: string) => (size === 'OS' ? 'One size' : size)
 
@@ -13,6 +14,14 @@ export default function ProductPage() {
   const [selected, setSelected] = useState<string | null>(null)
   const [color, setColor] = useState<string | null>(null)
   const { add } = useCart()
+
+  // Share the shopper's picks with the chat, so "is this in stock in my size?" means this item and size.
+  useEffect(() => {
+    Object.assign(itemSelection, { productId, size: selected, color })
+    return () => {
+      Object.assign(itemSelection, { productId: null, size: null, color: null })
+    }
+  }, [productId, selected, color])
 
   if (loading) return <div className="page container"><p className="muted">Loading product…</p></div>
   if (error || !product) {

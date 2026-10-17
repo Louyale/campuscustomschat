@@ -1,65 +1,69 @@
-PASS ( 0.6s) How much is the Basic Hoodie Big Yale?
-     -> The Basic Hoodie Big Yale is $39.99.
+PASS (18.1s) How much is the Basic Hoodie Big Yale?
+     -> The Basic Hoodie Big Yale is $39.99. It’s currently in stock in XS through XXL.
      cards: ['basic-hoodie-big-yale']
-PASS ( 0.4s) Is the Pierson College Crewneck in stock in size L?
-     -> The Pierson College Crewneck is sold out in L. It is in stock in XS, S, M, and XXL, and costs $39.99.
+PASS (20.8s) Is the Pierson College Crewneck in stock in size L?
+     -> The Pierson College Crewneck is sold out in L. It’s $39.99 and is in stock in XS, S, M, and XXL.
      cards: ['pierson-college-crewneck']
-PASS ( 0.5s) How many XL Basic Hoodie Big Yale are left?
-     -> There are 2 Basic Hoodie Big Yale hoodies left in XL.
+PASS (20.8s) How many XL Basic Hoodie Big Yale are left?
+     -> There are 2 Basic Hoodie Big Yale in XL, so only a few are left.
      cards: ['basic-hoodie-big-yale']
-PASS ( 0.6s) Does the Basic Hoodie Big Yale come in pink?
-     -> The Basic Hoodie Big Yale comes in navy blue with white lettering, not pink. I didn’t find a pink hoodie in the catalog.
+PASS ( 4.3s) Does the Basic Hoodie Big Yale come in pink?
+     -> No. The Basic Hoodie Big Yale is navy blue with white lettering; pink isn’t listed as an option.
      cards: ['basic-hoodie-big-yale']
-PASS ( 0.4s) What hats do you have under $30?
-     -> There are three hats under $30: the Y Pom Beanie ($24.99), Y Dad Hat ($29.99), and Class of 2026 Big Y Hat ($29.99). The Y Dad Hat comes in navy, stone, or white; the beanie is navy/heather grey, and the Class of 2026 hat is navy.
+PASS ( 7.8s) What hats do you have under $30?
+     -> I found three hats under $30: the Y Pom Beanie ($24.99), Y Dad Hat ($29.99), and Class of 2026 Big Y Hat ($29.99). The Y Dad Hat comes in navy, stone, or white.
      cards: ['pom-beanie-3dy', 'lo-profile-cap-2-y', 'class-of-2026-big-y-hat']
-PASS ( 0.4s) Do you sell scarves?
-     -> Yes. We carry the Big Yale Striped Scarf for $26.99, the Yale Twilly Scarf for $69.99, and the Yale Silk Scarf for $109.99.
-     cards: ['yale-striped-knit-scarf', 'yale-twilly-scarf', 'silk-scarf']
-PASS ( 0.4s) Do you have any Ezra Stiles college gear?
-     -> Yes. Ezra Stiles gear includes a T-shirt for $29.99 and a mug for $12.99, along with a decal and dress tie.
+PASS (69.4s) Do you sell scarves?
+     -> Yes. The Big Yale Striped Scarf is $26.99; the Yale Silk Scarf and Yale Twilly Scarf are also available. The scarves are shown on the page.
+     cards: ['yale-striped-knit-scarf', 'silk-scarf', 'yale-twilly-scarf', 'ladies-j-campion-silk-scarf']
+PASS (12.4s) Do you have any Ezra Stiles college gear?
+     -> Yes. I found four Ezra Stiles items, including a T-shirt for $29.99 and a mug for $12.99; the decal and tie are listed below as well.
      cards: ['ezra-stiles-logo-t-shirt', 'ezra-stiles-ceramic-mug', 'ezra-stiles-decal', 'ezra-stiles-dress-tie']
-PASS ( 1.4s) I want something subtle that says Yale without a big YALE on it.
-     -> For a quieter Yale reference, consider the Vintage Sitting Bulldog T-Shirt ($29.99) or a residential college crest tee, such as Saybrook or Pierson ($29.99 each). The Low-Key Yale Gear collection is shown here.
-     cards: ['district-tri-blend-t-shirt-vintage-sitting-bulldog', 'saybrook-logo-t-shirt', 'pierson-logo-t-shirt']
-PASS ( 0.4s) What is the most expensive item you sell?
-     -> The most expensive item listed is the Gallery Diploma Frame – Thick Glossy Frame, at $209.99.
+PASS (35.1s) I want something subtle that says Yale without a big YALE on it.
+     -> For a quieter Yale nod, the Vintage Sitting Bulldog T-Shirt has a small vintage-style bulldog graphic for $29.99. The college crest tees are another understated option, also $29.99.
+     cards: ['district-tri-blend-t-shirt-vintage-sitting-bulldog', 'saybrook-logo-t-shirt', 'ezra-stiles-logo-t-shirt', 'pierson-logo-t-shirt', 'morse-logo-t-shirt', 'grace-hopper-logo-t-shirt', 'boola-boola-t-shirt', 'school-of-management-crest-t-shirt']
+PASS ( 4.2s) What is the most expensive item you sell?
+     -> The most expensive item in the catalogue is the Gallery Diploma Frame – Thick Glossy Frame, priced at $209.99.
      cards: ['gallery-diploma-frame-thick-glossy-frame']
-PASS ( 0.6s) What is the most expensive piece of clothing you sell?
+PASS (25.6s) What is the most expensive piece of clothing you sell?
      -> The most expensive clothing item is the Brooks Brothers Bomber Jacket Yale at $199.99.
      cards: ['brooks-brothers-bomber-jacket-yale']
-PASS ( 0.4s) Show me Morse college gear.
-     -> Morse College gear is shown here: a Morse Logo T Shirt ($29.99), Morse 1 4 Zip ($59.99), and Morse decal ($6.99).
-     cards: ['morse-logo-t-shirt', 'morse-1-4-zip', 'morse-decal']
-PASS ( 0.4s) Is the Lacrosse Left Chest Crewneck available in XS?
-     -> The Lacrosse Left Chest Crewneck is sold out in XS. It is $34.99 and available in S, M, L, XL, and XXL.
+PASS ( 6.2s) Show me Morse college gear.
+     -> Morse College gear is shown here, including the Morse Logo T Shirt ($29.99) and Morse 1/4 Zip ($59.99).
+     cards: ['morse-logo-t-shirt', 'morse-decal', 'morse-1-4-zip']
+PASS (15.1s) Is the Lacrosse Left Chest Crewneck available in XS?
+     -> The Lacrosse Left Chest Crewneck is sold out in XS. Sizes S, M, L, XL, and XXL are in stock; it’s $34.99.
      cards: ['lacrosse-left-chest-crewneck']
-PASS ( 0.4s) What colors does the School of Management Crest T Shirt come in?
-     -> The shirt comes in navy. The crest and lettering are printed in white and light blue; those are design colors, not garment options.
+PASS ( 4.6s) What colors does the School of Management Crest T Shirt come in?
+     -> The School of Management Crest T Shirt comes in navy, with white and light blue in the printed crest and lettering.
      cards: ['school-of-management-crest-t-shirt']
-PASS ( 0.4s) What are your store hours?
-     -> Store hours aren’t published. Please call ahead at (475) 301-4205 before visiting 57 Broadway, New Haven.
+PASS (23.3s) What are your store hours?
+     -> Store hours aren’t published. Please call (475) 301-4205 before visiting 57 Broadway, New Haven.
      cards: []
-PASS ( 0.4s) What is your return policy?
-     -> Returns are accepted within 30 days of the ship date for unworn, unused items with original tags. Final-sale and custom items, including Custom Alumni pieces, are not returnable. If we made a mistake, we cover return shipping; otherwise, return shipping is the customer’s responsibility. Refunds take 2–10 business days and exclude the original shipping charge.
+PASS (29.5s) What is your return policy?
+     -> Returns are accepted within 30 days of the ship date for items that are unworn and unused, with original tags. Final-sale and custom items, including Custom Alumni pieces, are not returnable. If the shop made an error, it covers return shipping; otherwise, return shipping is the customer’s responsibility. Refunds take 2–10 business days and exclude original shipping.
      cards: []
-PASS ( 0.4s) Do you sell Yale coffee mugs? What is the cheapest one?
-     -> Yes. The least expensive is the Yale University Mug at $9.99; it’s available in white or navy and currently in stock.
+PASS ( 7.9s) Do you sell Yale coffee mugs? What is the cheapest one?
+     -> Yes. The least expensive is the Yale University Mug at $9.99; it’s in stock and comes in white or navy. Other Yale mugs are available as well.
      cards: ['ceramic-mug-yale-university-wordmark', 'law-ceramic-mug', 'medicine-ceramic-mug', 'music-ceramic-mug', 'nursing-ceramic-mug', 'public-health-ceramic-mug', 'benjamin-franklin-ceramic-mug', 'berkeley-ceramic-mug', 'branford-ceramic-mug', 'davenport-ceramic-mug', 'ezra-stiles-ceramic-mug', 'residential-college-mug-grace-hopper']
-PASS ( 1.0s) Do you have umbrellas?
-     -> I couldn’t find any umbrellas in the shop’s current catalog.
+PASS (16.8s) Do you have umbrellas?
+     -> I couldn’t find umbrellas in our catalog. I can help you look at other accessories if you’d like.
      cards: []
-PASS ( 1.0s) Do you have a pink hat?
-     -> I don’t see a pink hat, but the Legacy Varsity Y Hat is available in Dusty Rose for $34.99.
+PASS (30.3s) Do you have a pink hat?
+     -> I don’t see a hat listed as pink, but the Legacy Varsity Y Hat comes in Dusty Rose for $34.99. It’s the closest match.
      cards: ['adjustable-y-w-vintage-foam']
-PASS ( 0.4s) [page] What hoodies do you have?
+PASS (35.0s) [page] What hoodies do you have?
      -> page: {'title': 'Hoodies', 'headline': 'We have Hoodies!', 'total': 28, 'browse_url': '/products?category=Hoodies'}
      cards: ['basic-hoodie-big-yale', 'yale-sports-hoodie-baseball', 'brooks-brothers-double-knit-full-zip-hoodie-yale', 'the-forest-school-hoodie', 'yale-mom-hoodie', 'district-vit-hoodie-vintage-sailor-bulldog', 'yale-sports-hoodie-soccer', 'yale-grandma-hoodie', 'yale-sports-hoodie-hockey', 'sailing-left-chest-hoodie', 'yale-dad-hoodie', 'ua-gameday-double-knit-hood']
-PASS ( 0.8s) [page] Show me Yale mugs under $15
-     -> page: {'title': 'Drinkware under $15', 'headline': 'We have Drinkware under $15!', 'total': 29, 'browse_url': '/products?q=Yale+mug&category=Drinkware&max_price=15'}
-     cards: ['ceramic-mug-yale-university-wordmark', 'law-ceramic-mug', 'medicine-ceramic-mug', 'custom-alumni-mug', 'yale-relative-mug-mom', 'public-health-ceramic-mug', 'yale-relative-mug-dad', 'yale-relative-mug-grandpa', 'yale-relative-mug-grandma', 'class-of-2026-big-y-mug-copy-1', 'residential-college-mug-grace-hopper', 'music-ceramic-mug']
-PASS ( 0.3s) [page] How much is the Basic Hoodie Big Yale?
+FAIL ( 0.0s) [page] Show me Yale mugs under $15
+     -> page: ERROR timed out
+     cards: []
+PASS ( 1.6s) [page] How much is the Basic Hoodie Big Yale?
      -> page: None
      cards: ['basic-hoodie-big-yale']
 
-21/21 chat checks passed
+20/21 chat checks passed
+
+Re-run of the one case that timed out (the AI service took over 2 minutes):
+PASS [page] Show me Yale mugs under $15 -> "We have Drinkware under $15!", 12 cards, all Drinkware at $15 or less (29 matches in all)
+=> 21/21 chat checks pass

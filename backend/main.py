@@ -41,8 +41,8 @@ from auth import current_user  # noqa: E402
 from auth import router as auth_router  # noqa: E402
 from urllib.parse import urlencode  # noqa: E402
 
-from models import (ChatMessage, ChatRequest, ChatResponse, ChatTurn, PageResults, Product,  # noqa: E402
-                    ProductSummary, SearchFilters)
+from models import (ChatMessage, ChatRequest, ChatResponse, ChatTurn, CustomerInfo, PageResults,  # noqa: E402
+                    Product, ProductSummary, SearchFilters, ShopDeps)
 
 log = logging.getLogger("campus_customs")
 IMAGES_DIR = ROOT / os.getenv("PRODUCT_IMAGES_DIR", "data/products")
@@ -161,6 +161,15 @@ def _saved_turns(user_id: int, limit: int = 40, recent_hours: int | None = None)
     return list(reversed(rows))
 
 
+def customer_info(user) -> CustomerInfo:
+    """The logged-in shopper's own account details for the agent (never the password hash)."""
+    with _chat_db() as con:
+        created = con.execute("SELECT created_at FROM users WHERE id = ?", (user.id,)).fetchone()["created_at"]
+        saved = con.execute("SELECT COUNT(*) FROM chat_messages WHERE user_id = ?", (user.id,)).fetchone()[0]
+    return CustomerInfo(customer_id=user.id, first_name=user.first_name, last_name=user.last_name, email=user.email,
+                        member_since=(created or "")[:10], saved_messages=saved)
+
+
 def _product_ids(products_json: str | None) -> list[str]:
     try:
         return [p["product_id"] for p in json.loads(products_json or "[]")]
@@ -198,7 +207,8 @@ async def chat(body: ChatRequest, request: Request, cc_session: str | None = Coo
         history = body.history
 
     try:
-        answer = await agent.ask(body.message, history, first_name=user.first_name if user else None)
+        deps = ShopDeps(customer=customer_info(user) if user else None, page=body.page)
+        answer = await agent.ask(body.message, history, deps)
     except Exception:  # model or network trouble: friendly message, details only in the server log
         log.exception("Agent call failed")
         raise HTTPException(503, "Our assistant is taking a breather. Please try again in a moment, or call "

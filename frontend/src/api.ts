@@ -1,4 +1,5 @@
 // Typed calls to the FastAPI backend (backend/main.py). Vite proxies /api and /images.
+import type { PageContext } from './pageContext'
 
 export type StockStatus = 'in_stock' | 'low_stock' | 'sold_out'
 
@@ -100,11 +101,11 @@ export function getFacets(): Promise<{ categories: Facet[]; collections: Facet[]
 
 export const getChatHistory = () => request<SavedChatMessage[]>('/api/chat/history')
 
-export function sendChat(message: string, history: ChatTurn[]): Promise<ChatResponse> {
+export function sendChat(message: string, history: ChatTurn[], page?: PageContext): Promise<ChatResponse> {
   return request('/api/chat', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ message, history }),
+    body: JSON.stringify({ message, history, page }),
   })
 }
 

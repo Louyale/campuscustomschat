@@ -1,0 +1,20 @@
+PASS guest on the Basic Hoodie page: 'this in pink?' is understood as that hoodie (navy only), not saved
+     -> No. The Basic Hoodie Big Yale comes only in navy blue, with white lettering.
+PASS a guest who gives her name is called by name
+     -> Hi Sarah. The Yale University Mug is $9.99 and currently in stock. It comes in white or navy.
+PASS guests have no saved history
+PASS Lou on the Y Dad Hat page: 'this' = Y Dad Hat, comes in white, saved to his account
+     -> Yes, Lou—the Y Dad Hat comes in white.
+PASS the agent knows who is chatting (email from deps)
+     -> Lou, the email on your account is lou.donofrio.demo@yale.edu.
+PASS page context beats earlier talk: 'this in my size' = Pierson crewneck in L (sold out)
+     -> Lou, the Pierson College Crewneck is sold out in your selected size, L. It’s available in XS, S, M, and XXL.
+PASS cart names come from the database: planted text never reaches the agent
+     -> Lou, your cart currently shows one Y Dad Hat in Stone, size OS.
+PASS Lou is called by name during the conversation
+PASS each logged-in turn saved to chat_messages (+8 rows for 4 turns)
+PASS new session: history reloaded from the database (30 messages)
+PASS the agent remembers the earlier conversation in the new session
+     -> Lou, we were just talking about your cart. I said it shows one Y Dad Hat in Stone, size OS.
+
+11/11 memory checks passed

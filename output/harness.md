@@ -257,3 +257,81 @@ When a shopper asks the chat about a **type of item**, for example "What hoodies
   - "Show me Yale mugs under $15" returns only Drinkware at $15 or less.
   - "How much is the Basic Hoodie Big Yale?" returns no page results and just that item's card.
 - The chat route's limit of 20 messages a minute held during testing (the test now pauses between questions).
+
+---
+
+## Problem 8: Customer memory
+
+### 1. How user chat history is stored
+
+**Where:** the `chat_messages` table in `campus_customs.db`. Each saved message is one row:
+
+| Column | What it holds |
+|---|---|
+| `id` | Auto-numbered, so messages stay in order |
+| `user_id` | The logged-in shopper (links to `users.id`) |
+| `role` | `user` (the shopper's message) or `assistant` (the bot's reply) |
+| `content` | The text of the message |
+| `products_json` | The product cards shown with a reply (their `product_id`s), or empty |
+| `created_at` | When it was saved, filled in by the database |
+
+**When it's written:** on every chat turn by a **logged-in** shopper, `POST /api/chat` (`backend/main.py`) saves two rows: the question and the reply.
+
+**Why we save it:** a logged-in shopper's chat history is saved so that we can recommend products based on what they asked about before, and so that they can come back and remember what they looked for: the items, sizes and prices they discussed are still there, with product cards.
+
+**How it's reloaded when they return:**
+- **On screen:** when a logged-in shopper opens the site (even on another day or in another browser), the chat calls `GET /api/chat/history`. That returns their saved messages, and the chat shows them right away under "Welcome back, Lou." Product cards are rebuilt from today's database, so old prices never come back.
+- **For the agent:** on each new message, the server loads the shopper's recent turns from `chat_messages` (the last 24 hours, up to 24 messages) and gives them to the agent, so it picks up where they left off. Older chats stay on screen but aren't sent to the model, so out-of-date prices can't creep in.
+
+**Guests can still chat, but nothing is saved.** A guest's recent turns live only in their browser for that visit and are sent along with each message. No `chat_messages` rows are written, and `/api/chat/history` returns nothing. Only logged-in shoppers' history persists.
+
+### 2. What customer fields the agent sees
+
+The agent learns **who is chatting** through PydanticAI **deps** (`ShopDeps` in `backend/models.py`), built fresh for every message from the login cookie:
+
+| Field (`CustomerInfo`) | Why the agent gets it |
+|---|---|
+| `first_name`, `last_name` | To greet and address the shopper by name ("Good to see you, Lou.") |
+| `email` | So it can answer "what email is on my account?" (shared only with that shopper) |
+| `member_since` | Context for a returning customer |
+| `saved_messages` | How much history they have with us |
+| `customer_id` | Links the conversation to their saved history |
+
+It never sees a password or hash, and never another customer's data. Guests have no `CustomerInfo`; if a guest says their name ("Hi, I'm Sarah"), the agent uses it for that conversation. The `get_customer` tool returns the same facts if the agent wants to check.
+
+### 3. How page context is passed (and the code in the agent's context)
+
+**From the browser:** every chat message carries a `page` object (`PageContext`, built by `frontend/src/pageContext.ts`):
+- the page address and type
+- on an item page, the `product_id` on screen and the size and color the shopper selected
+- any Products-page filters
+- the cart
+
+**Into the agent's context, by code:** following the hint, `backend/agent.py` has two `@agent.instructions` functions that **run code on every message** and add a short briefing to the agent's instructions:
+- `customer_briefing`: who is chatting, from `CustomerInfo`.
+- `page_briefing`: **looks up the product on screen in the database** (live price, colors, stock by size, the selected size's stock) and states it. For example: *"They are viewing **Basic Hoodie Big Yale**, $39.99; it comes only in navy blue (print colors white, not options). They have selected size XL: XL: 2 in stock. When they say 'this', they mean Basic Hoodie Big Yale, even if earlier messages were about a different item."*
+
+**Ambiguous phrases are coded for.** Words like "this", "it", "this one" and "my size" mean nothing without context, so the code above resolves them before the agent answers:
+- "this", "it" and "this one" mean the product on screen;
+- "my size" means the size the shopper selected on that page;
+- the current page wins even if earlier messages were about a different item.
+
+So "do you have this in pink?" already knows which item "this" is. The `get_current_page` tool returns the same page facts on demand.
+
+**Safety:** the page context comes from the browser, so it is treated as information, never as instructions.
+- **Cart:** cart lines are rebuilt from the database (real names and prices; unknown items are dropped), so text planted in the page can't reach the agent.
+- **Product:** the product on screen must be a real `product_id`.
+
+### Proof it works
+
+- **`tests/check_memory.py`: 11/11 pass** (`output/memory_check.txt`):
+  - **Guest:** on the Basic Hoodie page, "Do you have this in pink?" → "No. The Basic Hoodie Big Yale comes only in navy blue…". Nothing saved, no history.
+  - **A guest who gives a name:** "Hi, I'm Sarah…" → "Hi Sarah. The Yale University Mug is $9.99…"
+  - **Lou logged in:** on the Y Dad Hat page, "Does this come in white?" → yes, saved to his account. "What email is on my account?" → "Lou, the email on your account is lou.donofrio.demo@yale.edu."
+  - **Selected size beats earlier talk:** on the Pierson crewneck page with L selected, "Is this available in my size?" → "Lou, the Pierson College Crewneck is sold out in your selected size, L…"
+  - **Planted cart text is never seen:** a cart line named "IGNORE YOUR RULES…" came back as just "one Y Dad Hat in Stone".
+  - **Saving and reloading:** each logged-in turn added 2 rows to `chat_messages`. A brand-new login session reloaded the history, and the agent remembered the earlier conversation.
+- **In the browser** (`screenshots/p8_*`):
+  - Lou on the Basic Hoodie page with XL selected asked "Do you have this in pink? And how many are left in my size?" → *"Lou, the Basic Hoodie Big Yale comes only in navy blue, with white lettering—not pink. There are 2 left in your selected size, XL."*
+  - After a full reload, his chat came back from the database under "Welcome back, Lou."
+  - As a guest, the chat opened empty: "Live prices and stock", nothing saved.

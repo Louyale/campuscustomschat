@@ -1,26 +1,26 @@
 Part 1: tools vs. the database
-PASS ( 0.46 ms) get_price: Basic Hoodie Big Yale = $39.99 (matches catalogue.price)
-PASS ( 0.50 ms) get_product_description: SOM tee text matches; navy garment, print colors are not options
-PASS ( 0.25 ms) get_product_description: Yale mug offers White and Navy
-PASS ( 0.33 ms) get_stock: every size matches the inventory table
-PASS ( 0.38 ms) get_stock: Pierson crewneck in L says 'sold out' clearly
-PASS ( 0.34 ms) get_stock: hoodie XL = 2, flagged as only a few left
-PASS ( 1.41 ms) quick_check: name + size -> $39.99, 2 in XL
-PASS ( 2.24 ms) quick_check: 'pierson crewneck' in L -> sold out, with in-stock sizes
-PASS ( 1.33 ms) quick_check: '2xl' is read as XXL
-PASS ( 1.17 ms) quick_check: a size that isn't offered says so
-PASS ( 1.25 ms) quick_check: an unknown product is 'not found' (nothing invented)
-PASS ( 0.41 ms) get_price: an unknown id returns an error, not a price
+PASS ( 0.41 ms) get_price: Basic Hoodie Big Yale = $39.99 (matches catalogue.price)
+PASS ( 0.30 ms) get_product_description: SOM tee text matches; navy garment, print colors are not options
+PASS ( 0.24 ms) get_product_description: Yale mug offers White and Navy
+PASS ( 0.32 ms) get_stock: every size matches the inventory table
+PASS ( 0.54 ms) get_stock: Pierson crewneck in L says 'sold out' clearly
+PASS ( 0.30 ms) get_stock: hoodie XL = 2, flagged as only a few left
+PASS ( 0.89 ms) quick_check: name + size -> $39.99, 2 in XL
+PASS ( 2.32 ms) quick_check: 'pierson crewneck' in L -> sold out, with in-stock sizes
+PASS ( 0.84 ms) quick_check: '2xl' is read as XXL
+PASS ( 1.05 ms) quick_check: a size that isn't offered says so
+PASS ( 0.69 ms) quick_check: an unknown product is 'not found' (nothing invented)
+PASS ( 0.22 ms) get_price: an unknown id returns an error, not a price
 
 Part 2: which tools the live agent calls
 PASS How much is the Basic Hoodie Big Yale?
-       tools called: ['quick_check']  (34.1s)
-       reply: The Basic Hoodie Big Yale is $39.99.
+       tools called: ['quick_check']  (0.5s)
+       reply: The Basic Hoodie Big Yale is $39.99. It’s currently in stock in XS through XXL.
 PASS Is the Pierson College Crewneck in stock in a large?
-       tools called: ['quick_check']  (44.2s)
-       reply: The Pierson College Crewneck is sold out in L. It’s in stock in XS, S, M, and XXL.
+       tools called: ['quick_check']  (6.0s)
+       reply: The Pierson College Crewneck is sold out in large. It’s $39.99 and currently available in XS, S, M, and XXL.
 PASS Tell me about the School of Management crest tee.
-       tools called: ['get_product_description']  (13.5s)
+       tools called: ['get_product_description']  (48.4s)
        reply: The School of Management Crest T Shirt is a navy short-sleeve tee with white Yale School of Management lettering and a centered shield crest in white and light blue.
 
 15/15 tool checks passed

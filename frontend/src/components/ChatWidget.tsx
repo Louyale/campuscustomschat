@@ -2,6 +2,9 @@ import { useEffect, useRef, useState, type FormEvent } from 'react'
 import { getChatHistory, sendChat, type ChatTurn, type ProductSummary } from '../api'
 import { useAuth } from '../auth'
 import { useChatResults } from '../chatResults'
+import { useCart } from '../cart'
+import { buildPageContext } from '../pageContext'
+import { useLocation } from 'react-router-dom'
 import ProductCard from './ProductCard'
 
 interface Message extends ChatTurn {
@@ -21,6 +24,8 @@ export function openChat(prefill = '') {
 export default function ChatWidget() {
   const { user } = useAuth()
   const chatResults = useChatResults()
+  const { items: cartItems } = useCart()
+  const location = useLocation()
   const [open, setOpen] = useState(false)
   const [messages, setMessages] = useState<Message[]>([])
   const [draft, setDraft] = useState('')
@@ -53,8 +58,13 @@ export default function ChatWidget() {
     return () => window.removeEventListener('open-chat', handler)
   }, [])
 
+  // Opening the chat jumps to the newest message; new messages scroll in smoothly.
+  const wasOpen = useRef(false)
   useEffect(() => {
-    listRef.current?.scrollTo({ top: listRef.current.scrollHeight, behavior: 'smooth' })
+    const list = listRef.current
+    if (!list) return
+    list.scrollTo({ top: list.scrollHeight, behavior: wasOpen.current ? 'smooth' : 'auto' })
+    wasOpen.current = open
   }, [messages, busy, open])
 
   async function send(text: string) {
@@ -66,7 +76,9 @@ export default function ChatWidget() {
     setDraft('')
     setBusy(true)
     try {
-      const response = await sendChat(message, history)
+      // Page context: where the shopper is, the item on screen, their selections and cart.
+      const page = buildPageContext(location.pathname, location.search, cartItems)
+      const response = await sendChat(message, history, page)
       // A search for a type of item fills the page with its matches; the chat keeps a short preview.
       if (response.page && response.products.length) {
         chatResults.show(message, response.products, response.page)
