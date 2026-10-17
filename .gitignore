@@ -1,28 +1,11 @@
-# Assignment rule: never commit the database or product images
-data/
-*.db
-*.sqlite
-*.sqlite3
-
-# Secrets
+# Repo root: the homework lives in hw4/ (which has its own .gitignore).
+# Never commit secrets, the course data pack, local environments or packages.
 .env
 .env.*
 !.env.example
-
-# Python
+data/
+*.db
 .venv/
-**/.venv/
 __pycache__/
-*.py[cod]
-
-# Node / Vite
 node_modules/
-**/node_modules/
-dist/
-*.local
-
-# Editors and OS
-.vscode/
-.DS_Store
-Thumbs.db
-*.tsbuildinfo
+*.zip

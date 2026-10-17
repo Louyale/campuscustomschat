@@ -20,6 +20,7 @@ This is the log of what I typed to my vibe coder (Claude Code) while building th
 | 10 | Style the website | Re-look at the design and enhance it; write how it keeps customers engaged and buying; add licensed Yale campus photos and a slideshow of people in Yale gear | (none yet) | `output/design.md`, `Slideshow.tsx`, `CampusGallery.tsx`, `SpiritTicker.tsx`, `photoCredits.ts`, `frontend/public/photos/` |
 | 11 | Site testing (app check) | Test the live site; note the banner stops on hover; show other features work; make the HTML very easy to grade with screenshots | (none yet) | `output/app_check.html`, `output/app_check_images/` |
 | 12 | Audit trail, safety, finish harness | Append-only audit JSON never wiped; recommend more safety rules; finish the harness (models and why, tools, safety, specs); show harness and JSON | Add rules against invented products, misstated prices and interfering with other stores, and prove them | `output/audit_trail.json`, `backend/audit.py`, `backend/prompts/prompt.md`, `output/harness.md`, `tests/check_audit.py`, `tests/check_safety.py` |
+| 13 | Push to GitHub and submit the URL | Match the exact hw4 layout, README run steps, push to the public repo, package HW4, grade us | Same repo (campuscustomschat); everything in the repo for grading | `hw4/` folder in the repo, `requirements.txt`, `README.md`, final file tree |
 
 ---
 
@@ -615,6 +616,90 @@ This is the log of what I typed to my vibe coder (Claude Code) while building th
 > when do you exopect all tests to finish?
 
 **Result:** About 10 minutes. When they finished (memory 11/11, chat re-checks all pass, safety 16/16), the results were added here and in the harness and pushed automatically.
+
+---
+
+## Problem 13: Push to GitHub and submit the URL
+
+**Prompt (my own words):**
+
+> while we are waiting for the final test, make sure all files comply with the file layout.  create the tree exactly as specified.  make sure the readme gives the froint and back end explaiantion.  package all up in HW4, update HW4 and the git.  make sure everything is pushed to the public repo, camouscustomschat for louyale that we've been using.  give me the url so i can see the final webpage and the repo url.  grade us and tell me what we will get bac=sed on all prompts requested.  make sure it is over 95% and if not make any corrections.  show me the final tree.  be sure to send me the packaged HW4 file.
+
+**Follow-up prompts:**
+
+> note the overlap above, of course
+
+> the site is campuscustomschat as we've been using for the repo
+
+> tell me when we are done and the grader will give me a A+
+
+> be sure its in the repo to be graded with all our work
+
+**What was lacking after the first prompt:** I wanted it clear that everything goes to the same public repo we've used all along, with all our work in it for grading.
+
+**Outcome:**
+- **Layout:** the repo now has a folder named `hw4/` holding the exact layout from the assignment:
+  - `AI_prompts.md`, `requirements.txt` (moved up from `backend/`), `.env.example`, `.gitignore`, `README.md`
+  - `frontend/`
+  - `backend/` with `main.py`, `agent.py`, `models.py`, `tools.py` and `prompts/prompt.md`
+  - `output/` with `harness.md`, `design.md`, `usability.md`, `app_check.html`, `app_check_images/` and `audit_trail.json`
+
+  The repo root has only a pointer `README.md` and a safety `.gitignore`.
+- **Not committed:** the real `.env`, `campus_customs.db` and product images. They stay local in `hw4/data/` and `hw4/.env`, and `.env.example` has placeholders only.
+- **README:** explains how to place the data pack (`hw4/data/campus_customs.db`, `hw4/data/products/`), set `.env`, and run the back end (`uvicorn main:app --reload --port 8000`) and the front end (`npm run dev`, http://localhost:5180). It also lists every test with its last result and shows the file tree.
+- **Checked after the move:** the API health check reported `database`, `images` and `ai_key_loaded` all true; the site, product images and campus photos loaded; a live chat gave the right Pierson price; and the audit trail kept appending.
+
+**Final file tree (from `git ls-files`):**
+
+```
+hw4/
+├── AI_prompts.md
+├── requirements.txt
+├── .env.example
+├── .gitignore
+├── README.md
+├── frontend/               # Vite React TypeScript app
+├── backend/
+│   ├── main.py             # FastAPI app — run with: uvicorn main:app --reload
+│   ├── agent.py
+│   ├── models.py
+│   ├── tools.py
+│   ├── audit.py            # append-only audit trail
+│   ├── auth.py             # accounts and sessions
+│   ├── bestsellers.json
+│   ├── fetch_bestsellers.py
+│   └── prompts/
+│       └── prompt.md
+├── output/
+│   ├── harness.md
+│   ├── design.md
+│   ├── usability.md
+│   ├── app_check.html
+│   ├── app_check_images/   # screenshots linked from app_check.html
+│   ├── audit_trail.json
+│   ├── audit_check.txt
+│   ├── auth_check.txt
+│   ├── chat_check.txt
+│   ├── memory_check.txt
+│   ├── safety_check.txt
+│   ├── search_check.txt
+│   └── tools_check.txt
+├── add_products.py
+├── check_portkey.py
+├── EVIDENCE_CHECKLIST.md
+├── screenshots/            # evidence per problem
+├── STYLE_GUIDE.md
+├── tests/                  # automated checks
+└── update_prices.py
+```
+
+Local-only data pack (not in git):
+
+```
+data/
+├── campus_customs.db
+└── products/              # images referenced by the catalogue
+```
 
 ---
 

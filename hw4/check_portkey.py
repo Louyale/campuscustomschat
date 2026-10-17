@@ -1,6 +1,6 @@
 """Make one tiny Portkey chat request per model to confirm the AI route works.
 
-Reads PORTKEY_API_KEY from HW4/.env (falls back to the workspace .env).
+Reads PORTKEY_API_KEY from hw4/.env (falls back to a parent-folder .env).
 Never prints the key. Usage: python check_portkey.py [model ...]
 """
 

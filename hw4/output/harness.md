@@ -477,12 +477,12 @@ Safety is layered: the prompt tells the agent what to do, and code enforces what
 **How to run it (two terminals):**
 
 ```bash
-# Back end (from HW4/backend), with HW4/.env holding PORTKEY_API_KEY and SESSION_SECRET
+# Back end (from hw4/backend), with hw4/.env holding PORTKEY_API_KEY and SESSION_SECRET; data pack in hw4/data/
 uvicorn main:app --reload --port 8000
 ```
 
 ```bash
-# Front end (from HW4/frontend)
+# Front end (from hw4/frontend)
 npm install
 npm run dev        # opens http://localhost:5180
 ```

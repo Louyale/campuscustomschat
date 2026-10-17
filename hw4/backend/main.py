@@ -27,7 +27,7 @@ from dotenv import load_dotenv
 
 ROOT = Path(__file__).resolve().parent.parent
 load_dotenv(ROOT / ".env")
-load_dotenv(ROOT.parent / ".env")  # workspace .env holds PORTKEY_API_KEY; HW4/.env wins on conflicts
+load_dotenv(ROOT.parent / ".env")  # optional parent-folder .env for local setups; hw4/.env wins on conflicts
 
 import os  # noqa: E402
 
