@@ -249,6 +249,14 @@ This is the log of what I typed to my vibe coder (Claude Code) while building th
 - **Chat button:** the circle is now twice the size (104 px; 72 px on phones). Screenshot `p5_11`.
 - **Pushed:** everything was committed and pushed to `github.com/Louyale/campuscustomschat`.
 
+> morning- we'll pick up soon.  for now put a thin white circle around the chat circle so that it's more prominent.
+
+**Result:** Added a thin white ring (3 px) around the navy chat circle, with a faint navy outline and a soft shadow so it stands out on both white and navy backgrounds. Screenshot `p5_11` refreshed.
+
+> Yes, commit the white ring change and push it to the campuscustomschat repo.
+
+**Result:** Committed and pushed the white ring change to `github.com/Louyale/campuscustomschat`.
+
 ---
 
 ## Appendix: setup prompts (before Problem 1)
