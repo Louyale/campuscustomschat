@@ -525,6 +525,14 @@ This is the log of what I typed to my vibe coder (Claude Code) while building th
 - **Accessibility:** alt text on every photo, a pausable slideshow, keyboard support in the large photo view, and no auto-motion for "reduce motion" users.
 - **Checked in the running app:** desktop and phone; all photos load; the slideshow auto-advances; the large photo view shows its credit; the chat answered "Is this in stock in M?" correctly with the new look; front end type check clean.
 
+> put what we wrote in the design.md file here and give me the website again, here
+
+**Result:** Pasted `output/design.md` into the chat, opened it in the side pane, and gave the running site link (http://localhost:5180).
+
+> yes, ready to save everywhere and push to the repo
+
+**Result:** Checked that no `.env`, database or product images were staged, then pushed Problem 10 to `github.com/Louyale/campuscustomschat`. **Problem 10 complete.**
+
 ---
 
 ## Appendix: setup prompts (before Problem 1)
