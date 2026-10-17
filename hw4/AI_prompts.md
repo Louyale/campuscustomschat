@@ -723,6 +723,18 @@ data/
 
 **Result:** Added **`hw4/TREE.md`**, the complete file tree generated from git, with notes on each key file, the local-only data pack and a "required layout check" table. The repo's front page (`README.md` at the root) now shows the file tree first, with a link to `hw4/TREE.md`; `hw4/README.md` links to it too.
 
+> is the repo updated so the grader can now see the finished product?
+
+**Result:** Yes: the public repo was at the latest commit, with nothing unpushed.
+
+> so they use the readme to run the website?
+
+**Result:** Yes: graders follow `hw4/README.md` (place the data pack, set `.env`, run the back end and front end, open http://localhost:5180). `output/app_check.html` and `screenshots/` show everything working without running it.
+
+> thx see u seeon
+
+**Result:** HW4 complete.
+
 ---
 
 ## Appendix: setup prompts (before Problem 1)
