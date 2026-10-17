@@ -399,6 +399,14 @@ This is the log of what I typed to my vibe coder (Claude Code) while building th
   - Tests: chat 21/21 (now also checking the headline), auth 16/16.
   - Committed and pushed to `github.com/Louyale/campuscustomschat`. **Problem 7 complete.**
 
+> shoew me the harness again
+
+**Result:** Opened `output/harness.md` in the side pane at the Problem 7 section.
+
+> ready to push and move to problem 8
+
+**Result:** Committed and pushed to `github.com/Louyale/campuscustomschat`; ready for Problem 8.
+
 ---
 
 ## Appendix: setup prompts (before Problem 1)
