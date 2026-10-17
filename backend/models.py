@@ -30,6 +30,8 @@ class ProductSummary(BaseModel):
     name: str
     garment_type: str
     category: str
+    group: str  # "Apparel" or "Accessories"
+    one_size: bool = False  # only one size ("OS"), so it can go straight into the cart
     collections: list[str]
     short_description: str
     price: float

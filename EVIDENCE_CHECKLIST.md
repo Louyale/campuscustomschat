@@ -49,8 +49,9 @@ The assignment says the evidence is **the running site, the database writes, and
 - [x] `output/harness.md`: how the front end talks to FastAPI and how the agent is loaded
 - [x] Extras: Add to cart / Check options (size, color), cart with shipping + CT tax + total and a demo card form (no card data sent or stored), refined chat
 - [x] Low-Key Yale Gear collection (11 pieces: Handsome Dan, Boola Boola, crests; 4 added from the live store)
-- [x] Chat accuracy: `tests/check_chat.py` 15/15 (`output/chat_check.txt`) after fixing the color and stale-history causes
-- [x] Screenshots `p5_01` to `p5_12` (guest chat, prompt-injection refusal, Lou's saved chat, cart buttons, options, hat colors, added-to-cart popup, checkout tally, card validation, refined chat, larger chat button, Low-Key Yale Gear)
+- [x] Accessories: all 251 non-clothing items from the live store (Drinkware, Bags, Home & Decor, Books & Stationery, Ties & Scarves, Jewelry/Pins/Keychains, Decals & Magnets, Pets & Plush), shown as "Accessories" with real colorways
+- [x] Chat accuracy: `tests/check_chat.py` 18/18 (`output/chat_check.txt`) after fixing the color and stale-history causes
+- [x] Screenshots `p5_01` to `p5_15` (guest chat, prompt-injection refusal, Lou's saved chat, cart buttons, options, hat colors, added-to-cart popup, checkout tally, card validation, refined chat, larger chat button, Low-Key Yale Gear, Accessories page, home Accessories row, mug color options)
 - [x] I've reviewed the harness Problem 5 section (my edits kept; the proof now matches a real Lou Donofrio test)
 
 ## Whole project (from the scenario)

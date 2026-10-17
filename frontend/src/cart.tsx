@@ -96,10 +96,10 @@ export function useCart() {
   return value
 }
 
-/** Colors a shopper can actually choose. Hats come in several colorways; for other pieces the
- *  catalogue lists the design's colors (garment first, then print), so only the garment color applies. */
+/** Colors a shopper can actually choose. Hats and accessories come in real colorways; for clothing
+ *  the catalogue lists the design's colors (garment first, then print), so only the garment color applies. */
 // eslint-disable-next-line react-refresh/only-export-components
-export function colorOptions(product: Pick<ProductSummary, 'category' | 'colors'>): string[] {
+export function colorOptions(product: Pick<ProductSummary, 'category' | 'group' | 'colors'>): string[] {
   if (product.colors.length === 0) return []
-  return product.category === 'Hats' ? product.colors : [product.colors[0]]
+  return product.category === 'Hats' || product.group === 'Accessories' ? product.colors : [product.colors[0]]
 }

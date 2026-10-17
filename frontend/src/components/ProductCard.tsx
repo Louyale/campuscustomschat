@@ -16,9 +16,9 @@ export default function ProductCard({ product, showDescription = true, showActio
   const [choosing, setChoosing] = useState(false)
   const colors = colorOptions(product)
 
-  // One-size hats in a single color go straight in; everything else needs a size first.
+  // One-size items with one colorway go straight in; everything else opens the options first.
   function addToCart() {
-    if (product.category === 'Hats' && colors.length <= 1) add(product, 'OS', colors[0] ?? '')
+    if (product.one_size && colors.length <= 1) add(product, 'OS', colors[0] ?? '')
     else setChoosing(true)
   }
 

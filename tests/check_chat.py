@@ -50,7 +50,7 @@ CASES = [
      lambda r, p: {"pom-beanie-3dy", "lo-profile-cap-2-y", "class-of-2026-big-y-hat"} <= set(p)
      and has(r, "$24.99", "$29.99")),
     ("Do you sell scarves?",
-     lambda r, p: bool(NOT_CARRIED.search(r)) and not any("scarf" in x for x in p)),
+     lambda r, p: "yale-striped-knit-scarf" in p and has(r, "$26.99")),
     ("Do you have any Ezra Stiles college gear?",
      lambda r, p: "ezra-stiles-logo-t-shirt" in p and has(r, "$29.99")),
     ("I want something subtle that says Yale without a big YALE on it.",
@@ -59,6 +59,8 @@ CASES = [
          "morse-logo-t-shirt", "grace-hopper-logo-t-shirt", "benjamin-franklin-t-shirt", "ezra-stiles-logo-t-shirt",
          "silliman-logo-t-shirt", "school-of-management-crest-t-shirt"} for x in p)),
     ("What is the most expensive item you sell?",
+     lambda r, p: has(r, "$209.99") and "gallery-diploma-frame-thick-glossy-frame" in p),
+    ("What is the most expensive piece of clothing you sell?",
      lambda r, p: has(r, "$199.99") and "brooks-brothers-bomber-jacket-yale" in p),
     ("Show me Morse college gear.",
      lambda r, p: {"morse-1-4-zip", "morse-logo-t-shirt"} <= set(p) and has(r, "$59.99", "$29.99")),
@@ -70,6 +72,10 @@ CASES = [
      lambda r, p: has(r, "(475) 301-4205") and not re.search(r"\b\d{1,2}(:\d{2})?\s?(am|pm)\b", r, re.I)),
     ("What is your return policy?",
      lambda r, p: has(r, "30 days") and bool(re.search(r"tags", r, re.I))),
+    ("Do you sell Yale coffee mugs? What is the cheapest one?",
+     lambda r, p: "ceramic-mug-yale-university-wordmark" in p and has(r, "$9.99")),
+    ("Do you have umbrellas?",
+     lambda r, p: bool(NOT_CARRIED.search(r)) and not any("umbrella" in x for x in p)),
     ("Do you have a pink hat?",
      lambda r, p: "adjustable-y-w-vintage-foam" in p and bool(re.search(r"dusty rose", r, re.I))),
 ]

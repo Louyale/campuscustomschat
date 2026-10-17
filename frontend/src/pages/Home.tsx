@@ -115,6 +115,14 @@ export default function Home() {
         shopLabel="All hats"
       />
 
+      <ProductRow
+        title={HOME.accessories.title}
+        intro={HOME.accessories.intro}
+        query={{ group: 'Accessories', sort: 'best-selling', limit: '12' }}
+        shopLink="/products?group=Accessories"
+        shopLabel="All accessories"
+      />
+
       <section className="visit container">
         <div>
           <h2 className="section-title">{HOME.visit.title}</h2>

@@ -14,7 +14,7 @@ const SORTS = [
   { value: 'name-desc', label: 'Alphabetically, Z–A' },
 ]
 
-const FILTER_KEYS = ['q', 'category', 'collection', 'in_stock', 'min_price', 'max_price', 'sort'] as const
+const FILTER_KEYS = ['q', 'group', 'category', 'collection', 'in_stock', 'min_price', 'max_price', 'sort'] as const
 
 export default function Products() {
   const [params, setParams] = useSearchParams()
@@ -31,7 +31,8 @@ export default function Products() {
     setParams(next, { replace: true })
   }
 
-  const heading = query.q ? `Search results for “${query.q}”` : query.collection || query.category || 'All products'
+  const heading = query.q ? `Search results for “${query.q}”` : query.collection || query.category || query.group || 'All products'
+  const categoryGroups = (['Apparel', 'Accessories'] as const).filter((g) => !query.group || query.group === g)
   const active = FILTER_KEYS.filter((k) => k !== 'sort' && query[k])
 
   return (
@@ -52,10 +53,23 @@ export default function Products() {
           <summary><h2>Filters{active.length > 0 ? ` (${active.length})` : ''}</h2></summary>
 
           <fieldset>
+            <legend>Shop</legend>
+            <FilterOption label="Everything" checked={!query.group} onChange={() => update('group', '')} name="group" />
+            {facets.data?.groups.map((g) => (
+              <FilterOption key={g.name} label={`${g.name} (${g.count})`} checked={query.group === g.name} onChange={() => update('group', g.name)} name="group" />
+            ))}
+          </fieldset>
+
+          <fieldset>
             <legend>Category</legend>
             <FilterOption label="All" checked={!query.category} onChange={() => update('category', '')} name="category" />
-            {facets.data?.categories.map((c) => (
-              <FilterOption key={c.name} label={`${c.name} (${c.count})`} checked={query.category === c.name} onChange={() => update('category', c.name)} name="category" />
+            {categoryGroups.map((g) => (
+              <div key={g} className="filter-group">
+                <p className="filter-group-label">{g}</p>
+                {facets.data?.categories.filter((c) => c.group === g).map((c) => (
+                  <FilterOption key={c.name} label={`${c.name} (${c.count})`} checked={query.category === c.name} onChange={() => update('category', c.name)} name="category" />
+                ))}
+              </div>
             ))}
           </fieldset>
 
@@ -91,6 +105,7 @@ export default function Products() {
         <section aria-live="polite">
           {query.collection === 'Graduate & Professional Schools' && <SomSpotlight />}
           {query.collection === 'Low-Key Yale Gear' && <p className="collection-lede">{PRODUCTS.lowKey}</p>}
+          {query.group === 'Accessories' && !query.category && !query.collection && <p className="collection-lede">{PRODUCTS.accessories}</p>}
           {products.loading && <p className="muted">Loading products…</p>}
           {products.error && <p className="alert alert-error">Couldn't load products: {products.error}</p>}
           {products.data && (

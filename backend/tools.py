@@ -23,8 +23,26 @@ SIZE_ORDER = ["XS", "S", "M", "L", "XL", "XXL", "OS"]  # OS = one size (hats)
 LOW_STOCK = 5
 IMAGE_VERSION = 4  # bump when main.clean_image() changes so browsers refetch
 
-# garment_type has 22 free-text spellings; fold them into shop categories.
-CATEGORIES = ["Hoodies", "Crewnecks", "T-Shirts", "Quarter-Zips", "Jackets & Fleece", "Long Sleeves", "Hats"]
+# garment_type has many free-text spellings; fold them into shop categories, grouped like the
+# live store's menu: Apparel (clothing and hats) and Accessories (everything else).
+APPAREL = ["Hoodies", "Crewnecks", "T-Shirts", "Quarter-Zips", "Jackets & Fleece", "Long Sleeves", "Hats"]
+ACCESSORY_CATEGORIES = {  # category: accessory types (garment_type values) that belong to it
+    "Drinkware": ["mug", "glass", "glass set", "wine glass", "pint glass", "shotglass", "tumbler", "bottle",
+                  "waterbottle", "water bottle", "koozie", "drinkware"],
+    "Bags": ["bag", "backpack", "duffle", "tote", "tote bag", "pouch", "cooler", "cooler bag", "cinch bag",
+             "laundry bag", "messenger bag"],
+    "Home & Decor": ["pennant", "banner", "blanket", "frame", "ornament", "towel", "golf towel", "apron",
+                     "pot holder", "coaster", "golf ball", "charger", "phone wallet", "gift"],
+    "Books & Stationery": ["book", "journal", "folder", "pencil", "pen", "pen pack", "stationary", "sticky notes",
+                           "mousepad"],
+    "Ties & Scarves": ["tie", "scarf", "silk scarf", "soccer scarf", "earmuffs", "slides", "sunglasses"],
+    "Jewelry, Pins & Keychains": ["earrings", "lapel pin", "keychain", "acrylic keychain", "keyring", "lanyard",
+                                  "badge holder", "card organizer"],
+    "Decals & Magnets": ["decal", "magnet", "tattoo"],
+    "Pets & Plush": ["dog bandana", "dog toy", "dog tank top", "plush", "stress ball"],
+}
+CATEGORIES = APPAREL + list(ACCESSORY_CATEGORIES)
+GROUPS = ["Apparel", "Accessories"]
 
 COLLEGES = ["benjamin-franklin", "berkeley", "branford", "davenport", "ezra-stiles", "grace-hopper",
             "jonathan-edwards", "morse", "pauli-murray", "pierson", "saybrook", "silliman",
@@ -57,7 +75,10 @@ SortKey = Literal["featured", "best-selling", "price-asc", "price-desc", "name-a
 # ---------------------------------------------------------------- grouping
 
 def category_for(garment_type: str) -> str:
-    g = garment_type.lower()
+    g = garment_type.lower().strip()
+    for category, kinds in ACCESSORY_CATEGORIES.items():
+        if g in kinds:
+            return category
     if any(word in g for word in ("beanie", "cap", "hat")):
         return "Hats"
     if "quarter-zip" in g:
@@ -97,6 +118,15 @@ def collections_for(product_id: str) -> list[str]:
     return found
 
 
+def group_for(category: str) -> str:
+    return "Apparel" if category in APPAREL else "Accessories"
+
+
+def has_color_choice(category: str) -> bool:
+    """Hats and accessories come in real colorways; clothing lists its design colors (garment first)."""
+    return category == "Hats" or group_for(category) == "Accessories"
+
+
 def stock_status(quantity: int) -> Literal["in_stock", "low_stock", "sold_out"]:
     if quantity <= 0:
         return "sold_out"
@@ -116,12 +146,15 @@ def db() -> sqlite3.Connection:
     return con
 
 
-def to_summary(row: sqlite3.Row, total_stock: int) -> dict:
+def to_summary(row: sqlite3.Row, total_stock: int, one_size: bool = False) -> dict:
+    category = category_for(row["garment_type"])
     return {
         "product_id": row["product_id"],
         "name": row["name"],
         "garment_type": row["garment_type"],
-        "category": category_for(row["garment_type"]),
+        "category": category,
+        "group": group_for(category),
+        "one_size": one_size,
         "collections": collections_for(row["product_id"]),
         "short_description": short_description(row["description"]),
         "price": row["price"],
@@ -136,11 +169,12 @@ def to_summary(row: sqlite3.Row, total_stock: int) -> dict:
 def load_products() -> list[dict]:
     with db() as con:
         rows = con.execute(
-            """SELECT c.*, COALESCE(SUM(i.quantity), 0) AS total_stock
+            """SELECT c.*, COALESCE(SUM(i.quantity), 0) AS total_stock,
+                      COUNT(i.size) = 1 AND MAX(i.size) = 'OS' AS one_size
                FROM catalogue c LEFT JOIN inventory i ON i.product_id = c.product_id
                GROUP BY c.product_id"""
         ).fetchall()
-    return [to_summary(r, r["total_stock"]) for r in rows]
+    return [to_summary(r, r["total_stock"], bool(r["one_size"])) for r in rows]
 
 
 def summaries_for(product_ids: list[str]) -> list[dict]:
@@ -156,8 +190,10 @@ def _category_rank(category: str) -> int:
 
 def find_products(q: str | None = None, category: str | None = None, collection: str | None = None,
                   in_stock: bool | None = None, min_price: float | None = None, max_price: float | None = None,
-                  sort: SortKey = "featured", limit: int = 200) -> list[dict]:
+                  sort: SortKey = "featured", limit: int = 400, group: str | None = None) -> list[dict]:
     products = load_products()
+    if group:
+        products = [p for p in products if p["group"].lower() == group.lower()]
     if q:
         terms = q.lower().split()
         with db() as con:
@@ -203,7 +239,7 @@ def product_detail(product_id: str) -> dict | None:
     sizes = [{"size": s, "quantity": stock[s], "status": stock_status(stock[s])}
              for s in sorted(stock, key=lambda s: SIZE_ORDER.index(s) if s in SIZE_ORDER else 99)]
     return {
-        **to_summary(row, sum(stock.values())),
+        **to_summary(row, sum(stock.values()), list(stock) == ["OS"]),
         "description": row["description"],
         "search_tags": json.loads(row["search_tags"]),
         "sizes": sizes,
@@ -213,7 +249,9 @@ def product_detail(product_id: str) -> dict | None:
 def category_counts() -> dict:
     products = load_products()
     return {
-        "categories": [{"name": c, "count": sum(p["category"] == c for p in products)} for c in CATEGORIES],
+        "categories": [{"name": c, "group": group_for(c), "count": sum(p["category"] == c for p in products)}
+                       for c in CATEGORIES],
+        "groups": [{"name": g, "count": sum(p["group"] == g for p in products)} for g in GROUPS],
         "collections": [{"name": c, "count": sum(c in p["collections"] for p in products)} for c in COLLECTIONS],
     }
 
@@ -225,7 +263,7 @@ def category_counts() -> dict:
 def _brief(p: dict) -> dict:
     # The catalogue's colors describe the design: garment color first, then print colors.
     # Only hats come in several colorways, so only their colors are real choices.
-    if p["category"] == "Hats":
+    if has_color_choice(p["category"]):
         colors = {"colors_available": p["colors"]}
     else:
         colors = {"garment_color": p["colors"][0] if p["colors"] else None, "print_colors": p["colors"][1:]}
@@ -236,13 +274,15 @@ def _brief(p: dict) -> dict:
 
 def search_products(query: str | None = None, category: str | None = None, collection: str | None = None,
                     max_price: float | None = None, in_stock_only: bool = False,
-                    sort: SortKey = "best-selling", limit: int = 8) -> dict:
+                    sort: SortKey = "best-selling", limit: int = 8, group: str | None = None) -> dict:
     """Search the Campus Customs catalogue.
 
     Args:
         query: Words to match in names, descriptions, colors and tags, e.g. "navy hoodie" or "pierson".
             Every word must match, so use one or two key words. Leave empty to browse.
-        category: One of Hoodies, Crewnecks, T-Shirts, Quarter-Zips, Jackets & Fleece, Long Sleeves, Hats.
+        category: Apparel: Hoodies, Crewnecks, T-Shirts, Quarter-Zips, Jackets & Fleece, Long Sleeves, Hats.
+            Accessories: Drinkware (mugs, glasses, tumblers), Bags, Home & Decor (pennants, blankets, ornaments,
+            towels), Books & Stationery, Ties & Scarves, "Jewelry, Pins & Keychains", Decals & Magnets, Pets & Plush.
         collection: One of Residential Colleges, Bulldog Athletics, Low-Key Yale Gear (subtle pieces with
             Handsome Dan, Boola Boola or a crest instead of a big YALE), Family, Graduate & Professional Schools,
             The Game, Bulldogs.
@@ -250,10 +290,11 @@ def search_products(query: str | None = None, category: str | None = None, colle
         in_stock_only: True to skip products that are sold out in every size.
         sort: best-selling (default), featured, price-asc, price-desc, name-asc or name-desc.
         limit: How many results to return (1-12).
+        group: "Apparel" (clothing and hats) or "Accessories" (everything else).
     """
     limit = max(1, min(int(limit), 12))
     results = find_products(q=query or None, category=category, collection=collection,
-                            in_stock=True if in_stock_only else None, max_price=max_price, sort=sort)
+                            in_stock=True if in_stock_only else None, max_price=max_price, sort=sort, group=group)
     return {"total_matches": len(results), "products": [_brief(p) for p in results[:limit]]}
 
 

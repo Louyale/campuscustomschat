@@ -277,6 +277,29 @@ This is the log of what I typed to my vibe coder (Claude Code) while building th
 - **Checks:** the chat test now has 15 checks (Ezra Stiles gear now exists, plus a subtle-gear question), and all 15 pass. Auth passes 16/16. Screenshot `p5_12`.
 - **Pushed** to `github.com/Louyale/campuscustomschat`.
 
+> i notice that our website only has clothing.  you need to add the other merch from the real website and update our page in the same way that you have the clothing.  this includes mugs, umbrellas, etc
+
+> the top banner line should call these accessories
+
+> add these bef problem 6
+
+**Result:**
+- **Added:** every non-clothing item the real store sells, 251 accessories. Each has its real photo, price, colorways and one-size stock, added by `add_products.py`. The catalogue is now 364 products.
+- **Grouped like the live site's menu:** **Apparel** and **Accessories**. The Accessories page heading and banner read "Accessories: mugs and glassware, bags, pennants and blankets, stationery, ties and scarves, keychains, decals and more…"
+- **Accessories categories:** Drinkware, Bags, Home & Decor, Books & Stationery, Ties & Scarves, Jewelry/Pins/Keychains, Decals & Magnets, Pets & Plush.
+- **Same treatment as clothing:**
+  - filters (a new "Shop" filter plus grouped categories)
+  - Add to cart / Check options with real color choices (e.g. the Yale University Mug in White or Navy), and one-click add for single-option items
+  - a home-page "Accessories" row led by best sellers
+  - a footer link
+- **The chatbot knows them:** e.g. "the cheapest Yale mug is the Yale University Mug at $9.99".
+- **Umbrellas:** the real store doesn't sell any, so none were added (keeping it real). The gift card and gift bundle were also left out.
+- **Checks:**
+  - The chat test now has 18 questions; all pass. Two expected answers changed with the new catalogue: we now sell scarves, and the priciest item is a $209.99 diploma frame (the $199.99 bomber is the priciest clothing).
+  - Auth passes 16/16.
+  - Screenshots `p5_13` to `p5_15`.
+- **Pushed** to `github.com/Louyale/campuscustomschat`.
+
 ---
 
 ## Appendix: setup prompts (before Problem 1)

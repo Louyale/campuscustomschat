@@ -31,6 +31,7 @@ export default function ProductPage() {
     <div className="page container">
       <nav className="breadcrumb" aria-label="Breadcrumb">
         <Link to="/">Home</Link> / <Link to="/products">Products</Link> /{' '}
+        <Link to={`/products?group=${product.group}`}>{product.group}</Link> /{' '}
         <Link to={`/products?category=${encodeURIComponent(product.category)}`}>{product.category}</Link> / {product.name}
       </nav>
 
@@ -47,7 +48,7 @@ export default function ProductPage() {
 
           <dl className="item-facts">
             <div><dt>Style</dt><dd>{product.garment_type}</dd></div>
-            <div><dt>Colors</dt><dd>{product.colors.join(', ')}</dd></div>
+            {product.colors.length > 0 && <div><dt>Colors</dt><dd>{product.colors.join(', ')}</dd></div>}
           </dl>
 
           <fieldset className="sizes">

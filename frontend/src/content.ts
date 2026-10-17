@@ -56,6 +56,11 @@ export const HOME = {
     gradSchools: `Management, Law, Medicine, Music, Forestry and more.`,
   },
 
+  accessories: {
+    title: `Accessories`,
+    intro: `Mugs for early lectures, pennants for the dorm, a tie for the interview, and a tumbler for the tailgate.`,
+  },
+
   hats: {
     title: `Hats off`,
     intro: `Knit pom beanies for a January walk up Science Hill, Y caps for a sunny afternoon at the Bowl, and a Class of 2026 hat for the grads.`,
@@ -68,6 +73,9 @@ export const HOME = {
 }
 
 export const PRODUCTS = {
+  // Line at the top of the Accessories page (everything that isn't clothing).
+  accessories: `Accessories: mugs and glassware, bags, pennants and blankets, stationery, ties and scarves, keychains, decals and more, for the desk, the dorm and the tailgate.`,
+
   // Line under the heading of the Low-Key Yale Gear collection.
   lowKey: `So you can rep as a Yalie on the down low, iykyk: Handsome Dan, Boola Boola and the crests, no big YALE required.`,
 

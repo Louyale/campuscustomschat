@@ -390,3 +390,5 @@ button, input, select { font: inherit; }
 .spotlight p { margin: 0 0 12px; }
 @media (max-width: 719px) { .spotlight { grid-template-columns: 1fr; } .spotlight img { width: 140px; } }
 .collection-lede { margin: 0 0 18px; padding: 14px 18px; border-left: 3px solid var(--navy); background: #f5f8fc; font-size: 1.02rem; }
+.filter-group { margin-top: 6px; }
+.filter-group-label { margin: 8px 0 2px; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-light); }

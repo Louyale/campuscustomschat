@@ -41,7 +41,7 @@ export default function OptionsDialog({ product, onClose }: { product: ProductSu
           <h2>{product.name}</h2>
           <p className="dialog-price">{money(product.price)}</p>
 
-          <fieldset className="option-group">
+          {colors.length > 0 && <fieldset className="option-group">
             <legend>Color <span>{color}</span></legend>
             <div className="option-pills">
               {colors.map((c) => (
@@ -49,7 +49,7 @@ export default function OptionsDialog({ product, onClose }: { product: ProductSu
                   disabled={colors.length === 1} onClick={() => setColor(c)}>{c}</button>
               ))}
             </div>
-          </fieldset>
+          </fieldset>}
 
           <fieldset className="option-group">
             <legend>Size {chosen && <span>{sizeLabel(chosen.size)} · {STOCK_LABEL[chosen.status].toLowerCase()}</span>}</legend>

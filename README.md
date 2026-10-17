@@ -15,7 +15,7 @@ A customer website for Campus Customs (Yale Bulldog Blue). It has a React + Vite
 
 | Table | Rows | Contents |
 |---|---|---|
-| `catalogue` | 102 (+11 from `add_products.py`: 7 hats, 4 low-key pieces) | product_id, name, garment_type, description, colors (JSON), search_tags (JSON), image_file_path, price |
+| `catalogue` | 102 (+262 from `add_products.py`: 7 hats, 4 low-key pieces, 251 accessories) | product_id, name, garment_type, description, colors (JSON), search_tags (JSON), image_file_path, price |
 | `inventory` | 612 | product_id × size (XS–XXL) → quantity; 145 rows have 0 in stock |
 | `users` | 3 | name, email, password_hash (pbkdf2_sha256), created_at, first_name, last_name; includes a test user |
 | `chat_messages` | 22 | user_id, role, content, products_json, created_at |
@@ -40,11 +40,11 @@ npm install
 npm run dev
 ```
 
-Copy `.env.example` to `.env` and fill in `PORTKEY_API_KEY` (and a `SESSION_SECRET`). Vite forwards `/api` and `/images` to the backend. After unzipping the data, run `python add_products.py` once: it adds 11 real products from the live store, 7 hats (the course data has none) and 4 pieces for the Low-Key Yale Gear collection. Optional: `python update_prices.py --apply` syncs prices with the live store, and `python backend/fetch_bestsellers.py` refreshes the best-seller ranking.
+Copy `.env.example` to `.env` and fill in `PORTKEY_API_KEY` (and a `SESSION_SECRET`). Vite forwards `/api` and `/images` to the backend. After unzipping the data, run `python add_products.py` once: it adds 262 real products from the live store: 7 hats (the course data has none), 4 pieces for the Low-Key Yale Gear collection, and all 251 non-clothing accessories (mugs, glassware, bags, pennants, stationery, ties, scarves, jewelry, keychains, decals, magnets, pet gear). Then run `python backend/fetch_bestsellers.py` to rank them. Optional: `python update_prices.py --apply` syncs prices with the live store, and `python backend/fetch_bestsellers.py` refreshes the best-seller ranking.
 
 | Endpoint | What it returns |
 |---|---|
-| `GET /api/products` | Product list; filters `q`, `category`, `collection`, `in_stock`, `min_price`, `max_price`, `sort` |
+| `GET /api/products` | Product list; filters `q`, `group` (Apparel or Accessories), `category`, `collection`, `in_stock`, `min_price`, `max_price`, `sort` |
 | `GET /api/products/{product_id}` | One product with stock by size |
 | `GET /api/categories` | Category and collection counts |
 | `GET /images/{file}` | Product photo on a white background |
@@ -56,4 +56,4 @@ The agent lives in four files next to `main.py`: `prompts/prompt.md` (system pro
 
 ## Checks
 
-With the backend running: `python tests/check_auth.py` (16 account and security checks) and `python tests/check_chat.py` (14 chat accuracy checks against the database).
+With the backend running: `python tests/check_auth.py` (16 account and security checks) and `python tests/check_chat.py` (18 chat accuracy checks against the database).

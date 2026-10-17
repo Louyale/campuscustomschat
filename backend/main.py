@@ -117,9 +117,10 @@ def list_products(
     min_price: float | None = None,
     max_price: float | None = None,
     sort: tools.SortKey = "featured",
-    limit: int = Query(200, ge=1, le=200),
+    limit: int = Query(400, ge=1, le=400),
+    group: str | None = None,
 ) -> list[dict]:
-    return tools.find_products(q, category, collection, in_stock, min_price, max_price, sort, limit)
+    return tools.find_products(q, category, collection, in_stock, min_price, max_price, sort, limit, group)
 
 
 @app.get("/api/products/{product_id}", response_model=Product)

@@ -7,6 +7,8 @@ export interface ProductSummary {
   name: string
   garment_type: string
   category: string
+  group: 'Apparel' | 'Accessories'
+  one_size: boolean
   collections: string[]
   short_description: string
   price: number
@@ -32,6 +34,7 @@ export interface Product extends ProductSummary {
 export interface Facet {
   name: string
   count: number
+  group?: 'Apparel' | 'Accessories'
 }
 
 export interface ChatTurn {
@@ -53,6 +56,7 @@ export interface SavedChatMessage extends ChatTurn {
 
 export type ProductQuery = Partial<{
   q: string
+  group: string
   category: string
   collection: string
   in_stock: string
@@ -82,7 +86,7 @@ export function getProduct(productId: string): Promise<Product> {
   return request(`/api/products/${encodeURIComponent(productId)}`)
 }
 
-export function getFacets(): Promise<{ categories: Facet[]; collections: Facet[] }> {
+export function getFacets(): Promise<{ categories: Facet[]; collections: Facet[]; groups: Facet[] }> {
   return request('/api/categories')
 }
 
