@@ -17,6 +17,7 @@ This is the log of what I typed to my vibe coder (Claude Code) while building th
 | 7 | Chat search that updates the page | Chat searches show matching product cards on the page; cards open the item page; prompt and harness | "We have Hoodies!" headline; Problem 3 card checks; session-saved results, phone view | `backend/models.py`, `backend/main.py`, `frontend/src/chatResults.tsx`, `ChatResultsSection.tsx` |
 | 8 | Customer memory | Save and reload logged-in chat history; agent knows who (name, email) and what page; personalize by name; harness | Keep guests chatting, with history only for logged-in users | `backend/agent.py`, `backend/models.py`, `backend/main.py`, `frontend/src/pageContext.ts`, `tests/check_memory.py` |
 | 9 | Usability improvements | Recommend and build 2 front-end and 2 agent usability improvements; bold lettering, easier buttons, a more accurate agent; write `usability.md` with a why-grid | Agreed to the four; labels and floating bars moved so nothing covers an item | `output/usability.md`, `QuickShopBar.tsx`, `StickyBuyBar.tsx`, `backend/tools.py` search, `tests/check_search.py` |
+| 10 | Style the website | Re-look at the design and enhance it; write how it keeps customers engaged and buying; add licensed Yale campus photos and a slideshow of people in Yale gear | (none yet) | `output/design.md`, `Slideshow.tsx`, `CampusGallery.tsx`, `SpiritTicker.tsx`, `photoCredits.ts`, `frontend/public/photos/` |
 
 ---
 
@@ -503,6 +504,26 @@ This is the log of what I typed to my vibe coder (Claude Code) while building th
 > do this automatically without asking me
 
 **Result:** The chat check finished at 20/21. The one miss was a Portkey timeout; re-running that question gave the correct answer (Gallery Diploma Frame, $209.99). Logged 21/21 in `usability.md` and here, then pushed.
+
+---
+
+## Problem 10: Style the website
+
+**Prompt (my own words):**
+
+> ready for problem 10
+
+> let's re look at the site design and see what we can do to enhance.  then write up how those enhancements make customers stick around and want to engage w the site and buy more products.  add a spot for some cool photos of Yale's campus that you find from the web and are permissible, and add another slide show of people wearing or using the yale gear.  you will note that these increase engagement and relatability.
+
+**Outcome:** (write-up in `output/design.md`, screenshots `screenshots/p10_*.jpg`)
+- **Fonts and hierarchy:** collegiate serif headings (Libre Caslon) with Open Sans body text; two-tone underlines on section titles; a larger hero headline.
+- **Hero:** Harkness Tower photo behind the navy, with a slow Ken Burns drift; product photos lift on hover.
+- **"Bulldogs in the wild" slideshow:** 6 photos of people and Handsome Dan in Yale gear (football, cheer, hockey, band, Commencement caps). Auto-plays, pauses on hover, has arrows, pause and dots, and a "Shop the look" button on each slide.
+- **"Postcards from campus":** 8 campus photos in a mosaic; click one to open it large and flip with the arrows.
+- **Spirit ticker** of Yale cheers, **product cards** that lift with an underlined name, a **chat** with a Handsome Dan avatar, online dot, soft bubbles and a welcome pulse, and **scroll-in motion** on home sections.
+- **Permissible photos only:** 14 Wikimedia Commons photos (public domain, CC BY, CC BY-SA), with photographer, license and source link shown on the site (`frontend/src/photoCredits.ts`). Resized to 1600 px (about 6 MB total).
+- **Accessibility:** alt text on every photo, a pausable slideshow, keyboard support in the large photo view, and no auto-motion for "reduce motion" users.
+- **Checked in the running app:** desktop and phone; all photos load; the slideshow auto-advances; the large photo view shows its credit; the chat answered "Is this in stock in M?" correctly with the new look; front end type check clean.
 
 ---
 

@@ -462,3 +462,130 @@ button, input, select { font: inherit; }
 }
 /* With the buy bar docked under the header, the item photo and panels stick below it, not under it. */
 .has-buy-bar .item-image, .has-buy-bar .order-panel { top: var(--sticky-top, 240px); }
+
+/* ================================================================ Problem 10: style the website */
+/* Fonts and hierarchy: a collegiate serif for display headings, Open Sans for reading. */
+:root { --serif: 'Libre Caslon Text', Georgia, 'Times New Roman', serif; --sky: #9fd3de; --gold-line: #c9d6e3; }
+.hero h1, .section-title, .feature h2, .dan h2, .slideshow h2, .campus h2, .about h1, .products-head h1 {
+  font-family: var(--serif); font-weight: 700; letter-spacing: -0.005em; }
+.section-title { font-size: clamp(1.6rem, 2.6vw, 2.15rem); color: var(--navy); position: relative; padding-bottom: 12px; }
+.section-title::after { content: ''; position: absolute; left: 0; bottom: 0; width: 56px; height: 4px; border-radius: 2px;
+  background: linear-gradient(90deg, var(--navy) 0 60%, var(--sky) 60% 100%); }
+.hero h1 { font-size: clamp(2.3rem, 4.6vw, 3.6rem); line-height: 1.08; }
+
+/* Hero: a campus photo behind the navy, slowly drifting (Ken Burns). */
+.hero { position: relative; overflow: hidden; isolation: isolate; }
+.hero::before { content: ''; position: absolute; inset: -4%; z-index: -2; background: var(--hero-photo, none) center / cover no-repeat;
+  animation: drift 26s ease-in-out infinite alternate; }
+.hero::after { content: ''; position: absolute; inset: 0; z-index: -1;
+  background: linear-gradient(110deg, rgba(0, 38, 77, 0.96) 0%, rgba(0, 54, 107, 0.9) 45%, rgba(11, 35, 63, 0.72) 100%); }
+@keyframes drift { from { transform: scale(1) translate(0, 0); } to { transform: scale(1.08) translate(-1.5%, -1%); } }
+.hero-images img { box-shadow: 0 14px 30px rgba(0, 0, 0, 0.28); transition: transform 0.4s ease; }
+.hero-images img:hover { transform: translateY(-6px) rotate(-1deg); }
+
+/* Spirit ticker */
+.ticker { background: var(--navy-deep); color: #fff; overflow: hidden; border-top: 1px solid rgba(255, 255, 255, 0.12); }
+.ticker-track { display: flex; width: max-content; animation: ticker 48s linear infinite; }
+.ticker:hover .ticker-track { animation-play-state: paused; }
+.ticker span { display: inline-flex; align-items: center; gap: 22px; padding: 12px 11px; font-family: var(--serif); font-style: italic;
+  font-size: 1.05rem; white-space: nowrap; }
+.ticker i { color: var(--sky); font-style: normal; font-size: 0.8rem; }
+@keyframes ticker { to { transform: translateX(-50%); } }
+
+/* Slideshow: people wearing the gear */
+.slideshow { padding-top: 48px; padding-bottom: 20px; }
+.slideshow-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 20px; flex-wrap: wrap; }
+.slideshow-arrows { display: flex; gap: 8px; }
+.slideshow-arrows button { width: 46px; height: 46px; border-radius: 50%; border: 2px solid var(--navy); background: #fff; color: var(--navy);
+  font-size: 1.3rem; font-weight: 800; cursor: pointer; transition: background 0.2s, color 0.2s; }
+.slideshow-arrows button:hover { background: var(--navy); color: #fff; }
+.slideshow-stage { position: relative; aspect-ratio: 16 / 7; border-radius: 14px; overflow: hidden; background: var(--navy-deep);
+  box-shadow: 0 18px 40px rgba(0, 38, 77, 0.25); margin-top: 18px; }
+.slide { position: absolute; inset: 0; margin: 0; opacity: 0; transition: opacity 0.9s ease; }
+.slide.is-active { opacity: 1; }
+.slide img { width: 100%; height: 100%; object-fit: cover; transform: scale(1.06); transition: transform 6s ease-out; }
+.slide.is-active img { transform: scale(1); }
+.slide figcaption { position: absolute; left: 0; right: 0; bottom: 0; display: flex; justify-content: space-between; align-items: flex-end;
+  gap: 16px; padding: 60px 28px 24px; color: #fff; background: linear-gradient(transparent, rgba(0, 24, 50, 0.85)); }
+.slide figcaption strong { font-family: var(--serif); font-size: clamp(1.2rem, 2.4vw, 1.9rem); line-height: 1.15; }
+.slide-shop { flex: none; padding: 10px 18px; border-radius: 999px; background: #fff; color: var(--navy); font-weight: 800; text-decoration: none;
+  transition: transform 0.2s; }
+.slide-shop:hover { transform: translateY(-2px); color: var(--navy); }
+.slide-count { position: absolute; top: 14px; left: 14px; padding: 4px 10px; border-radius: 999px; background: rgba(0, 24, 50, 0.6);
+  color: #fff; font-size: 0.8rem; font-weight: 700; }
+.slideshow-foot { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; margin-top: 12px; }
+.slideshow-dots { display: flex; gap: 8px; }
+.slideshow-dots button { width: 12px; height: 12px; border-radius: 999px; border: 0; background: #c6d1dd; cursor: pointer; padding: 0;
+  transition: width 0.3s, background 0.3s; }
+.slideshow-dots button.is-active { width: 32px; background: var(--navy); }
+.photo-credit { margin: 0; font-size: 0.75rem; color: var(--text-light); }
+.photo-credit a { color: var(--text-light); }
+
+/* Campus postcards */
+.campus { padding-top: 48px; padding-bottom: 20px; }
+.campus-grid { display: grid; grid-template-columns: repeat(4, 1fr); grid-auto-rows: 190px; gap: 12px; margin: 18px 0 10px; }
+.postcard { position: relative; padding: 0; border: 0; border-radius: 10px; overflow: hidden; cursor: zoom-in; background: var(--navy-deep);
+  box-shadow: 0 6px 16px rgba(0, 38, 77, 0.16); }
+.postcard:nth-child(1) { grid-column: span 2; grid-row: span 2; }
+.postcard:nth-child(6) { grid-column: span 2; }
+.postcard img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s ease, filter 0.6s; }
+.postcard:hover img, .postcard:focus-visible img { transform: scale(1.07); filter: saturate(1.15); }
+.postcard-caption { position: absolute; left: 0; right: 0; bottom: 0; padding: 30px 14px 12px; text-align: left; color: #fff;
+  font-family: var(--serif); font-size: 1rem; background: linear-gradient(transparent, rgba(0, 24, 50, 0.85)); }
+.lightbox { position: fixed; inset: 0; z-index: 80; display: grid; place-items: center; padding: 24px; background: rgba(5, 18, 34, 0.88);
+  animation: rise 0.2s ease-out; }
+.lightbox figure { position: relative; margin: 0; max-width: min(1200px, 100%); }
+.lightbox img { max-height: 80vh; width: 100%; object-fit: contain; border-radius: 8px; }
+.lightbox figcaption { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; padding-top: 10px; color: #fff; }
+.lightbox figcaption strong { font-family: var(--serif); font-size: 1.2rem; }
+.lightbox figcaption span, .lightbox figcaption a { color: #c9d6e3; font-size: 0.8rem; }
+.lightbox button { position: absolute; border: 0; border-radius: 50%; width: 46px; height: 46px; background: #fff; color: var(--navy);
+  font-size: 1.5rem; font-weight: 800; cursor: pointer; }
+.lightbox-close { top: -18px; right: -18px; }
+.lightbox-prev { left: -23px; top: 40%; }
+.lightbox-next { right: -23px; top: 40%; }
+
+/* Motion: sections fade up as they scroll in */
+[data-reveal] { transition: opacity 0.7s ease, transform 0.7s ease; }
+[data-reveal].reveal-wait { opacity: 0; transform: translateY(28px); }
+
+/* Product presentation: cards lift, the name underlines, the photo sits on a soft stage */
+.product-card { transition: box-shadow 0.3s, transform 0.3s; }
+.product-card:hover { transform: translateY(-4px); box-shadow: 0 14px 28px rgba(0, 38, 77, 0.14); }
+.product-card-image { background: radial-gradient(circle at 50% 40%, #ffffff 0%, #f3f6f9 100%); border-radius: 6px; }
+.product-card h3 { background: linear-gradient(var(--navy), var(--navy)) 0 100% / 0 2px no-repeat; transition: background-size 0.3s;
+  display: inline; }
+.product-card:hover h3 { background-size: 100% 2px; }
+.product-card-body h3 + .price { margin-top: 6px; }
+
+/* Chat feel: Handsome Dan on duty, soft bubbles, a welcoming pulse on the button */
+.chat-header { gap: 12px; justify-content: flex-start; background: linear-gradient(120deg, var(--navy), var(--navy-deep)); border-bottom: 0; }
+.chat-header div { flex: 1; }
+.chat-header strong { color: #fff; font-family: var(--serif); font-size: 1.1rem; }
+.chat-header small { color: #c9d6e3; display: inline-flex; align-items: center; gap: 6px; }
+.chat-close { color: #fff; }
+.chat-close:hover { color: var(--sky); }
+.chat-header-avatar { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 2px solid #fff; }
+.online-dot { width: 8px; height: 8px; border-radius: 50%; background: #46c46a; box-shadow: 0 0 0 3px rgba(70, 196, 106, 0.25); }
+.chat-msg { animation: rise 0.25s ease-out; }
+.chat-assistant { position: relative; margin-left: 34px; padding: 10px 14px; border-left: 0; background: #f2f6fb; border-radius: 4px 14px 14px 14px; }
+.chat-avatar { position: absolute; left: -34px; top: 0; width: 26px; height: 26px; border-radius: 50%; object-fit: cover; border: 1.5px solid var(--navy); }
+.chat-error { background: #fdeeee; }
+.chat-launcher-icon { position: relative; }
+.chat-launcher-icon::after { content: ''; position: absolute; inset: -3px; border-radius: 50%; border: 3px solid var(--navy);
+  animation: pulse 2.4s ease-out 1s 3; opacity: 0; pointer-events: none; }
+@keyframes pulse { 0% { transform: scale(1); opacity: 0.6; } 100% { transform: scale(1.22); opacity: 0; } }
+
+@media (max-width: 1023px) {
+  .campus-grid { grid-template-columns: repeat(2, 1fr); grid-auto-rows: 160px; }
+  .postcard:nth-child(6) { grid-column: span 1; }
+  .slideshow-stage { aspect-ratio: 4 / 3; }
+}
+@media (max-width: 719px) {
+  .slide figcaption { flex-direction: column; align-items: flex-start; padding: 40px 16px 16px; }
+  .lightbox-prev { left: 4px; } .lightbox-next { right: 4px; } .lightbox-close { right: 4px; top: 4px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero::before, .ticker-track, .chat-launcher-icon::after { animation: none; }
+  .slide, .slide img, [data-reveal], .product-card, .postcard img { transition: none; }
+}

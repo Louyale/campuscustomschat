@@ -88,6 +88,13 @@ The assignment says the evidence is **the running site, the database writes, and
 - [x] Spacing: labels, the chat button and the Add to cart bar never cover an item or banner (moved, same size)
 - [x] All four seen in the running app; proof in `screenshots/p9_01` to `p9_05`
 
+## Problem 10: Style the website (6 points)
+- [x] Asked in my own words what to do (prompt logged in `AI_prompts.md`)
+- [x] Creative design across fonts, color, hierarchy, motion, product presentation and chat feel (`styles.css`, `index.html`)
+- [x] Licensed Yale campus photos ("Postcards from campus", `CampusGallery.tsx`) and a slideshow of people in Yale gear ("Bulldogs in the wild", `Slideshow.tsx`), credited on the site
+- [x] `output/design.md`: what changed and why it helps customers stick around and buy (concrete and short)
+- [x] Seen in the running app; proof in `screenshots/p10_01` to `p10_07`
+
 ## Whole project (from the scenario)
 - [x] **Running site:** the React + Vite TypeScript front end and FastAPI backend start cleanly (backend: `uvicorn main:app --reload --port 8000` from `backend/`)
 - [x] **Database writes:** a new account in `users` (hashed password, Problem 4) and chats saved in `chat_messages` for logged-in shoppers (Problem 5, rows 23–24 for Ezra Stiles)

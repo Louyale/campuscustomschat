@@ -1,5 +1,12 @@
+import { useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import ProductRow from '../components/ProductRow'
+import Slideshow from '../components/Slideshow'
+import CampusGallery from '../components/CampusGallery'
+import SpiritTicker from '../components/SpiritTicker'
+import { CAMPUS_PHOTOS, GEAR_PHOTOS } from '../photoCredits'
+import { GEAR_SHOP_LINKS } from '../content'
+import { startReveal } from '../reveal'
 import { getProduct, money, productImage } from '../api'
 import { useFetch } from '../useFetch'
 import { HOME } from '../content'
@@ -13,10 +20,12 @@ const COLLECTIONS = [
 
 export default function Home() {
   const game = useFetch(() => getProduct('2025-yale-vs-harvard-t-shirt'), [])
+  useEffect(() => startReveal(), [])
+  const gearSlides = GEAR_PHOTOS.map((p, i) => ({ ...p, shop: GEAR_SHOP_LINKS[i % GEAR_SHOP_LINKS.length] }))
 
   return (
     <>
-      <section className="hero">
+      <section className="hero" style={CAMPUS_PHOTOS[0] ? { ['--hero-photo' as string]: `url(${CAMPUS_PHOTOS[0].src})` } : undefined}>
         <div className="container hero-inner">
           <div className="hero-copy">
             <p className="eyebrow">{HOME.hero.eyebrow}</p>
@@ -42,6 +51,8 @@ export default function Home() {
         ))}
       </ul>
 
+      <SpiritTicker />
+
       <ProductRow
         title={HOME.bestSellers.title}
         intro={HOME.bestSellers.intro}
@@ -49,7 +60,17 @@ export default function Home() {
         shopLink="/products?sort=best-selling"
       />
 
-      <section className="feature container">
+      <div data-reveal>
+        <Slideshow
+          id="worn"
+          eyebrow="Worn in New Haven"
+          title="Bulldogs in the wild"
+          intro="Real people, real Yale spirit: game days, graduations and everyday campus life. Find your look, then shop it."
+          slides={gearSlides}
+        />
+      </div>
+
+      <section className="feature container" data-reveal>
         {game.data && (
           <Link to={`/products/${game.data.product_id}`} className="feature-image">
             <img src={game.data.image_url} alt={game.data.name} />
@@ -78,7 +99,7 @@ export default function Home() {
         shopLabel="All hoodies"
       />
 
-      <section className="dan container">
+      <section className="dan container" data-reveal>
         <div className="dan-copy">
           <p className="eyebrow">{HOME.handsomeDan.eyebrow}</p>
           <h2>{HOME.handsomeDan.title}</h2>
@@ -91,7 +112,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="home-section container">
+      <section className="home-section container" data-reveal>
         <h2 className="section-title">{HOME.findYourCrew.title}</h2>
         <p className="section-intro">{HOME.findYourCrew.intro}</p>
         <div className="collection-grid">
@@ -123,7 +144,11 @@ export default function Home() {
         shopLabel="All accessories"
       />
 
-      <section className="visit container">
+      <div data-reveal>
+        <CampusGallery photos={CAMPUS_PHOTOS} />
+      </div>
+
+      <section className="visit container" data-reveal>
         <div>
           <h2 className="section-title">{HOME.visit.title}</h2>
           <p>{HOME.visit.body}</p>

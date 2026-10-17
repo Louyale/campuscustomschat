@@ -110,9 +110,10 @@ export default function ChatWidget() {
       {open && (
         <section className="chat-panel" role="dialog" aria-label="Campus Customs chat">
           <header className="chat-header">
+            <img className="chat-header-avatar" src="/handsome-dan.jpg" alt="" />
             <div>
               <strong>Campus Customs</strong>
-              <small>{user ? 'Saved to your account' : 'Live prices and stock'}</small>
+              <small><span className="online-dot" aria-hidden="true" />{user ? 'Saved to your account' : 'Live prices and stock'}</small>
             </div>
             <button className="chat-close" aria-label="Close chat" onClick={() => setOpen(false)}>×</button>
           </header>
@@ -120,6 +121,7 @@ export default function ChatWidget() {
             {user && <p className="chat-note">Welcome back, {user.first_name}.</p>}
             {messages.map((m, i) => (
               <div key={i} className={`chat-msg chat-${m.role} ${m.error ? 'chat-error' : ''}`}>
+                {m.role === 'assistant' && <img className="chat-avatar" src="/handsome-dan.jpg" alt="" />}
                 <p>{m.content}</p>
                 {m.onPage ? <p className="chat-on-page">{m.onPage} {m.onPage === 1 ? 'match is' : 'matches are'} on the page ↖</p> : null}
                 {m.products && m.products.length > 0 && (

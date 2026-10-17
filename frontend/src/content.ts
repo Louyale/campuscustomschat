@@ -121,3 +121,13 @@ export const ABOUT = {
   // Closing line at the very bottom of the About Us page.
   closing: `Boola Boola!`,
 }
+
+// "Shop the look" buttons on the people-in-Yale-gear slideshow (one per slide, in order).
+export const GEAR_SHOP_LINKS = [
+  { label: 'Shop Handsome Dan gear', to: '/products?collection=Bulldogs' },
+  { label: 'Shop game-day gear', to: '/products?collection=Bulldog%20Athletics' },
+  { label: 'Shop Yale tees', to: '/products?category=T-Shirts' },
+  { label: 'Shop hockey gear', to: '/products?q=hockey' },
+  { label: 'Shop crewnecks', to: '/products?category=Crewnecks' },
+  { label: 'Shop grad school gear', to: '/products?collection=Graduate%20%26%20Professional%20Schools' },
+]
