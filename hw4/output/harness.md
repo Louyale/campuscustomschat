@@ -457,7 +457,7 @@ Safety is layered: the prompt tells the agent what to do, and code enforces what
 | Passwords: PBKDF2-SHA256, 120,000 iterations; HttpOnly, SameSite=Lax signed cookie; 5 failed logins → 20-minute lockout | `auth.py` | Password theft, cookie theft and guessing attacks. |
 | CORS only for the site's own origin | `main.py` | Other websites calling the API from a shopper's browser. |
 | Secrets only in `.env` (`PORTKEY_API_KEY`, `SESSION_SECRET`), never committed | `.gitignore`, `.env.example` | Leaked keys. |
-| Audit trail masks emails and long numbers, and stores "guest" or "customer #id" only | `audit.mask()` | Personal data in the log. |
+| Audit trail masks emails and long numbers, and stores "guest" or "customer #id" only | `agent.mask()` | Personal data in the log. |
 
 ### 5. Specs
 
@@ -517,7 +517,7 @@ Tests (backend running):
 | `model_error: …` | The model or network failed; the shopper got the friendly 503 message |
 
 **Append-only, never wiped:**
-- The file is one JSON array. `audit.append()` writes the new entry over the closing `]` and adds `]` back after it, so earlier bytes are never rewritten or reordered.
+- The file is one JSON array. `append_audit()` in `agent.py` writes the new entry over the closing `]` and adds `]` back after it, so earlier bytes are never rewritten or reordered.
 - Nothing ever truncates or recreates the file. It survives restarts and test runs.
 - If the file has been damaged by hand, the code refuses to touch it and logs a warning rather than starting over.
 - A lock keeps two chats from writing at once.

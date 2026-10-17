@@ -19,7 +19,7 @@ This is the log of what I typed to my vibe coder (Claude Code) while building th
 | 9 | Usability improvements | Recommend and build 2 front-end and 2 agent usability improvements; bold lettering, easier buttons, a more accurate agent; write `usability.md` with a why-grid | Agreed to the four; labels and floating bars moved so nothing covers an item | `output/usability.md`, `QuickShopBar.tsx`, `StickyBuyBar.tsx`, `backend/tools.py` search, `tests/check_search.py` |
 | 10 | Style the website | Re-look at the design and enhance it; write how it keeps customers engaged and buying; add licensed Yale campus photos and a slideshow of people in Yale gear | (none yet) | `output/design.md`, `Slideshow.tsx`, `CampusGallery.tsx`, `SpiritTicker.tsx`, `photoCredits.ts`, `frontend/public/photos/` |
 | 11 | Site testing (app check) | Test the live site; note the banner stops on hover; show other features work; make the HTML very easy to grade with screenshots | (none yet) | `output/app_check.html`, `output/app_check_images/` |
-| 12 | Audit trail, safety, finish harness | Append-only audit JSON never wiped; recommend more safety rules; finish the harness (models and why, tools, safety, specs); show harness and JSON | Add rules against invented products, misstated prices and interfering with other stores, and prove them | `output/audit_trail.json`, `backend/audit.py`, `backend/prompts/prompt.md`, `output/harness.md`, `tests/check_audit.py`, `tests/check_safety.py` |
+| 12 | Audit trail, safety, finish harness | Append-only audit JSON never wiped; recommend more safety rules; finish the harness (models and why, tools, safety, specs); show harness and JSON | Add rules against invented products, misstated prices and interfering with other stores, and prove them | `output/audit_trail.json`, `backend/agent.py` (audit code), `backend/prompts/prompt.md`, `output/harness.md`, `tests/check_audit.py`, `tests/check_safety.py` |
 | 13 | Push to GitHub and submit the URL | Match the exact hw4 layout, README run steps, push to the public repo, package HW4, grade us | Same repo (campuscustomschat); everything in the repo for grading | `hw4/` folder in the repo, `requirements.txt`, `README.md`, final file tree |
 
 ---
@@ -584,7 +584,7 @@ This is the log of what I typed to my vibe coder (Claude Code) while building th
 **Result:** About 15–20 minutes, mostly waiting on slow AI replies during the live tests.
 
 **Outcome:**
-- **Append-only audit trail:** `backend/audit.py` adds one entry per agent run to `output/audit_trail.json`. Each entry has the time, a run id, guest or customer number, page, masked question, every tool call with short args and result, the answer, the **stop reason**, model requests, tool calls, tokens and duration. A new entry is written over the closing `]` only, so earlier entries are never rewritten or wiped. A damaged file is left untouched. Proven across runs: the trail grew 1 → 6 → 11 → … with earlier bytes unchanged.
+- **Append-only audit trail:** the audit-trail code (first in `backend/audit.py`, now at the end of `backend/agent.py`) adds one entry per agent run to `output/audit_trail.json`. Each entry has the time, a run id, guest or customer number, page, masked question, every tool call with short args and result, the answer, the **stop reason**, model requests, tool calls, tokens and duration. A new entry is written over the closing `]` only, so earlier entries are never rewritten or wiped. A damaged file is left untouched. Proven across runs: the trail grew 1 → 6 → 11 → … with earlier bytes unchanged.
 - **Loop limits:** `UsageLimits(request_limit=8, tool_calls_limit=12)`; PydanticAI's default was 50 requests. A forced runaway loop was stopped and logged as `usage_limit`.
 - **New models in `models.py`:** `AuditStep` and `AuditEntry`, typed and length-capped, with the shopper stored as "guest" or "customer #id", never a name or email.
 - **Safety rules added to `prompt.md`:**
@@ -661,10 +661,9 @@ hw4/
 ├── frontend/               # Vite React TypeScript app
 ├── backend/
 │   ├── main.py             # FastAPI app — run with: uvicorn main:app --reload
-│   ├── agent.py
+│   ├── agent.py            # also writes the append-only audit trail
 │   ├── models.py
 │   ├── tools.py
-│   ├── audit.py            # append-only audit trail
 │   ├── auth.py             # accounts and sessions
 │   ├── bestsellers.json
 │   ├── fetch_bestsellers.py
@@ -700,6 +699,18 @@ data/
 ├── campus_customs.db
 └── products/              # images referenced by the catalogue
 ```
+
+> is the tree specifically labeled in the hw4 folder?
+
+**Result:** Yes: under "## File tree" in `README.md` and "Final file tree" in this log (Problem 13).
+
+> and the agent itself is in 4 files as noted?
+
+**Result:** Mostly: the agent was `prompts/prompt.md`, `agent.py`, `tools.py` and `models.py`, but `agent.py` also imported `audit.py` (added in Problem 12). I suggested folding it in.
+
+> make the agent.py change you note above and push to the repo and update the hw4 folder
+
+**Result:** Moved the audit-trail code from `backend/audit.py` into the end of `backend/agent.py` (same behavior; functions `append_audit`, `audit_entry`, `mask`) and deleted `audit.py`. The agent is now exactly four files: `prompts/prompt.md`, `agent.py`, `tools.py`, `models.py`. Updated the audit test, harness, README tree and checklist; the audit test passed again; pushed, and the HW4 package was rebuilt.
 
 ---
 

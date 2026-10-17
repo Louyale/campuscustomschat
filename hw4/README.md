@@ -123,11 +123,10 @@ hw4/
 ├── frontend/                 # Vite React TypeScript app
 ├── backend/
 │   ├── main.py               # FastAPI app — run with: uvicorn main:app --reload
-│   ├── agent.py
+│   ├── agent.py              # also writes the append-only audit trail
 │   ├── models.py
 │   ├── tools.py
 │   ├── auth.py               # accounts and sessions (Problem 4)
-│   ├── audit.py              # append-only audit trail (Problem 12)
 │   └── prompts/
 │       └── prompt.md
 ├── output/

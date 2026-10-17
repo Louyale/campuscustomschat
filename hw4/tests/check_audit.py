@@ -34,24 +34,24 @@ def check(ok: bool, label: str) -> None:
 # ---------------------------------------------------------------- part 1: append-only, offline
 with tempfile.TemporaryDirectory() as tmp:
     os.environ["AUDIT_TRAIL_PATH"] = str(Path(tmp) / "audit_trail.json")
-    import audit  # noqa: E402  (reads AUDIT_TRAIL_PATH at import)
+    import agent as audit  # noqa: E402  (the audit-trail code lives in agent.py; reads AUDIT_TRAIL_PATH at import)
     from models import AuditEntry  # noqa: E402
 
     def entry(n: int) -> AuditEntry:
         return AuditEntry(time=f"2026-10-17T00:00:0{n}+00:00", run_id=f"test{n}", shopper="guest", page="/",
                           question=f"question {n}", answer="ok", stop_reason="final_answer")
 
-    audit.append(entry(1))
+    audit.append_audit(entry(1))
     first = audit.AUDIT_PATH.read_bytes()
-    audit.append(entry(2))
-    audit.append(entry(3))
+    audit.append_audit(entry(2))
+    audit.append_audit(entry(3))
     after = audit.AUDIT_PATH.read_bytes()
     data = json.loads(after)
     check(len(data) == 3 and [e["run_id"] for e in data] == ["test1", "test2", "test3"],
           "offline: three appends give a valid JSON array of 3 entries, in order")
     check(after.startswith(first.rstrip()[:-1]), "offline: the first entry's bytes are unchanged after later appends")
     audit.AUDIT_PATH.write_text("not json", encoding="utf-8")
-    audit.append(entry(4))
+    audit.append_audit(entry(4))
     check(audit.AUDIT_PATH.read_text(encoding="utf-8") == "not json",
           "offline: a damaged file is left untouched (never wiped or overwritten)")
     check("[email]" in audit.mask("me@yale.edu") and "[number]" in audit.mask("card 4111 1111 1111 1111"),
