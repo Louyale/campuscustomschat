@@ -39,7 +39,7 @@ Labels and floating controls were moved, not shrunk, so they never sit on a prod
 | Check | Result |
 |---|---|
 | `tests/check_search.py` → `output/search_check.txt` | **Before:** 5 of 12 everyday queries found anything. **After:** 12 of 12 put the right kind of item in the top 3 ("coffee cup", "coffee cup dad", "tee for my dad", "something for my dorm wall", "navy hoodies", "gift for grandma", "sticker", "hockey hoodie", "pierson crewneck", "winter hat", "tie", "baseball cap"). Each search takes about 10–40 ms. |
-| Regression tests, re-run after the changes | `check_tools.py` **15/15**, `check_auth.py` **16/16**, `check_memory.py` **11/11**; `check_chat.py` re-run in progress at push time |
+| Regression tests, re-run after the changes | `check_tools.py` **15/15**, `check_auth.py` **16/16**, `check_memory.py` **11/11**; `check_chat.py` **21/21** (20/21 in the paced run; the one miss was a Portkey network timeout, and the re-run answered correctly: Gallery Diploma Frame, $209.99, the top price in the database) |
 | `screenshots/p9_01_quick_shop_bar_bold_cards.jpg` | Quick-shop bar with **HATS** active; "Best seller" labels under the photos; bold names and prices |
 | `screenshots/p9_02_sticky_add_to_cart_bar.jpg` | The Add to cart bar docked under the menu after scrolling, size M chosen ("Low stock · 5 left") |
 | `screenshots/p9_03_stock_badge_by_price.jpg` | "Only 5 left in M" badge next to the price; the docked bar sits above the photo, not on it |
