@@ -39,7 +39,10 @@ import agent  # noqa: E402
 import tools  # noqa: E402
 from auth import current_user  # noqa: E402
 from auth import router as auth_router  # noqa: E402
-from models import ChatMessage, ChatRequest, ChatResponse, ChatTurn, Product, ProductSummary  # noqa: E402
+from urllib.parse import urlencode  # noqa: E402
+
+from models import (ChatMessage, ChatRequest, ChatResponse, ChatTurn, PageResults, Product,  # noqa: E402
+                    ProductSummary, SearchFilters)
 
 log = logging.getLogger("campus_customs")
 IMAGES_DIR = ROOT / os.getenv("PRODUCT_IMAGES_DIR", "data/products")
@@ -202,6 +205,8 @@ async def chat(body: ChatRequest, request: Request, cc_session: str | None = Coo
                                  "(475) 301-4205.") from None
 
     products = tools.summaries_for(answer.product_ids)  # only real products become cards
+    # A search for a type of item (e.g. 'what hoodies do you have?') also fills the page with its matches.
+    page = page_results(answer.search, len(products)) if products and answer.search else None
     saved = False
     if user:
         with _chat_db() as con:
@@ -210,4 +215,28 @@ async def chat(body: ChatRequest, request: Request, cc_session: str | None = Coo
             con.execute("INSERT INTO chat_messages (user_id, role, content, products_json) VALUES (?, 'assistant', ?, ?)",
                         (user.id, answer.reply, json.dumps(products) if products else None))
         saved = True
-    return ChatResponse(reply=answer.reply, products=products, suggestions=answer.suggestions, saved=saved)
+    return ChatResponse(reply=answer.reply, products=products, page=page, suggestions=answer.suggestions, saved=saved)
+
+
+def page_results(search: SearchFilters | None, shown: int) -> PageResults:
+    """Heading, total and "see all" link for chat matches shown on the page."""
+    if search is None:
+        return PageResults(title="From the chat", headline="Picked for you", total=shown)
+    filters = {k: v for k, v in search.model_dump().items() if v not in (None, "")}
+    if filters.get("category"):
+        filters.pop("group", None)  # a category already implies its group
+    total = len(tools.find_products(q=filters.get("query"), category=filters.get("category"),
+                                    collection=filters.get("collection"), group=filters.get("group"),
+                                    max_price=filters.get("max_price")))
+    max_price = filters.get("max_price")
+    params = {"q": filters.get("query"), "category": filters.get("category"), "collection": filters.get("collection"),
+              "group": filters.get("group"), "max_price": f"{max_price:g}" if max_price else None}
+    title = " · ".join(str(v) for v in (filters.get("collection"), filters.get("category"), filters.get("group"))
+                       if v) or (f"“{filters['query']}”" if filters.get("query") else "From the chat")
+    if filters.get("max_price"):
+        title += f" under ${filters['max_price']:g}"
+    # A personal touch: "We have Hoodies!" rather than just "Hoodies".
+    named = filters.get("collection") or filters.get("category") or filters.get("group")
+    headline = f"We have {title}!" if named else f"Here's what we found for {title}"
+    return PageResults(title=title, headline=headline, total=max(total, shown),
+                       browse_url="/products?" + urlencode({k: v for k, v in params.items() if v not in (None, "")}))

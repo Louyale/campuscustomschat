@@ -17,7 +17,20 @@ import urllib.request
 BASE = "http://127.0.0.1:8000"
 
 
+PACE = 3.2  # seconds between questions: the chat route allows 20 messages a minute per address
+
+
+def ask_full(message: str) -> tuple[dict, float]:
+    time.sleep(PACE)
+    body = json.dumps({"message": message, "history": []}).encode()
+    request = urllib.request.Request(f"{BASE}/api/chat", data=body, headers={"Content-Type": "application/json"})
+    start = time.perf_counter()
+    with urllib.request.urlopen(request, timeout=120) as response:
+        return json.load(response), time.perf_counter() - start
+
+
 def ask(message: str) -> tuple[str, list[str], float]:
+    time.sleep(PACE)
     body = json.dumps({"message": message, "history": []}).encode()
     request = urllib.request.Request(f"{BASE}/api/chat", data=body, headers={"Content-Type": "application/json"})
     start = time.perf_counter()
@@ -81,6 +94,20 @@ CASES = [
 ]
 
 
+# Problem 7: a search for a type of item comes back as page results (cards + heading + total + link).
+PAGE_CASES = [
+    ("What hoodies do you have?",
+     lambda d: d["page"] is not None and d["page"]["headline"] == "We have Hoodies!" and len(d["products"]) >= 6
+     and all(p["category"] == "Hoodies" for p in d["products"]) and d["page"]["total"] >= len(d["products"])
+     and "category=Hoodies" in (d["page"]["browse_url"] or "")),
+    ("Show me Yale mugs under $15",
+     lambda d: d["page"] is not None and len(d["products"]) >= 3
+     and all(p["category"] == "Drinkware" and p["price"] <= 15 for p in d["products"])),
+    ("How much is the Basic Hoodie Big Yale?",  # one item: no page results, just its card in the chat
+     lambda d: d["page"] is None and [p["product_id"] for p in d["products"]] == ["basic-hoodie-big-yale"]),
+]
+
+
 def main() -> int:
     passed = 0
     for question, check in CASES:
@@ -91,8 +118,18 @@ def main() -> int:
             reply, products, seconds, ok = f"ERROR {exc}", [], 0.0, False
         passed += ok
         print(f"{'PASS' if ok else 'FAIL'} ({seconds:4.1f}s) {question}\n     -> {reply}\n     cards: {products}")
-    print(f"\n{passed}/{len(CASES)} chat checks passed")
-    return 0 if passed == len(CASES) else 1
+    for question, check in PAGE_CASES:
+        try:
+            data, seconds = ask_full(question)
+            ok = check(data)
+        except Exception as exc:
+            data, seconds, ok = {"page": f"ERROR {exc}", "products": []}, 0.0, False
+        passed += ok
+        print(f"{'PASS' if ok else 'FAIL'} ({seconds:4.1f}s) [page] {question}\n     -> page: {data['page']}"
+              f"\n     cards: {[p['product_id'] for p in data['products']]}")
+    total = len(CASES) + len(PAGE_CASES)
+    print(f"\n{passed}/{total} chat checks passed")
+    return 0 if passed == total else 1
 
 
 if __name__ == "__main__":

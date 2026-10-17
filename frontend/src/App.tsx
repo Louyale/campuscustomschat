@@ -3,6 +3,7 @@ import { Route, Routes, useLocation } from 'react-router-dom'
 import Header from './components/Header'
 import Footer from './components/Footer'
 import ChatWidget from './components/ChatWidget'
+import ChatResultsSection from './components/ChatResultsSection'
 import Home from './pages/Home'
 import Products from './pages/Products'
 import ProductPage from './pages/ProductPage'
@@ -24,6 +25,7 @@ export default function App() {
       <a className="skip-link" href="#main">Skip to content</a>
       <Header />
       <main id="main">
+        <ChatResultsSection />
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/products" element={<Products />} />

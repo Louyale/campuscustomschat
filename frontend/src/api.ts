@@ -42,9 +42,17 @@ export interface ChatTurn {
   content: string
 }
 
+export interface PageResults {
+  title: string
+  headline: string // e.g. "We have Hoodies!"
+  total: number
+  browse_url: string | null
+}
+
 export interface ChatResponse {
   reply: string
   products: ProductSummary[]
+  page: PageResults | null // set when the chat searched for a type of item: show the matches on the page
   suggestions: string[]
   saved: boolean
 }

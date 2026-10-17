@@ -62,6 +62,14 @@ The assignment says the evidence is **the running site, the database writes, and
 - [x] `output/harness.md`: each tool, its model fields and why
 - [x] I've added my own language to the harness Problem 6 section (a "Why it matters to the shopper" column)
 
+## Problem 7: Chat search that updates the page (10 points)
+- [x] Asking about a type of item ("what hoodies do you have?") makes the agent search, and the website shows the matches as product cards (image, name, price, short info)
+- [x] API contract: the agent returns structured matches (`AgentReply.product_ids` + `search`); FastAPI returns cards + `page` (title, total, See-all link); the front end renders them
+- [x] Chat-delivered cards still open the single-item page from Problem 3 (checked carefully: options, large image, price, description, sizes, stock, Add to cart)
+- [x] Personal headline "We have Hoodies!"; results kept for the session; phone view folds the chat
+- [x] `prompts/prompt.md` and `output/harness.md` explain how search results reach the page
+- [x] Confirmed in the browser (`screenshots/p7_01` to `p7_03`) and by `tests/check_chat.py` 21/21
+
 ## Whole project (from the scenario)
 - [x] **Running site:** the React + Vite TypeScript front end and FastAPI backend start cleanly (backend: `uvicorn main:app --reload --port 8000` from `backend/`)
 - [x] **Database writes:** a new account in `users` (hashed password, Problem 4) and chats saved in `chat_messages` for logged-in shoppers (Problem 5, rows 23–24 for Ezra Stiles)

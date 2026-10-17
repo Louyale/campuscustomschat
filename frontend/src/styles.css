@@ -395,3 +395,16 @@ button, input, select { font: inherit; }
 .collection-lede { margin: 0 0 18px; padding: 14px 18px; border-left: 3px solid var(--navy); background: #f5f8fc; font-size: 1.02rem; }
 .filter-group { margin-top: 6px; }
 .filter-group-label { margin: 8px 0 2px; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-light); }
+
+/* ---------- chat results on the page (Problem 7) */
+.chat-results { margin-top: 18px; padding: 18px 20px 20px; border: 1px solid #d6dfea; border-left: 4px solid var(--navy);
+  border-radius: 8px; background: #f7f9fc; scroll-margin-top: 175px; animation: rise 0.35s ease-out; }
+.chat-results.folded { padding-bottom: 14px; }
+.chat-results-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; }
+.chat-results-head h2 { margin: 0 0 2px; font-size: 1.5rem; font-weight: 700; color: var(--navy); }
+.chat-results-head p { margin: 0; }
+.chat-results-actions { display: flex; align-items: center; gap: 14px; }
+.chat-results-close { background: none; border: 0; font-size: 26px; line-height: 1; color: var(--text-light); cursor: pointer; }
+.chat-results-grid { margin-top: 14px; }
+.chat-on-page { margin: 6px 0 0 !important; font-size: 0.8rem; color: var(--link); font-weight: 600; }
+@keyframes rise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }

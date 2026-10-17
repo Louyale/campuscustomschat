@@ -1,10 +1,12 @@
 import { useEffect, useRef, useState, type FormEvent } from 'react'
 import { getChatHistory, sendChat, type ChatTurn, type ProductSummary } from '../api'
 import { useAuth } from '../auth'
+import { useChatResults } from '../chatResults'
 import ProductCard from './ProductCard'
 
 interface Message extends ChatTurn {
   products?: ProductSummary[]
+  onPage?: number // how many matches were put on the page
   suggestions?: string[]
   error?: boolean
 }
@@ -18,6 +20,7 @@ export function openChat(prefill = '') {
 
 export default function ChatWidget() {
   const { user } = useAuth()
+  const chatResults = useChatResults()
   const [open, setOpen] = useState(false)
   const [messages, setMessages] = useState<Message[]>([])
   const [draft, setDraft] = useState('')
@@ -64,9 +67,16 @@ export default function ChatWidget() {
     setBusy(true)
     try {
       const response = await sendChat(message, history)
+      // A search for a type of item fills the page with its matches; the chat keeps a short preview.
+      if (response.page && response.products.length) {
+        chatResults.show(message, response.products, response.page)
+        // On a phone the chat covers the page, so step aside and let the cards show.
+        if (window.matchMedia('(max-width: 719px)').matches) setOpen(false)
+      }
       setMessages((prev) => [
         ...prev,
-        { role: 'assistant', content: response.reply, products: response.products, suggestions: response.suggestions },
+        { role: 'assistant', content: response.reply, products: response.products, suggestions: response.suggestions,
+          onPage: response.page ? response.products.length : undefined },
       ])
     } catch (err) {
       setMessages((prev) => [...prev, { role: 'assistant', content: (err as Error).message, error: true }])
@@ -99,9 +109,10 @@ export default function ChatWidget() {
             {messages.map((m, i) => (
               <div key={i} className={`chat-msg chat-${m.role} ${m.error ? 'chat-error' : ''}`}>
                 <p>{m.content}</p>
+                {m.onPage ? <p className="chat-on-page">{m.onPage} {m.onPage === 1 ? 'match is' : 'matches are'} on the page ↖</p> : null}
                 {m.products && m.products.length > 0 && (
                   <div className="chat-products">
-                    {m.products.map((p) => (
+                    {m.products.slice(0, m.onPage ? 3 : 6).map((p) => (
                       <ProductCard key={p.product_id} product={p} showDescription={false} />
                     ))}
                   </div>

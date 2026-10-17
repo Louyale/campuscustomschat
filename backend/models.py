@@ -70,22 +70,49 @@ class ChatMessage(ChatTurn):
     created_at: str | None = None
 
 
+class SearchFilters(BaseModel):
+    """The catalogue search behind a set of matches, so the page can link to every result."""
+
+    query: str | None = Field(None, description="Words searched for, e.g. 'navy' or 'pierson'.")
+    category: str | None = Field(None, description="e.g. Hoodies, T-Shirts, Hats, Drinkware.")
+    collection: str | None = Field(None, description="e.g. Residential Colleges, Bulldog Athletics, Low-Key Yale Gear.")
+    group: str | None = Field(None, description="Apparel or Accessories.")
+    max_price: float | None = None
+
+
+class PageResults(BaseModel):
+    """Chat search results for the website to show on the page."""
+
+    title: str = Field(description="What was searched, e.g. 'Hoodies'.")
+    headline: str = Field(description="Friendly heading shown on the page, e.g. 'We have Hoodies!'.")
+    total: int = Field(description="How many products match the search in all.")
+    browse_url: str | None = Field(None, description="Products-page link that shows every match.")
+
+
 class ChatResponse(BaseModel):
     reply: str
-    products: list[ProductSummary] = []
+    products: list[ProductSummary] = []  # the matches, as full product cards (best first)
+    page: PageResults | None = None      # set when the reply is a search the page should display
     suggestions: list[str] = []
     saved: bool = False  # True when the turn was stored in chat_messages for a logged-in shopper
 
 
 class AgentReply(BaseModel):
-    """The structured output the agent returns on every turn."""
+    """The structured output the agent returns on every turn (the API contract with the website)."""
 
     reply: str = Field(description="What to say to the shopper: friendly, short, plain text (no markdown tables).")
     product_ids: list[str] = Field(
         default_factory=list,
-        max_length=6,
-        description="product_id values (from tool results only) to show as product cards, best match first. "
-                    "Empty when no product should be shown.",
+        max_length=12,
+        description="product_id values (from tool results only) to show as product cards on the page, best "
+                    "match first. Up to 12 for a search like 'what hoodies do you have'; empty when no product "
+                    "should be shown.",
+    )
+    search: SearchFilters | None = Field(
+        None,
+        description="When the shopper asked about a type of item, the filters you searched with (the same values "
+                    "you passed to search_products). The website uses them to show the matches and link to all "
+                    "results. Leave empty for single-item, policy or small-talk answers.",
     )
     suggestions: list[str] = Field(
         default_factory=list,

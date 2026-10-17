@@ -14,6 +14,7 @@ This is the log of what I typed to my vibe coder (Claude Code) while building th
 | 4 | Create account and login | Secure sign-up/login with hacker safety; test the seed user and a new account; harness overview | "Safely saves" wording; 20-minute lockout and passwords need a number | `backend/auth.py`, Log in / Create account pages, `tests/check_auth.py` |
 | 5 | PydanticAI agent backend | Build the chatbot as a PydanticAI agent behind FastAPI in four files; Campus Customs voice and safety; harness narrative | Add to cart / Check options, checkout tally and card form, refined chat; real Lou Donofrio test | `backend/main.py`, `backend/prompts/prompt.md`, `backend/agent.py`, `backend/tools.py`, `backend/models.py` |
 | 6 | Tools: product info and stock | Description, price and stock-by-size tools; never invent; say sold out; a fast price-and-stock check | My own "why it matters" reasons in the harness; typo cleanup; push | `backend/tools.py`, `backend/models.py`, `backend/prompts/prompt.md`, `tests/check_tools.py` |
+| 7 | Chat search that updates the page | Chat searches show matching product cards on the page; cards open the item page; prompt and harness | "We have Hoodies!" headline; Problem 3 card checks; session-saved results, phone view | `backend/models.py`, `backend/main.py`, `frontend/src/chatResults.tsx`, `ChatResultsSection.tsx` |
 
 ---
 
@@ -358,6 +359,45 @@ This is the log of what I typed to my vibe coder (Claude Code) while building th
 > Yes, commit the harness wording change and push it to the campuscustomschat repo.
 
 **Result:** Committed and pushed to `github.com/Louyale/campuscustomschat`.
+
+---
+
+## Problem 7: Chat search that updates the page
+
+**Prompt (my own words):**
+
+> follow all commends here so that our chat searches update the webpage.  then update prompts and harness with a description of what we did and its confirmation.  did we do some of this already?  if so, refine it and make it as good as can be following these specifications
+
+**Follow-up prompt:**
+
+> in the response on the webpage, instead of just saying for instance "Hoodies," say, "We have Hoodies!," and in the harness say that we added this to include a personal touch, this is in the proof it works section.  also say that we paid special attention to assuring that the primary card built in problem 3 works.  update both now.  make any other changes to make the entire problem 7 response and function better.  then update so we can push to repo
+
+> do we need to correct the mobile?
+
+**What was lacking after the first prompt:** the page heading just named the search ("Hoodies") without a personal touch, and the harness didn't spell out how carefully the Problem 3 item page was checked from chat cards.
+
+**Outcome:** (screenshots `screenshots/p7_*.jpg`, test results in `output/chat_check.txt`)
+- **Already done:** since Problem 5, chat replies showed small product cards inside the chat bubble. Problem 7 needed the **website itself** to show the matches, so that part was refined.
+- **API contract (`backend/models.py`, `backend/main.py`):**
+  - The agent returns `AgentReply` with up to 12 `product_ids` plus `search` (the filters it used).
+  - FastAPI returns full product cards plus `page` (title, total matches, See-all link) for searches about a type of item.
+  - Unknown ids are dropped, so nothing invented can show up.
+- **On the page (`frontend/src/chatResults.tsx`, `components/ChatResultsSection.tsx`):**
+  - A "From the chat" section appears at the top of the current page, with the same product cards as the Products page (image, name, price, short description, Add to cart, Check options), "Showing 12 of 28 matches", and **See all**.
+  - The chat bubble notes how many matches are on the page.
+- **Single-item page still works:** clicking any chat-delivered card opens its item page from Problem 3; there the results fold into a slim bar so the shopper can return to them.
+- **Prompt:** a new "Search results that update the page" section saying when to fill `search` and `product_ids` (type-of-item questions) and when not to (single-item questions).
+- **Confirmed:**
+  - In the browser: "What hoodies do you have?" → 12 hoodie cards on the page; clicking one opened its item page; See all → all 28 hoodies.
+  - `tests/check_chat.py` **21/21** (three new page checks).
+- **Harness:** a "Problem 7: Chat search that updates the page" section explaining how search results reach the page.
+- **Follow-up:**
+  - The page heading is now a personal **"We have Hoodies!"** (the backend writes it for each search, e.g. "We have Drinkware under $15!").
+  - The Problem 3 item page was checked carefully from a chat card: Check options with real stock, then the item page with large image, price, description, sizes and stock table, and Add to cart. The harness notes the special attention.
+  - Other improvements: results survive a reload (kept for the browser session), the chat steps aside on phones so the cards show, and screen readers hear how many matches were added.
+  - Mobile needed no fix: the chat folded away and the cards showed; a pale screenshot was only the fade-in caught mid-way.
+  - Tests: chat 21/21 (now also checking the headline), auth 16/16.
+  - Committed and pushed to `github.com/Louyale/campuscustomschat`. **Problem 7 complete.**
 
 ---
 

@@ -4,6 +4,7 @@ import { BrowserRouter } from 'react-router-dom'
 import App from './App'
 import { AuthProvider } from './auth'
 import { CartProvider } from './cart'
+import { ChatResultsProvider } from './chatResults'
 import './styles.css'
 
 createRoot(document.getElementById('root')!).render(
@@ -11,7 +12,9 @@ createRoot(document.getElementById('root')!).render(
     <BrowserRouter>
       <AuthProvider>
         <CartProvider>
-          <App />
+          <ChatResultsProvider>
+            <App />
+          </ChatResultsProvider>
         </CartProvider>
       </AuthProvider>
     </BrowserRouter>

@@ -212,3 +212,48 @@ The prompt now has a "Which tool to call" table: `quick_check` first for any pri
   - The live agent made exactly one tool call per question: `quick_check` for "How much is the Basic Hoodie Big Yale?" ($39.99) and for "Is the Pierson College Crewneck in stock in a large?" ("sold out in L… in stock in XS, S, M, and XXL"), and `get_product_description` for the SOM tee.
 - `tests/check_chat.py`: **18/18 pass** through the website's chat route.
 - `tests/check_auth.py`: still **16/16**.
+
+---
+
+## Problem 7: Chat search that updates the page
+
+### What the shopper sees
+
+When a shopper asks the chat about a **type of item**, for example "What hoodies do you have?", the agent searches the catalogue and the website shows the matches as **product cards on the page itself**:
+- **Where:** a "From the chat" section opens at the top of whatever page the shopper is on.
+- **What's on each card:** image, name, price, short description, and the "Add to cart" and "Check options" buttons.
+- **Heading and count:** a friendly heading, **"We have Hoodies!"**, with "Showing 12 of 28 matches" and a **See all 28** link to the Products page filtered to every match.
+- **In the chat:** a short reply ("There are 28 hoodies; the page shows 12 options…"), a note that the matches are on the page, and a three-card preview.
+- **Every card works like the rest of the site:** clicking any card, including the ones the chat just added, opens the same **single-item page** from Problem 3 (large image, full description, price, sizes and stock). On the item page the chat results fold into a slim bar ("Show 12 matches") so the shopper can go back to them.
+- **Single items:** a question about one item ("How much is the Basic Hoodie Big Yale?") doesn't change the page; that item's card appears in the chat.
+
+### The API contract: how search results reach the page
+
+1. **Website → FastAPI.** The chat box sends `POST /api/chat` with the shopper's message.
+2. **Agent → structured matches.** The agent calls `search_products` with filters (category, collection, group, words, max price). It then returns an `AgentReply` (`backend/models.py`):
+   - `reply`: the short text for the chat
+   - `product_ids`: up to 12 matches, best first (best sellers and in-stock items lead), taken only from tool results
+   - `search`: a `SearchFilters` object with the filters it used, e.g. `{category: "Hoodies"}`; left empty for single-item questions
+3. **FastAPI → page results.** `main.py` turns the agent's answer into what the website needs:
+   - `products`: full product cards built from the database (unknown ids are dropped, so nothing made up can appear)
+   - `page`: `PageResults` with a `title` ("Hoodies"), a `headline` ("We have Hoodies!"), the `total` number of matches, and a `browse_url` ("/products?category=Hoodies") for See all; only sent when `search` was filled
+4. **Website → cards.** When `page` is present, the chat box hands the cards to a shared results store (`frontend/src/chatResults.tsx`). The `ChatResultsSection` component then shows them at the top of the page, using the same `ProductCard` as the Products page, and scrolls them into view.
+   - The results are kept for the browser session, so they survive a reload or a trip to an item page.
+   - On a phone, the chat steps aside when results arrive so the cards aren't hidden.
+   - Screen readers hear "12 matches for Hoodies added to the page."
+
+### Proof it works
+
+- **A personal touch:** the results heading says **"We have Hoodies!"** rather than just "Hoodies", so the page answers the shopper the way a person in the shop would. It adapts to each search: "We have Drinkware under $15!", "We have Low-Key Yale Gear!".
+- **In the browser** (`screenshots/p7_*`): on the home page, "What hoodies do you have?" put 12 hoodie cards on the page under "We have Hoodies!", with "Showing 12 of 28 matches · See all 28 →". The chat said the matches were on the page.
+- **We paid special attention to the primary card built in Problem 3.** Every card the chat puts on the page is the same product card as the Products page and still opens the same single-item page. Checked from a chat-delivered card (Brooks Brothers Double Knit Full Zip Hoodie):
+  - **Card buttons:** "Check options" opened the options popup with real stock (XS sold out).
+  - **Item page:** clicking the card opened the full item page: breadcrumb, large image, name, $124.99, full description, 6 size pills and the stock-by-size table. Choosing M and "Add to cart" added it to the cart (`screenshots/p7_03`).
+  - **Results above the item page:** the chat results folded into a slim bar; "Show 12 matches" re-opened them, and "See all 28" opened the Products page with all 28 hoodies.
+  - **After a reload:** the 12 matches and the cart were still there.
+- **On a phone:** asking "Show me Yale mugs under $15" folded the chat away and showed "We have Drinkware under $15!" with its cards.
+- **`tests/check_chat.py`:** **21/21 pass** (`output/chat_check.txt`), including three page checks:
+  - "What hoodies do you have?" returns page results with only hoodies and a See-all link.
+  - "Show me Yale mugs under $15" returns only Drinkware at $15 or less.
+  - "How much is the Basic Hoodie Big Yale?" returns no page results and just that item's card.
+- The chat route's limit of 20 messages a minute held during testing (the test now pauses between questions).
